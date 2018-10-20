@@ -1,4 +1,4 @@
-package com.wisdom.smartcity;
+package com.eco.smartcity;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

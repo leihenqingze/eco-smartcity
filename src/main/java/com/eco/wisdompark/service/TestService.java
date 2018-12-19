@@ -1,6 +1,6 @@
-package com.eco.smartcity.service;
+package com.eco.wisdompark.service;
 
-import com.eco.smartcity.domain.Test;
+import com.eco.wisdompark.domain.Test;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

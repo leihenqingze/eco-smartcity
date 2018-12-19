@@ -1,8 +1,8 @@
-package com.eco.smartcity.service.impl;
+package com.eco.wisdompark.service.impl;
 
-import com.eco.smartcity.domain.Test;
-import com.eco.smartcity.mapper.TestMapper;
-import com.eco.smartcity.service.TestService;
+import com.eco.wisdompark.domain.Test;
+import com.eco.wisdompark.mapper.TestMapper;
+import com.eco.wisdompark.service.TestService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

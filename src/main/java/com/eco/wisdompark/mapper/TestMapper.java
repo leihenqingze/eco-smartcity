@@ -1,6 +1,6 @@
-package com.eco.smartcity.mapper;
+package com.eco.wisdompark.mapper;
 
-import com.eco.smartcity.domain.Test;
+import com.eco.wisdompark.domain.Test;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

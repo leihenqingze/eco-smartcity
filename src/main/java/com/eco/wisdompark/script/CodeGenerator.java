@@ -1,4 +1,4 @@
-package com.eco.smartcity.script;
+package com.eco.wisdompark.script;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -32,7 +32,7 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://60.205.115.115:10001/smartcity?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://60.205.115.115:10001/wisdompark?useUnicode=true&useSSL=false&characterEncoding=utf8");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("wecoo");
         dsc.setPassword("2016wocoo0929");
@@ -41,7 +41,7 @@ public class CodeGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setEntity("domain");
-        pc.setParent("com.eco.smartcity");
+        pc.setParent("com.eco.wisdompark");
         mpg.setPackageInfo(pc);
 
         // 自定义配置

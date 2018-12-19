@@ -1,4 +1,4 @@
-package com.eco.smartcity.controller;
+package com.eco.wisdompark.controller;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;

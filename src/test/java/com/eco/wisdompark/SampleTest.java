@@ -1,4 +1,4 @@
-package com.eco.smartcity;
+package com.eco.wisdompark;
 
 //import com.eco.smartcity.mapper.TestMapper;
 import org.junit.Assert;

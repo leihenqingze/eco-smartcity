@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.eco.smartcity.mapper")
+@MapperScan("com.eco.wisdompark.mapper")
 public class WisdomparkApplication {
 
     public static void main(String[] args) {

@@ -28,6 +28,8 @@ public class Test extends Model<Test> {
 
     private String name;
 
+    private int age;
+
 
     @Override
     protected Serializable pkVal() {

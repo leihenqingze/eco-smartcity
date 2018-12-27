@@ -1,13 +1,16 @@
 package com.eco.wisdompark.common.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 
 /**
  * ajax请求返回结果
  *
- * @author arjaylv
+ * @author litao
  */
+@Data
 public class ResponseData implements Serializable {
     private static final long serialVersionUID = 8125672939123850928L;
 
@@ -78,48 +81,6 @@ public class ResponseData implements Serializable {
 
     public ResponseData(Object data) {
         this();
-        this.data = data;
-    }
-
-    /**
-     * @return the code
-     */
-    public int getCode() {
-        return code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * @param message the message to set
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    /**
-     * @return the data
-     */
-    public Object getData() {
-        return data;
-    }
-
-    /**
-     * @param data the data to set
-     */
-    public void setData(Object data) {
         this.data = data;
     }
 

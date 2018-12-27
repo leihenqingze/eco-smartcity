@@ -2,10 +2,6 @@ package com.eco.wisdompark.common.exceptions;
 
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @author 陈伟, chenwei@maichengvip.com on 2016/12/7
- * @version 1.0
- */
 public class WisdomParkException extends Exception {
     private static final long serialVersionUID = 2734616083002297625L;
 

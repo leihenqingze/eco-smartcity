@@ -3,7 +3,7 @@ package com.eco.wisdompark.controller;
 
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.Test;
-import com.eco.wisdompark.dto.SaveTestDto;
+import com.eco.wisdompark.domain.dto.req.SaveTestDto;
 import com.eco.wisdompark.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

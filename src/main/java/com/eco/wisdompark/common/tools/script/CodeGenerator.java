@@ -1,4 +1,4 @@
-package com.eco.wisdompark.script;
+package com.eco.wisdompark.common.tools.script;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;

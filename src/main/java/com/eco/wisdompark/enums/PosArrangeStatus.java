@@ -4,15 +4,15 @@ package com.eco.wisdompark.enums;
  * @author litao, 2018/12/29
  * @version 1.0
  */
-public enum YesNo implements CommonEnum<YesNo> {
-
-    YES(0, "是"),
-    NO(1, "否");
+public enum PosArrangeStatus implements CommonEnum<PosArrangeStatus> {
+    DEPLOYED(0, "已部署"),
+    NOT_DEPLOY(1, "未部署"),
+    OFFLINE(1, "已下线");
 
     private final int code;
     private final String description;
 
-    YesNo(int code, String description) {
+    PosArrangeStatus(int code, String description) {
         this.code = code;
         this.description = description;
     }
@@ -25,8 +25,8 @@ public enum YesNo implements CommonEnum<YesNo> {
         return description;
     }
 
-    public static YesNo valueOf(int code) {
-        for (YesNo item : YesNo.values()) {
+    public static PosArrangeStatus valueOf(int code) {
+        for (PosArrangeStatus item : PosArrangeStatus.values()) {
             if (item.getCode() == code) {
                 return item;
             }

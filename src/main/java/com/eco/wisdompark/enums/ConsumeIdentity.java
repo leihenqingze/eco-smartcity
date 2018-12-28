@@ -4,15 +4,16 @@ package com.eco.wisdompark.enums;
  * @author litao, 2018/12/29
  * @version 1.0
  */
-public enum YesNo implements CommonEnum<YesNo> {
-
-    YES(0, "是"),
-    NO(1, "否");
+public enum ConsumeIdentity implements CommonEnum<ConsumeIdentity> {
+    TB_STAFF(0, "训练局职工"),
+    UN_TB_STAFF(1, "非训练局职工"),
+    GD(2, "保洁"),
+    PAC(3, "保安");
 
     private final int code;
     private final String description;
 
-    YesNo(int code, String description) {
+    ConsumeIdentity(int code, String description) {
         this.code = code;
         this.description = description;
     }
@@ -25,8 +26,8 @@ public enum YesNo implements CommonEnum<YesNo> {
         return description;
     }
 
-    public static YesNo valueOf(int code) {
-        for (YesNo item : YesNo.values()) {
+    public static ConsumeIdentity valueOf(int code) {
+        for (ConsumeIdentity item : ConsumeIdentity.values()) {
             if (item.getCode() == code) {
                 return item;
             }

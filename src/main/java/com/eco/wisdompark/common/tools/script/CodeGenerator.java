@@ -14,7 +14,7 @@ import java.util.List;
 public class CodeGenerator {
 
     public static void main(String[] args) {
-        String table = "test";
+        String table = "tb_user";
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
 
@@ -40,7 +40,7 @@ public class CodeGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setEntity("domain");
+        pc.setEntity("domain.model");
         pc.setParent("com.eco.wisdompark");
         mpg.setPackageInfo(pc);
 
@@ -56,8 +56,10 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
+                String entityName = tableInfo.getEntityName();
                 return projectPath + "/src/main/resources/mapper/"
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                        + "/" + entityName
+                        + "Mapper" + StringPool.DOT_XML;
             }
         });
         cfg.setFileOutConfigList(focList);
@@ -72,7 +74,7 @@ public class CodeGenerator {
         strategy.setRestControllerStyle(true);
         strategy.setInclude(table);
         strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(pc.getModuleName() + "_");
+        strategy.setTablePrefix("tb_");
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();

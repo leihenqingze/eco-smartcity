@@ -48,7 +48,7 @@ public class RechargeRecord extends Model<RechargeRecord> {
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
 
-    @ApiModelProperty(value = "充值类型：1手动，2批量导入")
+    @ApiModelProperty(value = "充值类型：0手动，1批量导入")
     private Boolean rechargeType;
 
     @ApiModelProperty(value = "批量导入序列号")

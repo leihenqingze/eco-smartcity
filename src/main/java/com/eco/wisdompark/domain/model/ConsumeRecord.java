@@ -54,10 +54,10 @@ public class ConsumeRecord extends Model<ConsumeRecord> {
     @ApiModelProperty(value = "POS机编号")
     private Integer posId;
 
-    @ApiModelProperty(value = "消费类型，1：用餐，2：购物")
+    @ApiModelProperty(value = "消费类型，0：用餐，1：购物")
     private Integer type;
 
-    @ApiModelProperty(value = "用餐类型，1：早餐，2：午餐，3：晚餐")
+    @ApiModelProperty(value = "用餐类型，0：早餐，1：午餐，2：晚餐")
     private Integer diningType;
 
     @ApiModelProperty(value = "创建时间")

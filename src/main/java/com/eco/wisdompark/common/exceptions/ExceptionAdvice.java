@@ -37,11 +37,15 @@ public class ExceptionAdvice {
     @ResponseBody
     public ResponseData handleException(Throwable e) {
         log.error("[其他]", e);
-        return handleAjaxRequestException(e, 500);
+        return handleAjaxRequestException("系统内部异常,请联系管理员", 500);
     }
 
     private ResponseData handleAjaxRequestException(Throwable e, int code) {
         return new ResponseData(code, e.getMessage());
+    }
+
+    private ResponseData handleAjaxRequestException(String message, int code) {
+        return new ResponseData(code, message);
     }
 
 }

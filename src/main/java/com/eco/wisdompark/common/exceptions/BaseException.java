@@ -6,8 +6,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * 方便做日志的一个异常
- *
- * @author frank
  */
 @SuppressWarnings("serial")
 public class BaseException extends RuntimeException {

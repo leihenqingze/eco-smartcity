@@ -1,12 +1,12 @@
 package com.eco.wisdompark.controller;
 
-
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.Test;
-import com.eco.wisdompark.dto.SaveTestDto;
+import com.eco.wisdompark.domain.dto.req.SaveTestDto;
 import com.eco.wisdompark.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,7 +33,7 @@ public class TestController {
     @ApiOperation(value = "硬件接口", httpMethod = "POST")
     public ResponseData getStr(SaveTestDto saveTestDto) {
         Test test = new Test();
-        test.setName(saveTestDto.getName());
+        BeanUtils.copyProperties(saveTestDto,test);
         testService.save(test);
         return ResponseData.OK("sucess");
     }

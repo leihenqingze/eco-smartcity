@@ -29,9 +29,6 @@ public class Test extends Model<Test> {
     @Length(min = 10, max = 20, message = "设备名称在10到20个字符之间")
     private String name;
 
-    private int age;
-
-
     @Override
     protected Serializable pkVal() {
         return this.id;

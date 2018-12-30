@@ -28,6 +28,8 @@ public class ResponseData implements Serializable {
     public static final int STATUS_CODE_461 = 461; // 验证码错误
     public static final int STATUS_CODE_462 = 462; // 无订单商品
 
+    public static final int STATUS_CODE_600 = 600; // 用户已存在
+
     public static final String STATUS_MESSAGE_200 = "OK";
     public static final String STATUS_MESSAGE_400 = "Error";
 

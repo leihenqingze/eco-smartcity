@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/report-loss-record")
 public class ReportLossRecordController {
 
-
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "卡片挂失查询接口", httpMethod = "POST")
     public ResponseData queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
@@ -31,10 +30,9 @@ public class ReportLossRecordController {
     }
 
     @RequestMapping(value = "/reissue", method = RequestMethod.POST)
-    @ApiOperation(value = "卡片挂失查询接口", httpMethod = "POST")
+    @ApiOperation(value = "卡片挂失补发接口", httpMethod = "POST")
     public ResponseData reissueCard(@RequestBody ReissueCardDto reissueCardDto) {
         return ResponseData.OK();
     }
-
 
 }

@@ -1,5 +1,7 @@
 package com.eco.wisdompark.service.impl;
 
+import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.domain.dto.req.card.ReissueCardDto;
 import com.eco.wisdompark.domain.model.ReportLossRecord;
 import com.eco.wisdompark.mapper.ReportLossRecordMapper;
 import com.eco.wisdompark.service.ReportLossRecordService;
@@ -17,4 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMapper, ReportLossRecord> implements ReportLossRecordService {
 
+    @Override
+    public ResponseData reissueCard(ReissueCardDto reissueCardDto) {
+        return null;
+    }
 }

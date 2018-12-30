@@ -1,10 +1,11 @@
 package com.eco.wisdompark.enums;
 
+
 /**
  * @author litao, 2018/12/29
  * @version 1.0
  */
-public enum CardSource implements CommonEnum<CardSource> {
+public enum CardSource implements  CommonEnum<CardSource> {
     TOP_UP(0, "充值"),
     CONSUMPTION(1, "消费"),
     SUBSIDIES(2, "补助"),
@@ -35,5 +36,6 @@ public enum CardSource implements CommonEnum<CardSource> {
         }
         throw new IllegalArgumentException("未知的");
     }
+
 
 }

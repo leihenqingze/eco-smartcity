@@ -8,7 +8,7 @@ package com.eco.wisdompark.common.utils;
 import org.springframework.context.MessageSource;
 
 /**
- * <p>User: Zhang Kaitao
+ * <p>user: Zhang Kaitao
  * <p>Date: 13-2-9 下午8:49
  * <p>Version: 1.0
  */

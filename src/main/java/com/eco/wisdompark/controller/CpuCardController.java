@@ -2,7 +2,7 @@ package com.eco.wisdompark.controller;
 
 
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.card.CardRechargeDto;
+import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.service.CpuCardService;
@@ -44,13 +44,14 @@ public class CpuCardController {
 
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     @ApiOperation(value = "卡片余额充值接口", httpMethod = "POST")
-    public ResponseData cardRecharge(@RequestBody CardRechargeDto cardRechargeDto) {
+    public ResponseData recharge(@RequestBody RechargeCardDto rechargeCardDto) {
+        ResponseData responseData = cpuCardService.recharge(rechargeCardDto);
         return ResponseData.OK();
     }
 
     @RequestMapping(value = "/recharge/batch", method = RequestMethod.POST)
     @ApiOperation(value = "批量充值接口", httpMethod = "POST")
-    public ResponseData batchRecharge(@RequestParam("file") MultipartFile file) {
+    public ResponseData rechargeBatch(@RequestParam("file") MultipartFile file) {
         String fileName = file.getOriginalFilename();
 //        try {
 //            a = testService.batchImport(fileName, file);

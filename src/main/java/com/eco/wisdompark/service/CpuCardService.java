@@ -1,15 +1,12 @@
 package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.card.CardRechargeDto;
+import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
@@ -39,10 +36,10 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 卡片余额充值接口
-     * @param cardRechargeDto
+     * @param rechargeCardDto
      * @return
      */
-    ResponseData cardRecharge(CardRechargeDto cardRechargeDto);
+    ResponseData recharge(RechargeCardDto rechargeCardDto);
 
     /**
      * 卡片批量充值接口
@@ -50,7 +47,7 @@ public interface CpuCardService extends IService<CpuCard> {
      * @param file
      * @return
      */
-    ResponseData batchRecharge(String fileName, File file);
+    ResponseData rechargeBatch(String fileName, File file);
 
     /**
      * 查询CPU卡片信息 by cardId

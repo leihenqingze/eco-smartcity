@@ -3,7 +3,7 @@ package com.eco.wisdompark.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
-import com.eco.wisdompark.domain.dto.req.card.CardRechargeDto;
+import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
@@ -112,12 +112,15 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     }
 
     @Override
-    public ResponseData cardRecharge(CardRechargeDto cardRechargeDto) {
+    public ResponseData recharge(RechargeCardDto rechargeCardDto) {
+
+
+
         return null;
     }
 
     @Override
-    public ResponseData batchRecharge(String fileName, File file) {
+    public ResponseData rechargeBatch(String fileName, File file) {
         return null;
     }
 

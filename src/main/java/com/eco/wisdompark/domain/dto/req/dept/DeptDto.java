@@ -23,10 +23,10 @@ public class DeptDto {
     private String deptName;
 
     @ApiModelProperty(value = "消费身份：1训练局职工，2非训练局职工，3保安，4保洁")
-    private Boolean consumeIdentity;
+    private Integer consumeIdentity;
 
     @ApiModelProperty(value = "逻辑删除：0正常，1删除")
-    private Boolean del;
+    private Integer del;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

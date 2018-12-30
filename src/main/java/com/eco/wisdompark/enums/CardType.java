@@ -5,10 +5,10 @@ package com.eco.wisdompark.enums;
  * @version 1.0
  */
 public enum CardType implements CommonEnum<CardType> {
-    CPU(0, "CPU卡"),
     ID(1, "ID卡"),
     IC(2, "IC卡"),
-    VIRTUAL(3, "虚拟卡");
+    CPU(3, "CPU卡"),
+    VIRTUAL(4, "虚拟卡");
 
     private final int code;
     private final String description;

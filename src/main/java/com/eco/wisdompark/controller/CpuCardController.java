@@ -5,8 +5,10 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.CardRechargeDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
+import com.eco.wisdompark.service.CpuCardService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,18 +22,24 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequestMapping("/cpu-card")
+@Api(value = "CPU卡相关API", description = "CPU卡相关API")
 public class CpuCardController {
+
+    @Autowired
+    private CpuCardService cpuCardService;
 
     @RequestMapping(value = "/making", method = RequestMethod.POST)
     @ApiOperation(value = "制卡/卡片激活接口", httpMethod = "POST")
-    public ResponseData makingCpuCardDtos(@RequestBody MakingCpuCardDto makingCpuCardDto) {
-        return ResponseData.OK();
+    public ResponseData makingCpuCard(@RequestBody MakingCpuCardDto makingCpuCardDto) {
+        ResponseData responseData = cpuCardService.makingCpuCard(makingCpuCardDto);
+        return responseData;
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
     public ResponseData queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
-        return ResponseData.OK();
+        ResponseData responseData = cpuCardService.queryCardInfo(queryCardInfoDto);
+        return responseData;
     }
 
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)

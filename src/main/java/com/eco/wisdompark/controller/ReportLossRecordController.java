@@ -4,6 +4,7 @@ package com.eco.wisdompark.controller;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.ReissueCardDto;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/report-loss-record")
+@Api(value = "CPU卡挂失/补卡相关API", description = "CPU卡挂失/补卡相关API")
 public class ReportLossRecordController {
-
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "卡片挂失查询接口", httpMethod = "POST")
@@ -31,10 +32,9 @@ public class ReportLossRecordController {
     }
 
     @RequestMapping(value = "/reissue", method = RequestMethod.POST)
-    @ApiOperation(value = "卡片挂失查询接口", httpMethod = "POST")
+    @ApiOperation(value = "卡片挂失补发接口", httpMethod = "POST")
     public ResponseData reissueCard(@RequestBody ReissueCardDto reissueCardDto) {
         return ResponseData.OK();
     }
-
 
 }

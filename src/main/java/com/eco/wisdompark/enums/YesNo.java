@@ -6,8 +6,8 @@ package com.eco.wisdompark.enums;
  */
 public enum YesNo implements CommonEnum<YesNo> {
 
-    YES(0, "是"),
-    NO(1, "否");
+    YES(1, "是"),
+    NO(0, "否");
 
     private final int code;
     private final String description;

@@ -46,7 +46,7 @@ public class User extends Model<User> {
     private Integer deptId;
 
     @ApiModelProperty(value = "逻辑删除")
-    private Boolean del;
+    private Integer del;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

@@ -2,7 +2,7 @@ package com.eco.wisdompark.common.exceptions;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class WisdomParkException extends Exception {
+public class WisdomParkException extends RuntimeException {
     private static final long serialVersionUID = 2734616083002297625L;
 
     private int code;

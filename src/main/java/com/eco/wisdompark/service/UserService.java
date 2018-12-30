@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserService extends IService<User> {
 
+
+    /**
+     * 查询组织架构Id的所有人员数量
+     * */
+    public Integer countByDept(Integer deptId);
+
 }

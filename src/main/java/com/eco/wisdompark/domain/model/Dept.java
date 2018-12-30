@@ -1,5 +1,6 @@
 package com.eco.wisdompark.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -43,10 +44,11 @@ public class Dept extends Model<Dept> {
     private String deptName;
 
     @ApiModelProperty(value = "消费身份：1训练局职工，2非训练局职工，3保安，4保洁")
-    private Boolean consumeIdentity;
+    private Integer consumeIdentity;
 
     @ApiModelProperty(value = "逻辑删除：0正常，1删除")
-    private Boolean del;
+    @TableLogic
+    private Integer del;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

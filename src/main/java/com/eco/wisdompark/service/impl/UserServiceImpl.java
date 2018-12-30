@@ -1,5 +1,7 @@
 package com.eco.wisdompark.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.UserMapper;
 import com.eco.wisdompark.service.UserService;
@@ -17,4 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    @Override
+    public Integer countByDept(Integer deptId) {
+        QueryWrapper<User> wrapper = new QueryWrapper<User>();
+        wrapper.eq("dept_id", deptId);
+        return baseMapper.selectCount(wrapper);
+    }
 }

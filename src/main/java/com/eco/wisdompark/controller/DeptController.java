@@ -2,15 +2,18 @@ package com.eco.wisdompark.controller;
 
 
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.dept.AddLevel1DeptDto;
-import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
+import com.eco.wisdompark.domain.dto.req.dept.*;
+import com.eco.wisdompark.service.DeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,44 +28,46 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "组织架构API", description = "组织架构相关API")
 public class DeptController {
 
+    @Autowired
+    private DeptService deptService;
+
+
     @RequestMapping(value = "/addDeptLevel1", method = RequestMethod.POST)
     @ApiOperation(value = "添加组织架构一级", httpMethod = "POST")
-    public ResponseData addDeptLevel1(AddLevel1DeptDto AddLevel1DeptDto) {
-        return ResponseData.OK();
+    public ResponseData addDeptLevel1(AddLevel1DeptDto addLevel1DeptDto) {
+        Integer result = deptService.addDeptLevel1(addLevel1DeptDto);
+        return ResponseData.OK(result);
     }
 
     @RequestMapping(value = "/addDeptLevel2", method = RequestMethod.POST)
     @ApiOperation(value = "添加组织架构二级", httpMethod = "POST")
-    public ResponseData addDeptLevel2(AddLevel2DeptDto AddLevel2DeptDto) {
-        return ResponseData.OK();
+    public ResponseData addDeptLevel2(AddLevel2DeptDto addLevel2DeptDto) {
+
+        Integer result=deptService.addDeptLevel2(addLevel2DeptDto);
+        return ResponseData.OK(result);
     }
 
     @RequestMapping(value = "/getLevel1Dept", method = RequestMethod.POST)
-    @ApiOperation(value = "查询组织架构一级", httpMethod = "POST")
-    @ApiImplicitParam(name = "deptName", value = "通过名称模糊查询",  dataType = "String")
-    public ResponseData getLevel1Dept(String deptName) {
-        return ResponseData.OK();
+    public ResponseData getLevel1Dept(GetLevel1DeptDto getLevel1DeptDto) {
+        List<DeptDto> result=deptService.getLevel1Dept(getLevel1DeptDto);
+        return ResponseData.OK(result);
     }
 
 
     @RequestMapping(value = "/getLevel2Dept", method = RequestMethod.POST)
     @ApiOperation(value = "查询组织架构二级", httpMethod = "POST")
-    public ResponseData getLevel2Dept(AddLevel2DeptDto ddLevel2DeptDto) {
-        return ResponseData.OK();
+    public ResponseData getLevel2Dept(AddLevel2DeptDto addLevel2DeptDto) {
+        List<DeptDto> result=deptService.getLevel2Dept(addLevel2DeptDto);
+        return ResponseData.OK(result);
     }
 
 
     @RequestMapping(value = "/delDept", method = RequestMethod.POST)
     @ApiOperation(value = "删除组织架构", httpMethod = "POST")
-    @ApiImplicitParam(name = "id", value = "组织架构Id",  dataType = "Integer")
-    public ResponseData getLevel2Dept(Integer id) {
-        return ResponseData.OK();
+    public ResponseData delDept(DelDeptDto delDeptDto) {
+        Integer result= deptService.delDept(delDeptDto);
+        return ResponseData.OK(result);
     }
-
-
-
-
-
 
 
 }

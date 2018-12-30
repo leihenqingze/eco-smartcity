@@ -7,6 +7,7 @@ import com.eco.wisdompark.domain.dto.req.card.CardRechargeDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
+import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.CardType;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -80,7 +83,32 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Override
     public ResponseData queryCardInfo(QueryCardInfoDto queryCardInfoDto) {
-        return null;
+        ResponseData responseData = new ResponseData();
+
+        // 1.根据CPU卡id查询
+        String cardId = queryCardInfoDto.getCardId();
+        if (!StringUtils.isEmpty(cardId)){
+            RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByCardId(cardId);
+            if (respQueryCardInfoDto != null){
+                responseData.setData(respQueryCardInfoDto);
+                responseData.OK();
+                return responseData;
+            }
+        }
+
+        // 2.根据用户信息查询
+        String userName = queryCardInfoDto.getUserName();
+        String mobile = queryCardInfoDto.getPhoneNum();
+        int deptId = queryCardInfoDto.getDeptId();
+        RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByUserInfo(userName, mobile, deptId);
+        if (respQueryCardInfoDto != null){
+            responseData.setData(respQueryCardInfoDto);
+            responseData.OK();
+            return responseData;
+        }
+
+        responseData.ERROR(responseData.STATUS_CODE_601, "用户或卡信息不存在");
+        return responseData;
     }
 
     @Override
@@ -91,6 +119,94 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     public ResponseData batchRecharge(String fileName, File file) {
         return null;
+    }
+
+    @Override
+    public RespQueryCardInfoDto queryCardInfoByCardId(String cardId){
+        if (StringUtils.isEmpty(cardId)){
+            return null;
+        }
+
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("card_id", cardId);
+        List<CpuCard> cpuCards = list(queryWrapper);
+        if (CollectionUtils.isEmpty(cpuCards)){
+            log.info("queryCardInfoByCardId cardId:{}, no data...", cardId);
+            return null;
+        }
+
+        CpuCard cpuCard = cpuCards.get(0);
+        Integer userId = cpuCard.getUserId();
+        User user = userService.getById(userId);
+        if (user != null){
+            // 封装返回信息
+            RespQueryCardInfoDto respQueryCardInfoDto = userCardDataConvert(user, cpuCard);
+            return respQueryCardInfoDto;
+        }
+        log.error("queryCardInfoByCardId cardId:{}, userId:{}, exists but user not exists ERROR ...", cardId, userId);
+        return null;
+    }
+
+
+    /**
+     * 根据用户信息查询CPU卡信息
+     * @param userName
+     * @param mobile
+     * @param deptId
+     * @return
+     */
+    private RespQueryCardInfoDto queryCardInfoByUserInfo(String userName, String mobile, Integer deptId){
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(userName)){
+            queryWrapper.eq("user_name", userName);
+        }
+        if (!StringUtils.isEmpty(mobile)){
+            queryWrapper.eq("phone_num", mobile);
+        }
+        if (!StringUtils.isEmpty(deptId) && deptId > 0){
+            queryWrapper.eq("dept_id", deptId);
+        }
+
+        RespQueryCardInfoDto respQueryCardInfoDto = null;
+        Integer userId = 0;
+        User user = userService.getOne(queryWrapper);
+        log.info("queryCardInfoByUserInfo no data userName:{}, mobile:{}, deptId:{}", userName, mobile, deptId);
+        if (user != null && user.getId() > 0){
+            userId = user.getId();
+            QueryWrapper<CpuCard> cpuCardQueryWrapper = new QueryWrapper<>();
+            cpuCardQueryWrapper.eq("user_id", userId);
+            cpuCardQueryWrapper.eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode());
+            cpuCardQueryWrapper.eq("del", YesNo.NO.getCode());
+            CpuCard cpuCard = getOne(cpuCardQueryWrapper);
+            if (cpuCard != null){
+                respQueryCardInfoDto = userCardDataConvert(user, cpuCard);
+                return respQueryCardInfoDto;
+            }
+            log.info("queryCardInfoByUserInfo no data userId:{},reportLossStstus:{}, del:{}", userId, ReportLossStstus.IN_USE, YesNo.NO);
+        }
+        return null;
+    }
+
+
+    /**
+     * 组装人员卡信息
+     * @param user
+     * @param cpuCard
+     * @return
+     */
+    private RespQueryCardInfoDto userCardDataConvert(User user, CpuCard cpuCard){
+        RespQueryCardInfoDto respQueryCardInfoDto = new RespQueryCardInfoDto();
+        respQueryCardInfoDto.setId(cpuCard.getId());
+        respQueryCardInfoDto.setUserName(user.getUserName());
+        respQueryCardInfoDto.setUserCardNum(user.getUserCardNum());
+        respQueryCardInfoDto.setDeptId(user.getDeptId());
+        respQueryCardInfoDto.setPhoneNum(user.getPhoneNum());
+        BigDecimal rechargeBalance = cpuCard.getRechargeBalance() != null ? cpuCard.getRechargeBalance() : new BigDecimal(0);
+        BigDecimal subsidyBalance = cpuCard.getSubsidyBalance() != null ? cpuCard.getSubsidyBalance() : new BigDecimal(0);
+        respQueryCardInfoDto.setRechargeBalance(rechargeBalance);
+        respQueryCardInfoDto.setSubsidyBalance(cpuCard.getSubsidyBalance());
+        respQueryCardInfoDto.setTotalBalance(rechargeBalance.add(subsidyBalance));
+        return respQueryCardInfoDto;
     }
 
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ExceptionAdvice {
 
     // 业务异常
-    @ExceptionHandler(value = BaseException.class)
+    @ExceptionHandler(value = WisdomParkException.class)
     @ResponseBody
     public ResponseData handleBaseException(BaseException e) {
         log.error("[业务异常]", e);

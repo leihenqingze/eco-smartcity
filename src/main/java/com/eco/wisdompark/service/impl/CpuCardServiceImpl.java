@@ -60,53 +60,39 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Override
     @Transactional
-    public ResponseData makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
-        ResponseData responseData = new ResponseData();
+    public RespMakingCpuCardDto makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
         RespMakingCpuCardDto respMakingCpuCardDto = new RespMakingCpuCardDto();
-        try{
-            // 1.校验用户是否存在
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum());
-            List<User> userList = userService.list(queryWrapper);
-            if (!CollectionUtils.isEmpty(userList)){
-                log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
-                throw new WisdomParkException(ResponseData.STATUS_CODE_600, "user already exist");
-            }
-
-            // 2.保存用户信息
-            User user = saveUser(makingCpuCardDto);
-
-            // 3.保存制卡信息
-            Integer userId = user.getId();
-            CpuCard cpuCard = saveCpuCardInfo(makingCpuCardDto, userId);
-
-            // 4.封装返回信息
-            respMakingCpuCardDto.setId(cpuCard.getId());
-            respMakingCpuCardDto.setUserName(user.getUserName());
-            respMakingCpuCardDto.setPhoneNum(user.getPhoneNum());
-            respMakingCpuCardDto.setDeptId(user.getDeptId());
-            respMakingCpuCardDto.setDeposit(cpuCard.getDeposit());
-            responseData.setData(respMakingCpuCardDto);
-            responseData.OK();
-        }catch (Exception e){
-            log.error("makingCpuCard Exception... phoneNum:{}", makingCpuCardDto.getPhoneNum());
-            e.printStackTrace();
+        // 1.校验用户是否存在
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum());
+        List<User> userList = userService.list(queryWrapper);
+        if (!CollectionUtils.isEmpty(userList)){
+            log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
+            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "user already exist");
         }
-        return responseData;
+        // 2.保存用户信息
+        User user = saveUser(makingCpuCardDto);
+        // 3.保存制卡信息
+        Integer userId = user.getId();
+        CpuCard cpuCard = saveCpuCardInfo(makingCpuCardDto, userId);
+        // 4.封装返回信息
+        respMakingCpuCardDto.setId(cpuCard.getId());
+        respMakingCpuCardDto.setUserName(user.getUserName());
+        respMakingCpuCardDto.setPhoneNum(user.getPhoneNum());
+        respMakingCpuCardDto.setDeptId(user.getDeptId());
+        respMakingCpuCardDto.setDeposit(cpuCard.getDeposit());
+        return respMakingCpuCardDto;
     }
 
     @Override
-    public ResponseData queryCardInfo(QueryCardInfoDto queryCardInfoDto) {
-        ResponseData responseData = new ResponseData();
-
+    public RespQueryCardInfoDto queryCardInfo(QueryCardInfoDto queryCardInfoDto) {
+        RespQueryCardInfoDto respQueryCardInfoDto = null;
         // 1.根据CPU卡id查询
         String cardId = queryCardInfoDto.getCardId();
         if (!StringUtils.isEmpty(cardId)){
-            RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByCardId(cardId);
+            respQueryCardInfoDto = queryCardInfoByCardId(cardId);
             if (respQueryCardInfoDto != null){
-                responseData.setData(respQueryCardInfoDto);
-                responseData.OK();
-                return responseData;
+                return respQueryCardInfoDto;
             }
         }
 
@@ -114,15 +100,14 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         String userName = queryCardInfoDto.getUserName();
         String mobile = queryCardInfoDto.getPhoneNum();
         int deptId = queryCardInfoDto.getDeptId();
-        RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByUserInfo(userName, mobile, deptId);
+        respQueryCardInfoDto = queryCardInfoByUserInfo(userName, mobile, deptId);
         if (respQueryCardInfoDto != null){
-            responseData.setData(respQueryCardInfoDto);
-            responseData.OK();
-            return responseData;
+            return respQueryCardInfoDto;
         }
 
-        responseData.ERROR(responseData.STATUS_CODE_601, "用户或卡信息不存在");
-        return responseData;
+        log.error("queryCardInfo user or cpuCard not exists... cardId:{}, userName:{}, phoneNum:{}, deptId:{}",
+                queryCardInfoDto.getCardId(), queryCardInfoDto.getUserName(), queryCardInfoDto.getPhoneNum(), queryCardInfoDto.getDeptId());
+        return null;
     }
 
     @Override

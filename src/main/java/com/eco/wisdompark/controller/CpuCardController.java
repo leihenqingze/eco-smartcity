@@ -5,6 +5,8 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
+import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
+import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.service.CpuCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,22 +33,22 @@ public class CpuCardController {
     @RequestMapping(value = "/making", method = RequestMethod.POST)
     @ApiOperation(value = "制卡/卡片激活接口", httpMethod = "POST")
     public ResponseData makingCpuCard(@RequestBody MakingCpuCardDto makingCpuCardDto) {
-        ResponseData responseData = cpuCardService.makingCpuCard(makingCpuCardDto);
-        return responseData;
+        RespMakingCpuCardDto respMakingCpuCardDto = cpuCardService.makingCpuCard(makingCpuCardDto);
+        return ResponseData.OK(respMakingCpuCardDto);
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
     public ResponseData queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
-        ResponseData responseData = cpuCardService.queryCardInfo(queryCardInfoDto);
-        return responseData;
+        RespQueryCardInfoDto respQueryCardInfoDto = cpuCardService.queryCardInfo(queryCardInfoDto);
+        return ResponseData.OK(respQueryCardInfoDto);
     }
 
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     @ApiOperation(value = "卡片余额充值接口", httpMethod = "POST")
     public ResponseData recharge(@RequestBody RechargeCardDto rechargeCardDto) {
-        ResponseData responseData = cpuCardService.recharge(rechargeCardDto);
-        return ResponseData.OK();
+        boolean rechargeResult = cpuCardService.rechargeSingle(rechargeCardDto);
+        return ResponseData.OK(rechargeResult);
     }
 
     @RequestMapping(value = "/recharge/batch", method = RequestMethod.POST)

@@ -36,7 +36,7 @@ public class ChangeAmountServiceImpl extends ServiceImpl<ChangeAmountMapper, Cha
         changeAmount.setCreateTime(LocalDateTime.now());
         changeAmount.setChangeAgoRecharge(cardInfoDto.getRechargeBalance());
         changeAmount.setChangeAgoSubsidy(cardInfoDto.getSubsidyBalance());
-//        if (changeType == ChangeType){
+//        if (changeType == ChangeType.){
 //
 //        }
         return save(changeAmount);

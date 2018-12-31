@@ -36,7 +36,7 @@ public class RechargeRecord extends Model<RechargeRecord> {
     private Integer id;
 
     @ApiModelProperty(value = "卡ID")
-    private Integer cardId;
+    private String cardId;
 
     @ApiModelProperty(value = "卡序列号")
     @TableField("card_serialNo")
@@ -49,7 +49,7 @@ public class RechargeRecord extends Model<RechargeRecord> {
     private LocalDateTime createTime;
 
     @ApiModelProperty(value = "充值类型：0手动，1批量导入")
-    private Boolean rechargeType;
+    private Integer rechargeType;
 
     @ApiModelProperty(value = "批量导入序列号")
     @TableField("import_serialNo")

@@ -39,7 +39,7 @@ public interface CpuCardService extends IService<CpuCard> {
      * @param rechargeCardDto
      * @return
      */
-    ResponseData recharge(RechargeCardDto rechargeCardDto);
+    boolean rechargeSingle(RechargeCardDto rechargeCardDto);
 
     /**
      * 卡片批量充值接口

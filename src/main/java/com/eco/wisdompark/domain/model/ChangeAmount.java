@@ -60,7 +60,7 @@ public class ChangeAmount extends Model<ChangeAmount> {
     private BigDecimal changeAfterSubsidy;
 
     @ApiModelProperty(value = "金额变动类型:1充值，2消费充值余额，3消费补助金额，4补助，5补差消费余额，6补差补助余额，7退卡")
-    private Boolean changeType;
+    private Integer changeType;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

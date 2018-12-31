@@ -3,6 +3,7 @@ package com.eco.wisdompark.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
@@ -11,11 +12,14 @@ import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.CardType;
+import com.eco.wisdompark.enums.RechargeType;
 import com.eco.wisdompark.enums.ReportLossStstus;
 import com.eco.wisdompark.enums.YesNo;
 import com.eco.wisdompark.mapper.CpuCardMapper;
+import com.eco.wisdompark.service.ChangeAmountService;
 import com.eco.wisdompark.service.CpuCardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eco.wisdompark.service.RechargeRecordService;
 import com.eco.wisdompark.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,16 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RechargeRecordService rechargeRecordService;
+
+    @Autowired
+    private ChangeAmountService changeAmountService;
+
+    @Autowired
+    private CpuCardMapper cpuCardMapper;
+
 
     @Override
     @Transactional
@@ -112,16 +126,48 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     }
 
     @Override
-    public ResponseData recharge(RechargeCardDto rechargeCardDto) {
+    @Transactional
+    public boolean rechargeSingle(RechargeCardDto rechargeCardDto) {
+        // 1.校验CPU卡是否存在
+        CpuCardInfoDto cpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
+        if (cpuCardInfoDto == null){
+            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
+        }
 
-
-
-        return null;
+        //  2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
+        return rechargeBalance(cpuCardInfoDto, rechargeCardDto.getCardId(),rechargeCardDto.getRechargeAmt());
     }
 
     @Override
     public ResponseData rechargeBatch(String fileName, File file) {
         return null;
+    }
+
+
+    /**
+     * 查询 卡信息 内部使用
+     * @param cardId
+     * @param param 没有实际意义，与另外一个方法区分
+     * @return
+     */
+    public CpuCardInfoDto queryCardInfoByCardId(String cardId, String param){
+        if (StringUtils.isEmpty(cardId)){
+            return null;
+        }
+
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("card_id", cardId);
+        CpuCard cpuCard = getOne(queryWrapper);
+        if (cpuCard != null){
+            log.info("queryCardInfoByCardId  inner cardId:{}, no data...", cardId);
+            return null;
+        }
+
+        CpuCardInfoDto cardInfoDto = new CpuCardInfoDto();
+        cardInfoDto.setCardId(cardId);
+        cardInfoDto.setCardSerialNo(cpuCard.getCardSerialno());
+        cardInfoDto.setUserId(cpuCard.getUserId());
+        return cardInfoDto;
     }
 
     @Override
@@ -130,6 +176,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             return null;
         }
 
+        // TODO 可以加一层缓存
         QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("card_id", cardId);
         List<CpuCard> cpuCards = list(queryWrapper);
@@ -148,6 +195,29 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         }
         log.error("queryCardInfoByCardId cardId:{}, userId:{}, exists but user not exists ERROR ...", cardId, userId);
         return null;
+    }
+
+
+    /**
+     * 单个人员 充值操作
+     * @param cardInfoDto
+     * @param cardId
+     * @param amount
+     * @return
+     */
+    private boolean rechargeBalance(CpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount){
+        // 因为只改自己的数据(非共享数据且无 并发)，所以无需加锁；
+        int result = cpuCardMapper.recharge(cardId, amount);
+        if (result <= 0){
+            return false;
+        }
+        // 保存充值记录
+        rechargeRecordService.saveRechargeRecord(cardId, cardInfoDto.getCardSerialNo(), amount,
+                RechargeType.MANUAL, null, cardInfoDto.getUserId());
+
+        // 保存金额变更记录
+        changeAmountService.saveChanageAmountRecord(cardInfoDto, amount, null);
+        return true;
     }
 
 

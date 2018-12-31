@@ -3,6 +3,7 @@ package com.eco.wisdompark.service;
 import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
 import com.eco.wisdompark.domain.model.ChangeAmount;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eco.wisdompark.enums.AmountChangeType;
 import com.eco.wisdompark.enums.ChangeType;
 
 import java.math.BigDecimal;
@@ -24,6 +25,6 @@ public interface ChangeAmountService extends IService<ChangeAmount> {
      * @param changeType
      * @return
      */
-    boolean saveChanageAmountRecord(CpuCardInfoDto cardInfoDto, BigDecimal changeAmt, ChangeType changeType);
+    boolean saveChanageAmountRecord(CpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType);
 
 }

@@ -11,10 +11,7 @@ import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
-import com.eco.wisdompark.enums.CardType;
-import com.eco.wisdompark.enums.RechargeType;
-import com.eco.wisdompark.enums.ReportLossStstus;
-import com.eco.wisdompark.enums.YesNo;
+import com.eco.wisdompark.enums.*;
 import com.eco.wisdompark.mapper.CpuCardMapper;
 import com.eco.wisdompark.service.ChangeAmountService;
 import com.eco.wisdompark.service.CpuCardService;
@@ -27,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,53 +56,39 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Override
     @Transactional
-    public ResponseData makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
-        ResponseData responseData = new ResponseData();
+    public RespMakingCpuCardDto makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
         RespMakingCpuCardDto respMakingCpuCardDto = new RespMakingCpuCardDto();
-        try{
-            // 1.校验用户是否存在
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum());
-            List<User> userList = userService.list(queryWrapper);
-            if (!CollectionUtils.isEmpty(userList)){
-                log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
-                throw new WisdomParkException(ResponseData.STATUS_CODE_600, "user already exist");
-            }
-
-            // 2.保存用户信息
-            User user = saveUser(makingCpuCardDto);
-
-            // 3.保存制卡信息
-            Integer userId = user.getId();
-            CpuCard cpuCard = saveCpuCardInfo(makingCpuCardDto, userId);
-
-            // 4.封装返回信息
-            respMakingCpuCardDto.setId(cpuCard.getId());
-            respMakingCpuCardDto.setUserName(user.getUserName());
-            respMakingCpuCardDto.setPhoneNum(user.getPhoneNum());
-            respMakingCpuCardDto.setDeptId(user.getDeptId());
-            respMakingCpuCardDto.setDeposit(cpuCard.getDeposit());
-            responseData.setData(respMakingCpuCardDto);
-            responseData.OK();
-        }catch (Exception e){
-            log.error("makingCpuCard Exception... phoneNum:{}", makingCpuCardDto.getPhoneNum());
-            e.printStackTrace();
+        // 1.校验用户是否存在
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum());
+        List<User> userList = userService.list(queryWrapper);
+        if (!CollectionUtils.isEmpty(userList)){
+            log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
+            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "user already exist");
         }
-        return responseData;
+        // 2.保存用户信息
+        User user = saveUser(makingCpuCardDto);
+        // 3.保存制卡信息
+        Integer userId = user.getId();
+        CpuCard cpuCard = saveCpuCardInfo(makingCpuCardDto, userId);
+        // 4.封装返回信息
+        respMakingCpuCardDto.setId(cpuCard.getId());
+        respMakingCpuCardDto.setUserName(user.getUserName());
+        respMakingCpuCardDto.setPhoneNum(user.getPhoneNum());
+        respMakingCpuCardDto.setDeptId(user.getDeptId());
+        respMakingCpuCardDto.setDeposit(cpuCard.getDeposit());
+        return respMakingCpuCardDto;
     }
 
     @Override
-    public ResponseData queryCardInfo(QueryCardInfoDto queryCardInfoDto) {
-        ResponseData responseData = new ResponseData();
-
+    public RespQueryCardInfoDto queryCardInfo(QueryCardInfoDto queryCardInfoDto) {
+        RespQueryCardInfoDto respQueryCardInfoDto = null;
         // 1.根据CPU卡id查询
         String cardId = queryCardInfoDto.getCardId();
         if (!StringUtils.isEmpty(cardId)){
-            RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByCardId(cardId);
+            respQueryCardInfoDto = queryCardInfoByCardId(cardId);
             if (respQueryCardInfoDto != null){
-                responseData.setData(respQueryCardInfoDto);
-                responseData.OK();
-                return responseData;
+                return respQueryCardInfoDto;
             }
         }
 
@@ -114,15 +96,14 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         String userName = queryCardInfoDto.getUserName();
         String mobile = queryCardInfoDto.getPhoneNum();
         int deptId = queryCardInfoDto.getDeptId();
-        RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByUserInfo(userName, mobile, deptId);
+        respQueryCardInfoDto = queryCardInfoByUserInfo(userName, mobile, deptId);
         if (respQueryCardInfoDto != null){
-            responseData.setData(respQueryCardInfoDto);
-            responseData.OK();
-            return responseData;
+            return respQueryCardInfoDto;
         }
 
-        responseData.ERROR(responseData.STATUS_CODE_601, "用户或卡信息不存在");
-        return responseData;
+        log.error("queryCardInfo user or cpuCard not exists... cardId:{}, userName:{}, phoneNum:{}, deptId:{}",
+                queryCardInfoDto.getCardId(), queryCardInfoDto.getUserName(), queryCardInfoDto.getPhoneNum(), queryCardInfoDto.getDeptId());
+        return null;
     }
 
     @Override
@@ -212,23 +193,22 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     /**
      * 单个人员 充值操作
+     * (非共享数据且无并发)，所以无需加锁
      * @param cardInfoDto
      * @param cardId
      * @param amount
      * @return
      */
     private boolean rechargeBalance(CpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount){
-        // 因为只改自己的数据(非共享数据且无 并发)，所以无需加锁；
+        //  1.充值操作
         int result = cpuCardMapper.recharge(cardId, amount);
         if (result <= 0){
             return false;
         }
-        // 保存充值记录
-        rechargeRecordService.saveRechargeRecord(cardId, cardInfoDto.getCardSerialNo(), amount,
-                RechargeType.MANUAL, null, cardInfoDto.getUserId());
-
-        // 保存金额变更记录
-        changeAmountService.saveChanageAmountRecord(cardInfoDto, amount, null);
+        // 2.保存充值记录
+        rechargeRecordService.saveRechargeRecord(cardInfoDto, amount, RechargeType.MANUAL, null);
+        // 3.保存金额变更记录
+        changeAmountService.saveChanageAmountRecord(cardInfoDto, amount, AmountChangeType.TOP_UP);
         return true;
     }
 

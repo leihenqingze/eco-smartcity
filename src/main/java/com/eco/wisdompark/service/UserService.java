@@ -8,6 +8,8 @@ import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import com.eco.wisdompark.domain.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 人员表 服务类
@@ -40,6 +42,12 @@ public interface UserService extends IService<User> {
      * */
      UserDto getUser(GetUserDto getUserDto);
 
+    /**
+     * 查询人员ids
+     * @param userIds
+     * @return
+     * */
+    List<User> getUsers(List<Integer> userIds);
 
 
 }

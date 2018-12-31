@@ -5,6 +5,8 @@ import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import java.time.LocalTime;
 
 /**
+ * 用餐类型枚举
+ *
  * @author litao, 2018/12/29
  * @version 1.0
  */
@@ -15,7 +17,13 @@ public enum DiningType implements CommonEnum<DiningType> {
 
     private final int code;
     private final String description;
+    /**
+     * 用餐开始时间
+     */
     private final LocalTime start;
+    /**
+     * 用餐结束时间
+     */
     private final LocalTime end;
 
     DiningType(int code, String description, LocalTime start, LocalTime end) {
@@ -50,6 +58,12 @@ public enum DiningType implements CommonEnum<DiningType> {
         throw new IllegalArgumentException("未知的");
     }
 
+    /**
+     * 通过时间获取用餐类型
+     *
+     * @param time 当前时间
+     * @return 用餐类型
+     */
     public static DiningType valueOf(LocalTime time) {
         for (DiningType item : DiningType.values()) {
             if (time.isAfter(item.getStart()) &&

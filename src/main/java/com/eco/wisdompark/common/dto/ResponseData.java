@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author litao
  */
 @Data
-public class ResponseData implements Serializable {
+public class ResponseData<T> implements Serializable {
     private static final long serialVersionUID = 8125672939123850928L;
 
     public static final int STATUS_CODE_200 = 200;
@@ -69,7 +69,7 @@ public class ResponseData implements Serializable {
 
     private int code;
     private String message;
-    private Object data;
+    private T data;
 
     public ResponseData() {
         code = STATUS_CODE_200;
@@ -81,13 +81,13 @@ public class ResponseData implements Serializable {
         this.message = message;
     }
 
-    public ResponseData(int code, String message, Object data) {
+    public ResponseData(int code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    public ResponseData(Object data) {
+    public ResponseData(T data) {
         this();
         this.data = data;
     }

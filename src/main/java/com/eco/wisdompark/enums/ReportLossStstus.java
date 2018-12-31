@@ -5,8 +5,8 @@ package com.eco.wisdompark.enums;
  * @version 1.0
  */
 public enum ReportLossStstus implements CommonEnum<ReportLossStstus> {
-    IN_USE(1, "在用"),
-    REPORT_LOSS(2, "挂失");
+    IN_USE(0, "在用"),
+    REPORT_LOSS(1, "挂失");
 
     private final int code;
     private final String description;

@@ -7,7 +7,7 @@ package com.eco.wisdompark.enums;
 public enum PosArrangeStatus implements CommonEnum<PosArrangeStatus> {
     DEPLOYED(0, "已部署"),
     NOT_DEPLOY(1, "未部署"),
-    OFFLINE(1, "已下线");
+    OFFLINE(2, "已下线");
 
     private final int code;
     private final String description;

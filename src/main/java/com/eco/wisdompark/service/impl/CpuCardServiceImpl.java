@@ -150,6 +150,18 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return null;
     }
 
+    @Override
+    public List<CpuCard> getCpuCardByUserIds(List<Integer> userIds) {
+        if(userIds!=null && userIds.size()>0 ){
+            QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("report_loss_ststus",ReportLossStstus.IN_USE.getCode());
+            queryWrapper.in("user_id",userIds);
+            List<CpuCard> list=baseMapper.selectList(queryWrapper);
+            return list;
+        }
+        return null;
+    }
+
 
     /**
      * 根据用户信息查询CPU卡信息

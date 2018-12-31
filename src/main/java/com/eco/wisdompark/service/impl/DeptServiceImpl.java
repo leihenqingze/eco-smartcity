@@ -91,10 +91,19 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public Integer delDept(DelDeptDto delDeptDto) {
+
         if (userService.countByDept(delDeptDto.getId()) > 0)
             throw new WisdomParkException(ResponseData.STATUS_CODE_467, "组织架构下存在人员无法删除");
-
-        return  baseMapper.deleteById(delDeptDto.getId());
+        Dept dept = baseMapper.selectById(delDeptDto.getId());
+        if (dept.equals(0)) {
+            QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
+            wrapper.eq("dept_up_id", delDeptDto.getId());
+            Integer countLevel2 = baseMapper.selectCount(wrapper);
+            if (countLevel2 > 0) {
+                throw new WisdomParkException(ResponseData.STATUS_CODE_468, "存在二级组织架构无法删除");
+            }
+        }
+        return baseMapper.deleteById(delDeptDto.getId());
     }
 
     private Integer isExists(String deptName) {

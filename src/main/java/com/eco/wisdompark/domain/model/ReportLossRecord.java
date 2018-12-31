@@ -52,7 +52,7 @@ public class ReportLossRecord extends Model<ReportLossRecord> {
     private String newCardSerialNo;
 
     @ApiModelProperty(value = "挂失时间")
-    private LocalDateTime reportLossTiem;
+    private LocalDateTime reportLossTime;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

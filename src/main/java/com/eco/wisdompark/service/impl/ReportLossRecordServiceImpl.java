@@ -55,16 +55,17 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
     @Override
     @Transactional
     public RespReissueCardDto reissueCard(ReissueCardDto reissueCardDto) {
-        // 1.查询原来信息
+        // 1.查询原CPU卡信息
         int userId = reissueCardDto.getUserId();
         List<Integer> userIds = new ArrayList<>();
         userIds.add(userId);
         List<CpuCard> cpuCardList = cpuCardService.getCpuCardByUserIds(userIds);
         if (CollectionUtils.isEmpty(cpuCardList)){
-            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "user or cpuCard not exist");
+            log.error("reissueCard not query user or old cpuCard not exist... userId:{}", reissueCardDto.getUserId());
+            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
         }
 
-        // 查询用户信息
+        // 2.查询用户信息
         User user = userService.queryByUserId(userId);
         if (user == null){
             log.error("reissueCard user not exists... userId:{}", userId);
@@ -75,24 +76,32 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
         String newCardSerialNo = reissueCardDto.getCardSerialNo();
         CpuCard cpuCard = cpuCardList.get(0);
         String oldCardId = cpuCard.getCardId();
+        String oldCardSerialNo = cpuCard.getCardSerialNo();
         BigDecimal rechargeBalance = cpuCard.getRechargeBalance() != null ? cpuCard.getRechargeBalance() : new BigDecimal(0);
         BigDecimal subsidyBalance = cpuCard.getSubsidyBalance() != null ? cpuCard.getSubsidyBalance() : new BigDecimal(0);
 
-        // 2.将原卡信息置为挂失状态
+        // 3.将原卡信息置为挂失状态
         cpuCard.setReportLossStstus(ReportLossStstus.REPORT_LOSS.getCode());
         cpuCardService.updateCpuCard(cpuCard);
 
-        // 3.插入新卡信息
+        // 4.校验新CPU卡ID是否存在
+        boolean isExist = cpuCardService.queryCardInfoIsExist(newCardId, newCardSerialNo);
+        if (isExist){
+            log.error("reissueCard newCardId:{} or newCardSerialNo:{} exists...", newCardId, newCardSerialNo);
+            throw new WisdomParkException(ResponseData.STATUS_CODE_602, "新CPU卡ID或卡序列号已被使用");
+        }
+
+        // 5.插入新卡信息
         BigDecimal deposit = getDeposit(reissueCardDto.getDeposit());
         CpuCard newCpuCard =  CpuCardConverter.create(userId, newCardId, newCardSerialNo,
                 CardType.CPU, CardSource.MAKE_CARD, deposit, rechargeBalance, subsidyBalance);
         cpuCardService.save(newCpuCard);
 
-        // 4.插入挂失记录
-        ReportLossRecord reportLossRecord = ReportLossRecordConverter.create(userId, oldCardId, newCardId, newCardSerialNo);
+        // 6.插入挂失记录
+        ReportLossRecord reportLossRecord = ReportLossRecordConverter.create(userId, oldCardId, newCardId, newCardSerialNo, oldCardSerialNo);
         baseMapper.insert(reportLossRecord);
 
-        // 5.封装返回数据
+        // 7.封装返回数据
         BigDecimal totalBalance  = rechargeBalance.add(subsidyBalance);
         RespReissueCardDto respReissueCardDto = RespReissueCardDtoConverter.create(oldCardId,  newCardId, totalBalance, user);
         return respReissueCardDto;

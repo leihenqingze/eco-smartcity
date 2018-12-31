@@ -307,12 +307,8 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     private CpuCard saveCpuCardInfo(MakingCpuCardDto makingCpuCardDto, Integer userId){
         // 校验CPU卡物理id是否存在
-        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("card_id", makingCpuCardDto.getCardId())
-                    .or()
-                    .eq("card_serialNo", makingCpuCardDto.getCardSerialNo());
-        List<CpuCard> cpuCardList = baseMapper.selectList(queryWrapper);
-        if (!CollectionUtils.isEmpty(cpuCardList)){
+        boolean isExist = queryCardInfoIsExist(makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo());
+        if (isExist){
             log.error("saveCpuCardInfo cardId:{} or cardSerialNo:{} exists...",
                     makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo());
             throw new WisdomParkException(ResponseData.STATUS_CODE_602, "卡ID或卡序列号已存在");
@@ -328,4 +324,17 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return cpuCard;
     }
 
+
+    @Override
+    public boolean queryCardInfoIsExist(String cardId, String cardSerialNo) {
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("card_id", cardId)
+                .or()
+                .eq("card_serialNo", cardSerialNo);
+        List<CpuCard> cpuCardList = baseMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(cpuCardList)){
+            return true;
+        }
+        return false;
+    }
 }

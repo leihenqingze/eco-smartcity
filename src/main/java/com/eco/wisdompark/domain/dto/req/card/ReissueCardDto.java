@@ -15,10 +15,16 @@ public class ReissueCardDto {
     @NotNull(message = "用户Id不能为空")
     private Integer userId;
 
+    /**
+     * 新CPU卡ID
+     */
     @ApiModelProperty(value = "CPU卡物理ID")
     @NotNull(message = "未能读取到CPU卡物理ID，请重试")
     private String cardId;
 
+    /**
+     * 新CPU卡面序列号
+     */
     @ApiModelProperty(value = "CPU卡面序列号")
     private String cardSerialNo;
 

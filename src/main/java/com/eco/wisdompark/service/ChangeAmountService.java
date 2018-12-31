@@ -18,12 +18,12 @@ import java.math.BigDecimal;
 public interface ChangeAmountService extends IService<ChangeAmount> {
 
     /**
-     * 保存金额变动记录表
+     * 保存 充值 金额变动记录表
      * @param cardInfoDto
      * @param changeAmt
      * @param changeType
      * @return
      */
-    boolean saveChanageAmountRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType);
+    boolean saveRechargeChanageAmountRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType);
 
 }

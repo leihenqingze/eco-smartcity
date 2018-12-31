@@ -1,7 +1,9 @@
 package com.eco.wisdompark.service.impl;
 
+import com.eco.wisdompark.converter.req.ChangeAmountConverter;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.model.ChangeAmount;
+import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.enums.AmountChangeType;
 import com.eco.wisdompark.mapper.ChangeAmountMapper;
 import com.eco.wisdompark.service.ChangeAmountService;
@@ -22,35 +24,26 @@ import java.time.LocalDateTime;
 @Service
 public class ChangeAmountServiceImpl extends ServiceImpl<ChangeAmountMapper, ChangeAmount> implements ChangeAmountService {
 
-
+    /**
+     * 保存 充值 金额变更记录
+     * @param cardInfoDto
+     * @param changeAmt
+     * @param changeType
+     * @return
+     */
     @Override
-    public boolean saveChanageAmountRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType) {
+    public boolean saveRechargeChanageAmountRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType) {
+        CpuCard oldCpuCard = new CpuCard();
+        oldCpuCard.setCardId(cardInfoDto.getCardId());
+        oldCpuCard.setCardSerialno(cardInfoDto.getCardSerialNo());
+        oldCpuCard.setUserId(cardInfoDto.getUserId());
+        oldCpuCard.setRechargeBalance(cardInfoDto.getRechargeBalance());
+        oldCpuCard.setSubsidyBalance(cardInfoDto.getSubsidyBalance());
 
-        // 2.保存变更金额
-        ChangeAmount changeAmount = new ChangeAmount();
-        changeAmount.setCardId(cardInfoDto.getCardId());
-        changeAmount.setCardSerialno(cardInfoDto.getCardSerialNo());
-        changeAmount.setUserId(cardInfoDto.getUserId());
-        changeAmount.setChangeType(changeType.getCode());
-        changeAmount.setCreateTime(LocalDateTime.now());
-        changeAmount.setChangeAgoRecharge(cardInfoDto.getRechargeBalance());
-        changeAmount.setChangeAgoSubsidy(cardInfoDto.getSubsidyBalance());
-        if (changeType == AmountChangeType.TOP_UP){
-            // 充值操作（余额 + changeAmt）
-            changeAmount.setChangeAfterRecharge(cardInfoDto.getRechargeBalance().add(changeAmt));
-            changeAmount.setChangeAfterSubsidy(cardInfoDto.getSubsidyBalance());
-        }else if (changeType == AmountChangeType.RECHARGE_AMOUNT){
-            // 消费充值余额（余额 - changeAmt）
-//            if (cardInfoDto.getRechargeBalance().compareTo(changeAmt) ==  -1){
-//                throw new WisdomParkException(ResponseData.STATUS_CODE_600, "user already exist");
-//            }
-            changeAmount.setChangeAfterRecharge(cardInfoDto.getRechargeBalance().subtract(changeAmt));
-            changeAmount.setChangeAfterSubsidy(cardInfoDto.getSubsidyBalance());
-        }else if (changeType == AmountChangeType.SUBSIDY_AMOUNT){
-            // 消费补助余额（补助余额 - changeAmt）
-            changeAmount.setChangeAfterSubsidy(cardInfoDto.getSubsidyBalance().subtract(changeAmt));
-            changeAmount.setChangeAfterRecharge(cardInfoDto.getRechargeBalance());
-        }
+        CpuCard newCpuCard = new CpuCard();
+        newCpuCard.setRechargeBalance(cardInfoDto.getRechargeBalance().add(changeAmt));
+        newCpuCard.setSubsidyBalance(cardInfoDto.getSubsidyBalance());
+        ChangeAmount changeAmount = ChangeAmountConverter.changeAmount(changeAmt,AmountChangeType.TOP_UP, oldCpuCard, newCpuCard);
         return save(changeAmount);
     }
 }

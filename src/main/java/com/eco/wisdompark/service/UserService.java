@@ -32,4 +32,11 @@ public interface UserService extends IService<User> {
      * */
     public IPage<UserDto> searchUserDtos(SearchUserDto searchUserDto);
 
+    /**
+     * 查询人员信息
+     * @param userId
+     * @return
+     */
+    User queryByUserId(Integer userId);
+
 }

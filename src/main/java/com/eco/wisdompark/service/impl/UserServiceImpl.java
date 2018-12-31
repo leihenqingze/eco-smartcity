@@ -88,4 +88,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return result;
     }
+
+
+    @Override
+    public User queryByUserId(Integer userId) {
+        if (userId > 0){
+            return baseMapper.selectById(userId);
+        }
+        return null;
+    }
 }

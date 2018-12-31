@@ -1,10 +1,11 @@
-package com.eco.wisdompark.domain.dto;
+package com.eco.wisdompark.domain.dto.inner;
 
+import com.eco.wisdompark.domain.dto.CpuCardBaseDto;
 import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class CpuCardInfoDto extends CpuCardBaseDto {
+public class InnerCpuCardInfoDto extends CpuCardBaseDto {
 
     /**
      * 用户id

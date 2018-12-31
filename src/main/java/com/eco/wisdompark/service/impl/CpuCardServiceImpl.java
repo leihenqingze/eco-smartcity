@@ -1,14 +1,16 @@
 package com.eco.wisdompark.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
-import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
+import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
+import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoListDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.*;
@@ -27,6 +29,7 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,32 +94,30 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 return respQueryCardInfoDto;
             }
         }
-
-        // 2.根据用户信息查询
-        String userName = queryCardInfoDto.getUserName();
-        String mobile = queryCardInfoDto.getPhoneNum();
-        int deptId = queryCardInfoDto.getDeptId();
-        respQueryCardInfoDto = queryCardInfoByUserInfo(userName, mobile, deptId);
-        if (respQueryCardInfoDto != null){
-            return respQueryCardInfoDto;
-        }
-
-        log.error("queryCardInfo user or cpuCard not exists... cardId:{}, userName:{}, phoneNum:{}, deptId:{}",
-                queryCardInfoDto.getCardId(), queryCardInfoDto.getUserName(), queryCardInfoDto.getPhoneNum(), queryCardInfoDto.getDeptId());
+        log.error("queryCardInfo cpuCard not exists... cardId:{}", queryCardInfoDto.getCardId());
         return null;
+    }
+
+
+    @Override
+    public RespQueryCardInfoListDto queryCardInfo(QueryCardInfoDto queryCardInfoDto, String param) {
+        RespQueryCardInfoListDto respQueryCardInfoListDto = new RespQueryCardInfoListDto();
+        // 1.根据用户信息查询
+        List<RespQueryCardInfoDto> cardInfoList = queryCardInfo(queryCardInfoDto.getUserName(), queryCardInfoDto.getPhoneNum(), queryCardInfoDto.getDeptId());
+        respQueryCardInfoListDto.setCardInfoList(cardInfoList);
+        return respQueryCardInfoListDto;
     }
 
     @Override
     @Transactional
     public boolean rechargeSingle(RechargeCardDto rechargeCardDto) {
         // 1.校验CPU卡是否存在
-        CpuCardInfoDto cpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
-        if (cpuCardInfoDto == null){
+        InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
+        if (innerCpuCardInfoDto == null){
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
         }
-
-        //  2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
-        return rechargeBalance(cpuCardInfoDto, rechargeCardDto.getCardId(),rechargeCardDto.getRechargeAmt());
+        // 2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
+        return rechargeBalance(innerCpuCardInfoDto, rechargeCardDto.getCardId(),rechargeCardDto.getRechargeAmt());
     }
 
     @Override
@@ -131,7 +132,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
      * @param param 没有实际意义，与另外一个方法区分
      * @return
      */
-    public CpuCardInfoDto queryCardInfoByCardId(String cardId, String param){
+    public InnerCpuCardInfoDto queryCardInfoByCardId(String cardId, String param){
         if (StringUtils.isEmpty(cardId)){
             return null;
         }
@@ -144,7 +145,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             return null;
         }
 
-        CpuCardInfoDto cardInfoDto = new CpuCardInfoDto();
+        InnerCpuCardInfoDto cardInfoDto = new InnerCpuCardInfoDto();
         cardInfoDto.setCardId(cardId);
         cardInfoDto.setCardSerialNo(cpuCard.getCardSerialno());
         cardInfoDto.setUserId(cpuCard.getUserId());
@@ -208,7 +209,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
      * @param amount
      * @return
      */
-    private boolean rechargeBalance(CpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount){
+    private boolean rechargeBalance(InnerCpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount){
         //  1.充值操作
         int result = cpuCardMapper.recharge(cardId, amount);
         if (result <= 0){
@@ -222,14 +223,10 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     }
 
 
-    /**
-     * 根据用户信息查询CPU卡信息
-     * @param userName
-     * @param mobile
-     * @param deptId
-     * @return
-     */
-    private RespQueryCardInfoDto queryCardInfoByUserInfo(String userName, String mobile, Integer deptId){
+    @Override
+    public List<RespQueryCardInfoDto> queryCardInfo(String userName, String mobile, Integer deptId){
+        List<RespQueryCardInfoDto> cardInfoList = new ArrayList<>();
+
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (!StringUtils.isEmpty(userName)){
             queryWrapper.eq("user_name", userName);
@@ -241,24 +238,27 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             queryWrapper.eq("dept_id", deptId);
         }
 
-        RespQueryCardInfoDto respQueryCardInfoDto = null;
-        Integer userId = 0;
-        User user = userService.getOne(queryWrapper);
-        log.info("queryCardInfoByUserInfo no data userName:{}, mobile:{}, deptId:{}", userName, mobile, deptId);
-        if (user != null && user.getId() > 0){
-            userId = user.getId();
-            QueryWrapper<CpuCard> cpuCardQueryWrapper = new QueryWrapper<>();
-            cpuCardQueryWrapper.eq("user_id", userId);
-            cpuCardQueryWrapper.eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode());
-            cpuCardQueryWrapper.eq("del", YesNo.NO.getCode());
-            CpuCard cpuCard = getOne(cpuCardQueryWrapper);
-            if (cpuCard != null){
-                respQueryCardInfoDto = userCardDataConvert(user, cpuCard);
-                return respQueryCardInfoDto;
-            }
-            log.info("queryCardInfoByUserInfo no data userId:{},reportLossStstus:{}, del:{}", userId, ReportLossStstus.IN_USE, YesNo.NO);
+        List<User> userList = userService.list(queryWrapper);
+        log.info("queryCardInfo no data userName:{}, mobile:{}, deptId:{}, userList:{}",
+                userName, mobile, deptId, JSON.toJSONString(userList));
+        if (!CollectionUtils.isEmpty(userList)){
+            userList.forEach(user -> {
+                Integer userId = user.getId();
+                QueryWrapper<CpuCard> cpuCardQueryWrapper = new QueryWrapper<>();
+                cpuCardQueryWrapper.eq("user_id", userId);
+                cpuCardQueryWrapper.eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode());
+                cpuCardQueryWrapper.eq("del", YesNo.NO.getCode());
+                CpuCard cpuCard = getOne(cpuCardQueryWrapper);
+                if (cpuCard != null){
+                    RespQueryCardInfoDto respQueryCardInfoDto = userCardDataConvert(user, cpuCard);
+                    if (respQueryCardInfoDto != null){
+                        cardInfoList.add(respQueryCardInfoDto);
+                    }
+                }
+                log.error("queryCardInfo user no card ERROR... userId:{},reportLossStatus:{}, del:{}", userId, ReportLossStstus.IN_USE, YesNo.NO);
+            });
         }
-        return null;
+        return cardInfoList;
     }
 
 

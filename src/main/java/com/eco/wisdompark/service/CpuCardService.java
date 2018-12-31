@@ -6,6 +6,7 @@ import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
+import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoListDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -35,6 +36,23 @@ public interface CpuCardService extends IService<CpuCard> {
      * @return
      */
     RespQueryCardInfoDto queryCardInfo(QueryCardInfoDto queryCardInfoDto);
+
+    /**
+     * 查询人员卡信息接口
+     * @param queryCardInfoDto
+     * @param param 标记、没有实际意义
+     * @return
+     */
+    RespQueryCardInfoListDto queryCardInfo(QueryCardInfoDto queryCardInfoDto, String param);
+
+    /**
+     * 查询人员卡卡信息接口
+     * @param userName
+     * @param mobile
+     * @param deptId
+     * @return
+     */
+    List<RespQueryCardInfoDto> queryCardInfo(String userName, String mobile, Integer deptId);
 
     /**
      * 卡片余额充值接口

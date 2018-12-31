@@ -1,6 +1,6 @@
 package com.eco.wisdompark.service;
 
-import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
+import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.model.RechargeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.eco.wisdompark.enums.RechargeType;
@@ -24,6 +24,6 @@ public interface RechargeRecordService extends IService<RechargeRecord> {
      * @param importSerialNo 批量导入序列号
      * @return
      */
-    boolean saveRechargeRecord(CpuCardInfoDto cardInfoDto, BigDecimal amount, RechargeType rechargeType, String importSerialNo);
+    boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount, RechargeType rechargeType, String importSerialNo);
 
 }

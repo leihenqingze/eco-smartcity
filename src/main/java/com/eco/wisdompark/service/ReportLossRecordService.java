@@ -2,6 +2,7 @@ package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.ReissueCardDto;
+import com.eco.wisdompark.domain.dto.resp.RespReissueCardDto;
 import com.eco.wisdompark.domain.model.ReportLossRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,6 +21,6 @@ public interface ReportLossRecordService extends IService<ReportLossRecord> {
      * @param reissueCardDto
      * @return
      */
-    ResponseData reissueCard(ReissueCardDto reissueCardDto);
+    RespReissueCardDto reissueCard(ReissueCardDto reissueCardDto);
 
 }

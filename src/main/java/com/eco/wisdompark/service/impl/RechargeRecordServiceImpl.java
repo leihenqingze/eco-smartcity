@@ -1,12 +1,11 @@
 package com.eco.wisdompark.service.impl;
 
-import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
+import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.model.RechargeRecord;
 import com.eco.wisdompark.enums.RechargeType;
 import com.eco.wisdompark.mapper.RechargeRecordMapper;
 import com.eco.wisdompark.service.RechargeRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,7 +24,7 @@ import java.time.LocalDateTime;
 public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper, RechargeRecord> implements RechargeRecordService {
 
     @Override
-    public boolean saveRechargeRecord(CpuCardInfoDto cardInfoDto, BigDecimal amount,
+    public boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount,
                                       RechargeType rechargeType, String importSerialNo) {
         RechargeRecord rechargeRecord = new RechargeRecord();
         rechargeRecord.setCardId(cardInfoDto.getCardId());

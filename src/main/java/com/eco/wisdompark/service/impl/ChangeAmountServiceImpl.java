@@ -1,11 +1,8 @@
 package com.eco.wisdompark.service.impl;
 
-import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.common.exceptions.WisdomParkException;
-import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
+import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.model.ChangeAmount;
 import com.eco.wisdompark.enums.AmountChangeType;
-import com.eco.wisdompark.enums.ChangeType;
 import com.eco.wisdompark.mapper.ChangeAmountMapper;
 import com.eco.wisdompark.service.ChangeAmountService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,7 +24,7 @@ public class ChangeAmountServiceImpl extends ServiceImpl<ChangeAmountMapper, Cha
 
 
     @Override
-    public boolean saveChanageAmountRecord(CpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType) {
+    public boolean saveChanageAmountRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType) {
 
         // 2.保存变更金额
         ChangeAmount changeAmount = new ChangeAmount();

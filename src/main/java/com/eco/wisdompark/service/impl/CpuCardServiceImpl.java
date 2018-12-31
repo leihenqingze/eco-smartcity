@@ -11,10 +11,7 @@ import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
-import com.eco.wisdompark.enums.CardType;
-import com.eco.wisdompark.enums.RechargeType;
-import com.eco.wisdompark.enums.ReportLossStstus;
-import com.eco.wisdompark.enums.YesNo;
+import com.eco.wisdompark.enums.*;
 import com.eco.wisdompark.mapper.CpuCardMapper;
 import com.eco.wisdompark.service.ChangeAmountService;
 import com.eco.wisdompark.service.CpuCardService;
@@ -27,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -197,23 +193,22 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     /**
      * 单个人员 充值操作
+     * (非共享数据且无并发)，所以无需加锁
      * @param cardInfoDto
      * @param cardId
      * @param amount
      * @return
      */
     private boolean rechargeBalance(CpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount){
-        // 因为只改自己的数据(非共享数据且无 并发)，所以无需加锁；
+        //  1.充值操作
         int result = cpuCardMapper.recharge(cardId, amount);
         if (result <= 0){
             return false;
         }
-        // 保存充值记录
-        rechargeRecordService.saveRechargeRecord(cardId, cardInfoDto.getCardSerialNo(), amount,
-                RechargeType.MANUAL, null, cardInfoDto.getUserId());
-
-        // 保存金额变更记录
-        changeAmountService.saveChanageAmountRecord(cardInfoDto, amount, null);
+        // 2.保存充值记录
+        rechargeRecordService.saveRechargeRecord(cardInfoDto, amount, RechargeType.MANUAL, null);
+        // 3.保存金额变更记录
+        changeAmountService.saveChanageAmountRecord(cardInfoDto, amount, AmountChangeType.TOP_UP);
         return true;
     }
 

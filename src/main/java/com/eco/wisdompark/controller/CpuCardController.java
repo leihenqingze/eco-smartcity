@@ -47,7 +47,7 @@ public class CpuCardController {
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     @ApiOperation(value = "卡片余额充值接口", httpMethod = "POST")
     public ResponseData recharge(@RequestBody RechargeCardDto rechargeCardDto) {
-        boolean rechargeResult = cpuCardService.rechargeSingle(rechargeCardDto);
+        Boolean rechargeResult = cpuCardService.rechargeSingle(rechargeCardDto);
         return ResponseData.OK(rechargeResult);
     }
 

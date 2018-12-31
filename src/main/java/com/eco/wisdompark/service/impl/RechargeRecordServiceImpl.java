@@ -1,5 +1,6 @@
 package com.eco.wisdompark.service.impl;
 
+import com.eco.wisdompark.domain.dto.CpuCardInfoDto;
 import com.eco.wisdompark.domain.model.RechargeRecord;
 import com.eco.wisdompark.enums.RechargeType;
 import com.eco.wisdompark.mapper.RechargeRecordMapper;
@@ -24,17 +25,17 @@ import java.time.LocalDateTime;
 public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper, RechargeRecord> implements RechargeRecordService {
 
     @Override
-    public boolean saveRechargeRecord(String cardId, String cardSerialNo, BigDecimal amount, RechargeType rechargeType,
-                                  String importSerialNo, Integer userId) {
+    public boolean saveRechargeRecord(CpuCardInfoDto cardInfoDto, BigDecimal amount,
+                                      RechargeType rechargeType, String importSerialNo) {
         RechargeRecord rechargeRecord = new RechargeRecord();
-        rechargeRecord.setCardId(cardId);
-        rechargeRecord.setCardSerialno(cardSerialNo);
+        rechargeRecord.setCardId(cardInfoDto.getCardId());
+        rechargeRecord.setCardSerialno(cardInfoDto.getCardSerialNo());
         rechargeRecord.setAmount(amount);
         rechargeRecord.setRechargeType(rechargeType.getCode());
         if (StringUtils.isEmpty(importSerialNo)){
             rechargeRecord.setImportSerialno(importSerialNo);
         }
-        rechargeRecord.setUserId(userId);
+        rechargeRecord.setUserId(cardInfoDto.getUserId());
         rechargeRecord.setCreateTime(LocalDateTime.now());
         return save(rechargeRecord);
     }

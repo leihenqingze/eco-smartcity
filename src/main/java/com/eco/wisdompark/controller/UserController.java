@@ -3,6 +3,7 @@ package com.eco.wisdompark.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
 import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import com.eco.wisdompark.domain.model.User;
@@ -11,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,15 +36,14 @@ public class UserController {
 
     @RequestMapping(value = "/searchUserDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员列表", httpMethod = "POST")
-    public ResponseData searchUserDtos(SearchUserDto searchUserDto) {
+    public ResponseData<IPage<UserDto>> searchUserDtos( @RequestBody SearchUserDto searchUserDto) {
         IPage<UserDto> result=userService.searchUserDtos(searchUserDto);
         return ResponseData.OK(result);
     }
 
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员详情", httpMethod = "POST")
-    @ApiImplicitParam(name = "id", value = "人员Id",  dataType = "Integer")
-    public ResponseData getUser(Integer id) {
+    public ResponseData getUser( @RequestBody GetUserDto getUserDto) {
         return ResponseData.OK();
     }
 

@@ -190,6 +190,15 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return null;
     }
 
+    @Override
+    public CpuCard getCpuCarByUserId(Integer userId) {
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("report_loss_ststus",ReportLossStstus.IN_USE.getCode());
+        queryWrapper.eq("user_id",userId);
+        CpuCard cpuCard=baseMapper.selectOne(queryWrapper);
+        return cpuCard;
+    }
+
 
     /**
      * 单个人员 充值操作

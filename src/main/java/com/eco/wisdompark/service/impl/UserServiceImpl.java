@@ -3,6 +3,7 @@ package com.eco.wisdompark.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
 import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import com.eco.wisdompark.domain.model.CpuCard;
@@ -79,7 +80,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                             dto.setCardSource(c.getCardSource());
                             dto.setRechargeBalance(c.getRechargeBalance());
                             dto.setSubsidyBalance(c.getSubsidyBalance());
-
                         }
                     });
                 });
@@ -87,5 +87,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             result.setRecords(dtoList);
         }
         return result;
+    }
+
+    @Override
+    public UserDto getUser(GetUserDto getUserDto) {
+        UserDto dto=new UserDto();
+        User user=baseMapper.selectById(getUserDto.getId());
+        if(user!=null){
+
+
+
+        }
+        return dto;
     }
 }

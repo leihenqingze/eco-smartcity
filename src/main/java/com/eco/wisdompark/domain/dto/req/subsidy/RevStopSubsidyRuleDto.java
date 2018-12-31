@@ -10,7 +10,7 @@ import net.sf.oval.constraint.NotNull;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "自动补助-补助规则", description = "自动补助-补助规则")
+@ApiModel(value = "启停自动补助规则", description = "自动补助-补助规则")
 public class RevStopSubsidyRuleDto {
 
     @NotNull(message = "补助规则Id不能为空")

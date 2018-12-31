@@ -41,7 +41,7 @@ public class SubsidyRule extends Model<SubsidyRule> {
     private Integer deptId;
 
     @ApiModelProperty(value = "补助时间")
-    private LocalDateTime subsidyTime;
+    private Integer subsidyTime;
 
     @ApiModelProperty(value = "补助金额")
     private BigDecimal subsidyAmount;

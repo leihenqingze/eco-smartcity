@@ -43,8 +43,9 @@ public class UserController {
 
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员详情", httpMethod = "POST")
-    public ResponseData getUser( @RequestBody GetUserDto getUserDto) {
-        return ResponseData.OK();
+    public ResponseData<UserDto> getUser( @RequestBody GetUserDto getUserDto) {
+        UserDto result=userService.getUser(getUserDto);
+        return ResponseData.OK(result);
     }
 
 

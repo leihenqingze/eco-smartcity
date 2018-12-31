@@ -91,13 +91,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public UserDto getUser(GetUserDto getUserDto) {
-        UserDto dto=new UserDto();
-        User user=baseMapper.selectById(getUserDto.getId());
-        if(user!=null){
-
-
-
+        UserDto dto = new UserDto();
+        User user = baseMapper.selectById(getUserDto.getId());
+        if (user != null) {
+            BeanUtils.copyProperties(user, dto);
+            CpuCard cpuCard = cpuCardService.getCpuCarByUserId(user.getId());
+            if (cpuCard != null) {
+                dto.setCardSerialno(cpuCard.getCardSerialno());
+                dto.setDeposit(cpuCard.getDeposit());
+                dto.setCardSource(cpuCard.getCardSource());
+                dto.setRechargeBalance(cpuCard.getRechargeBalance());
+                dto.setSubsidyBalance(cpuCard.getSubsidyBalance());
+            }
         }
         return dto;
+    }
+
+    @Override
+    public List<User> getUsers(List<Integer> userIds) {
+
+        return null;
     }
 }

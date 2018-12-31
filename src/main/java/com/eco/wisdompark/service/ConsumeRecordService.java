@@ -1,5 +1,8 @@
 package com.eco.wisdompark.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +15,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2018-12-28
  */
 public interface ConsumeRecordService extends IService<ConsumeRecord> {
+
+    IPage<ConsumeRecordDto> searchUserConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
 
 }

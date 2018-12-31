@@ -4,6 +4,7 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.subsidy.AddAutoSubsidyRuleDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.RevStopSubsidyRuleDto;
 import com.eco.wisdompark.domain.model.SubsidyRule;
+import com.eco.wisdompark.enums.SubsidyStatus;
 import com.eco.wisdompark.service.SubsidyRuleService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +31,7 @@ public class SubsidyRuleController {
     public ResponseData addAutoSubsidyRule(@RequestBody AddAutoSubsidyRuleDto addAutoSubsidyRuleDto) {
         SubsidyRule subsidyRule = new SubsidyRule();
         BeanUtils.copyProperties(addAutoSubsidyRuleDto, subsidyRule);
+        subsidyRule.setSubsidyStatus(SubsidyStatus.START.getCode());
         subsidyRuleService.save(subsidyRule);
         return ResponseData.OK();
     }

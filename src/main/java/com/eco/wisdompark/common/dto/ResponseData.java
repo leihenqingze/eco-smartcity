@@ -31,6 +31,7 @@ public class ResponseData implements Serializable {
     public static final int STATUS_CODE_464 = 464; // 未匹配到消费类型
     public static final int STATUS_CODE_465 = 465; // 请输入组织架构名称
     public static final int STATUS_CODE_467 = 467; // 组织架构下存在人员无法删除
+    public static final int STATUS_CODE_468 = 468; // 存在二级组织架构无法删除
 
     public static final int STATUS_CODE_600 = 600; // 用户已存在
     public static final int STATUS_CODE_601 = 601; // 用户或卡信息不存在

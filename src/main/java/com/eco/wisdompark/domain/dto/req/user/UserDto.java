@@ -1,37 +1,21 @@
-package com.eco.wisdompark.domain.model;
+package com.eco.wisdompark.domain.dto.req.user;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-/**
- * <p>
- * 人员表
- * </p>
- *
- * @author litao
- * @since 2018-12-28
- */
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@TableName("tb_user")
-@ApiModel(value="User对象", description="人员表")
-public class User extends Model<User> {
-
-    private static final long serialVersionUID = 1L;
+@ApiModel(value="查询人员列表", description="查询人员列表")
+public class UserDto {
 
     @ApiModelProperty(value = "人员ID")
-    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty(value = "人员姓名")
@@ -47,7 +31,6 @@ public class User extends Model<User> {
     private Integer deptId;
 
     @ApiModelProperty(value = "逻辑删除")
-    @TableLogic
     private Integer del;
 
     @ApiModelProperty(value = "创建时间")
@@ -56,10 +39,19 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;
 
+    @ApiModelProperty(value = "CUP卡面印刷的序列号")
+    private String cardSerialno;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
+    @ApiModelProperty(value = "CUP卡押金")
+    private BigDecimal deposit;
+
+    @ApiModelProperty(value = "CUP卡来源，1制卡，2激活")
+    private Integer cardSource;
+
+    @ApiModelProperty(value = "CUP卡充值余额")
+    private BigDecimal rechargeBalance;
+
+    @ApiModelProperty(value = "CUP卡补助余额")
+    private BigDecimal subsidyBalance;
 
 }

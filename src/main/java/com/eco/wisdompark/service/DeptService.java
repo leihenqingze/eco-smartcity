@@ -16,18 +16,45 @@ import java.util.List;
  */
 public interface DeptService extends IService<Dept> {
 
+    /**
+     * 添加一级组织架构
+     *
+     * @param addLevel1DeptDto
+     * @return
+     */
     public Integer addDeptLevel1(AddLevel1DeptDto addLevel1DeptDto);
 
+    /**
+     * 添加二级组织架构
+     *
+     * @param addLevel2DeptDto
+     * @return
+     */
     public Integer addDeptLevel2(AddLevel2DeptDto addLevel2DeptDto);
 
+    /**
+     * 获取一级组织架构数据
+     *
+     * @param getLevel1DeptDto
+     * @return
+     */
     public List<DeptDto> getLevel1Dept(GetLevel1DeptDto getLevel1DeptDto);
 
+    /**
+     * 获取二级组织架构数据
+     *
+     * @param addLevel2DeptDto
+     * @return
+     */
     public List<DeptDto> getLevel2Dept(AddLevel2DeptDto addLevel2DeptDto);
 
+    /**
+     * 删除组织架构
+     *
+     * @param delDeptDto
+     * @return
+     */
     public Integer delDept(DelDeptDto delDeptDto);
-
-
-
 
 
 }

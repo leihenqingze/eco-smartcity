@@ -9,6 +9,7 @@ import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * <p>
@@ -55,5 +56,13 @@ public interface CpuCardService extends IService<CpuCard> {
      * @return
      */
     RespQueryCardInfoDto queryCardInfoByCardId(String cardId);
+
+    /**
+     * 查询人员对应CPU卡信息
+     * @param userIds
+     * @return
+     * */
+    List<CpuCard> getCpuCardByUserIds(List<Integer> userIds);
+
 
 }

@@ -17,4 +17,11 @@ public class SearchUserDto {
 
     @ApiModelProperty(value = "组织架构Id")
     private Integer deptId;
+
+
+    @ApiModelProperty(value = "当前页")
+    private  Integer currentPage;
+
+    @ApiModelProperty(value = "每页长度")
+    private Integer pageSize;
 }

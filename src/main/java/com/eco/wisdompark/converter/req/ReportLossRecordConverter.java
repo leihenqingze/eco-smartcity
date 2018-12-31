@@ -20,7 +20,7 @@ public class ReportLossRecordConverter {
         reportLossRecord.setUserId(userId);
         reportLossRecord.setOldCardId(oldCardId);
         reportLossRecord.setNewCardId(newCardId);
-        reportLossRecord.setNewCardSerialno(newCardSerialNo);
+        reportLossRecord.setNewCardSerialNo(newCardSerialNo);
         return reportLossRecord;
     }
 

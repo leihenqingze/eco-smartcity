@@ -5,24 +5,21 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import net.sf.oval.constraint.*;
+import net.sf.oval.constraint.Max;
+import net.sf.oval.constraint.Min;
+import net.sf.oval.constraint.NotNull;
 
 import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value = "添加自动补助规则", description = "自动补助-补助规则")
-public class AddAutoSubsidyRuleDto {
+@ApiModel(value = "修改自动补助规则", description = "自动补助-补助规则")
+public class UpdateSubsidyRuleDto {
 
-    @ApiModelProperty(value = "组织架构ID")
-    @NotNull(message = "组织架构ID不能为空")
-    private Integer deptId;
-
-    @NotNull(message = "补助时间不能为空")
-    @Max(value = 28, message = "补助时间不能超过28号")
-    @ApiModelProperty(value = "补助时间")
-    private Integer subsidyTime;
+    @NotNull(message = "补助规则Id不能为空")
+    @ApiModelProperty(value = "补助规则Id")
+    private Integer id;
 
     @NotNull(message = "补助金额不能为空")
     @Min(value = 0, message = "补助金额不能小于0")

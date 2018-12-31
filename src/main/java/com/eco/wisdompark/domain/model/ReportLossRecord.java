@@ -42,14 +42,14 @@ public class ReportLossRecord extends Model<ReportLossRecord> {
 
     @ApiModelProperty(value = "旧CUP卡面印刷的序列号")
     @TableField("old_card_serialNo")
-    private String oldCardSerialno;
+    private String oldCardSerialNo;
 
     @ApiModelProperty(value = "新CUP卡物理Id")
     private String newCardId;
 
     @ApiModelProperty(value = "新CUP卡面印刷的序列号")
     @TableField("new_card_serialNo")
-    private String newCardSerialno;
+    private String newCardSerialNo;
 
     @ApiModelProperty(value = "挂失时间")
     private LocalDateTime reportLossTiem;

@@ -25,7 +25,7 @@ public class MakingCpuCardDto {
     @Min(value = 0, message = "CUP卡押金需>=0元")
     private BigDecimal deposit;
 
-    @ApiModelProperty(value = "CUP卡来源，1制卡，2激活")
+    @ApiModelProperty(value = "CUP卡来源，0制卡，1激活")
     private Integer cardSource;
 
     @ApiModelProperty(value = "人员姓名")

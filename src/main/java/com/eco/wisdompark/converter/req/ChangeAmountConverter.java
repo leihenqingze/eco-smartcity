@@ -24,7 +24,7 @@ public class ChangeAmountConverter {
                                             CpuCard cpuCardBefore, CpuCard cpuCardAfter) {
         ChangeAmount changeAmount = new ChangeAmount();
         changeAmount.setCardId(cpuCardBefore.getCardId());
-        changeAmount.setCardSerialno(cpuCardBefore.getCardSerialno());
+        changeAmount.setCardSerialNo(cpuCardBefore.getCardSerialNo());
         changeAmount.setUserId(cpuCardBefore.getUserId());
         changeAmount.setChangeAmount(amount);
 

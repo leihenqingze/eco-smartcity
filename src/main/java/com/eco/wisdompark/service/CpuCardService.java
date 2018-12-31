@@ -82,6 +82,12 @@ public interface CpuCardService extends IService<CpuCard> {
      * @return
      * */
     List<CpuCard> getCpuCardByUserIds(List<Integer> userIds);
+    /**
+     * 查询人员对应CPU卡信息
+     * @param userId
+     * @return
+     * */
+    CpuCard getCpuCarByUserId(Integer userId);
 
 
     /**

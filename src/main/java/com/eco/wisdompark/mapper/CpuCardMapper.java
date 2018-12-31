@@ -21,6 +21,6 @@ public interface CpuCardMapper extends BaseMapper<CpuCard> {
      * @param cardId
      * @param amount
      */
-    int recharge(@Param("cardId") String cardId, @Param("amount") BigDecimal amount);
+    void recharge(@Param("cardId") String cardId, @Param("amount") BigDecimal amount);
 
 }

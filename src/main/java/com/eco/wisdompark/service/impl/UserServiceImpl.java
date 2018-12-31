@@ -3,10 +3,10 @@ package com.eco.wisdompark.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
 import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import com.eco.wisdompark.domain.model.CpuCard;
-import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.UserMapper;
 import com.eco.wisdompark.service.CpuCardService;
@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,12 +73,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 cpuCards.forEach(c -> {
                     dtoList.forEach(dto -> {
                         if (c.getUserId().equals(dto.getId())) {
-                            dto.setCardSerialno(c.getCardSerialno());
+                            dto.setCardSerialNo(c.getCardSerialNo());
                             dto.setDeposit(c.getDeposit());
                             dto.setCardSource(c.getCardSource());
                             dto.setRechargeBalance(c.getRechargeBalance());
                             dto.setSubsidyBalance(c.getSubsidyBalance());
-
                         }
                     });
                 });
@@ -92,9 +90,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User queryByUserId(Integer userId) {
-        if (userId > 0){
+        if (userId > 0) {
             return baseMapper.selectById(userId);
         }
+        return null;
+    }
+
+    @Override
+    public UserDto getUser(GetUserDto getUserDto) {
+        UserDto dto = new UserDto();
+        User user = baseMapper.selectById(getUserDto.getId());
+        if (user != null) {
+            BeanUtils.copyProperties(user, dto);
+            CpuCard cpuCard = cpuCardService.getCpuCarByUserId(user.getId());
+            if (cpuCard != null) {
+                dto.setCardSerialNo(cpuCard.getCardSerialNo());
+                dto.setDeposit(cpuCard.getDeposit());
+                dto.setCardSource(cpuCard.getCardSource());
+                dto.setRechargeBalance(cpuCard.getRechargeBalance());
+                dto.setSubsidyBalance(cpuCard.getSubsidyBalance());
+            }
+        }
+        return dto;
+    }
+
+    @Override
+    public List<User> getUsers(List<Integer> userIds) {
         return null;
     }
 }

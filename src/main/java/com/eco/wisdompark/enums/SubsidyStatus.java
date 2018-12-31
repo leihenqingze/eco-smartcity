@@ -1,18 +1,18 @@
 package com.eco.wisdompark.enums;
 
-
 /**
- * @author litao, 2018/12/29
+ * 自动补助规则状态枚举
+ * @author litao, 2018/12/31
  * @version 1.0
  */
-public enum CardSource implements CommonEnum<CardSource> {
-    MAKE_CARD(0, "制卡"),
-    ACTIVATION(1, "激活");
+public enum SubsidyStatus implements CommonEnum<SubsidyStatus> {
+    START(0, "启动"),
+    DISABLE(1, "停止");
 
     private final int code;
     private final String description;
 
-    CardSource(int code, String description) {
+    SubsidyStatus(int code, String description) {
         this.code = code;
         this.description = description;
     }
@@ -25,14 +25,13 @@ public enum CardSource implements CommonEnum<CardSource> {
         return description;
     }
 
-    public static CardSource valueOf(int code) {
-        for (CardSource item : CardSource.values()) {
+    public static SubsidyStatus valueOf(int code) {
+        for (SubsidyStatus item : SubsidyStatus.values()) {
             if (item.getCode() == code) {
                 return item;
             }
         }
-        throw new IllegalArgumentException("当前的CPU卡来源暂不支持");
+        throw new IllegalArgumentException("未知的");
     }
-
 
 }

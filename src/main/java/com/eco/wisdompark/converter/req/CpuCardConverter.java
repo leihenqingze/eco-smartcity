@@ -33,7 +33,7 @@ public class CpuCardConverter {
         CpuCard cpuCard = new CpuCard();
         cpuCard.setUserId(userId);
         cpuCard.setCardId(cardId);
-        cpuCard.setCardSerialno(cardSerialNo);
+        cpuCard.setCardSerialNo(cardSerialNo);
         cpuCard.setCardType(cardType.getCode());
         cpuCard.setCardSource(cardSource.getCode());
         cpuCard.setCreateTime(LocalDateTime.now());

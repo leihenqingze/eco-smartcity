@@ -108,7 +108,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     @Transactional
     public boolean rechargeSingle(RechargeCardDto rechargeCardDto) {
-        // 1.校验CPU卡是否存在
+        // 1.校验CPU卡是否存在getUsers
         InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
         if (innerCpuCardInfoDto == null){
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
@@ -152,8 +152,10 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
         InnerCpuCardInfoDto cardInfoDto = new InnerCpuCardInfoDto();
         cardInfoDto.setCardId(cardId);
-        cardInfoDto.setCardSerialNo(cpuCard.getCardSerialno());
+        cardInfoDto.setCardSerialNo(cpuCard.getCardSerialNo());
         cardInfoDto.setUserId(cpuCard.getUserId());
+        cardInfoDto.setRechargeBalance(cpuCard.getRechargeBalance());
+        cardInfoDto.setSubsidyBalance(cpuCard.getSubsidyBalance());
         return cardInfoDto;
     }
 
@@ -163,7 +165,6 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             return null;
         }
 
-        // TODO 后期可以加一层缓存
         QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("card_id", cardId);
         List<CpuCard> cpuCards = list(queryWrapper);
@@ -194,6 +195,15 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             return list;
         }
         return null;
+    }
+
+    @Override
+    public CpuCard getCpuCarByUserId(Integer userId) {
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("report_loss_ststus",ReportLossStstus.IN_USE.getCode());
+        queryWrapper.eq("user_id",userId);
+        CpuCard cpuCard=baseMapper.selectOne(queryWrapper);
+        return cpuCard;
     }
 
 
@@ -296,6 +306,18 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     }
 
     private CpuCard saveCpuCardInfo(MakingCpuCardDto makingCpuCardDto, Integer userId){
+        // 校验CPU卡物理id是否存在
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("card_id", makingCpuCardDto.getCardId())
+                    .or()
+                    .eq("card_serialNo", makingCpuCardDto.getCardSerialNo());
+        List<CpuCard> cpuCardList = baseMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(cpuCardList)){
+            log.error("saveCpuCardInfo cardId:{} or cardSerialNo:{} exists...",
+                    makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo());
+            throw new WisdomParkException(ResponseData.STATUS_CODE_602, "卡ID或卡序列号已存在");
+        }
+
         CardSource cardSource = CardSource.valueOf(makingCpuCardDto.getCardSource());
         CpuCard cpuCard = CpuCardConverter.create(userId, makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo(),
                 CardType.CPU, cardSource, makingCpuCardDto.getDeposit(),

@@ -35,7 +35,7 @@ public class ChangeAmountServiceImpl extends ServiceImpl<ChangeAmountMapper, Cha
     public boolean saveRechargeChanageAmountRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal changeAmt, AmountChangeType changeType) {
         CpuCard oldCpuCard = new CpuCard();
         oldCpuCard.setCardId(cardInfoDto.getCardId());
-        oldCpuCard.setCardSerialno(cardInfoDto.getCardSerialNo());
+        oldCpuCard.setCardSerialNo(cardInfoDto.getCardSerialNo());
         oldCpuCard.setUserId(cardInfoDto.getUserId());
         oldCpuCard.setRechargeBalance(cardInfoDto.getRechargeBalance());
         oldCpuCard.setSubsidyBalance(cardInfoDto.getSubsidyBalance());

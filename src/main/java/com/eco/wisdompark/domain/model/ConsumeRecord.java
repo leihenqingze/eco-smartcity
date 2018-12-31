@@ -40,7 +40,7 @@ public class ConsumeRecord extends Model<ConsumeRecord> {
 
     @ApiModelProperty(value = "卡序列号（冗余字段）")
     @TableField("card_serialNo")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "用户ID")
     private Integer userId;

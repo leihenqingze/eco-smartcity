@@ -35,6 +35,7 @@ public class ResponseData<T> implements Serializable {
 
     public static final int STATUS_CODE_600 = 600; // 用户已存在
     public static final int STATUS_CODE_601 = 601; // 用户或卡信息不存在
+    public static final int STATUS_CODE_602 = 602; // 卡ID或卡序列号已存在
 
     public static final String STATUS_MESSAGE_200 = "OK";
     public static final String STATUS_MESSAGE_400 = "Error";

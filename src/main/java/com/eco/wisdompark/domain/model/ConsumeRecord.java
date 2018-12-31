@@ -36,7 +36,7 @@ public class ConsumeRecord extends Model<ConsumeRecord> {
     private Integer id;
 
     @ApiModelProperty(value = "卡ID")
-    private Integer cardId;
+    private String cardId;
 
     @ApiModelProperty(value = "卡序列号（冗余字段）")
     @TableField("card_serialNo")
@@ -52,7 +52,7 @@ public class ConsumeRecord extends Model<ConsumeRecord> {
     private BigDecimal subsidyAmount;
 
     @ApiModelProperty(value = "POS机编号")
-    private Integer posId;
+    private String posNum;
 
     @ApiModelProperty(value = "消费类型，0：用餐，1：购物")
     private Integer type;

@@ -20,6 +20,8 @@ public class ResponseData<T> implements Serializable {
     public static final int STATUS_CODE_404 = 404;
     public static final int STATUS_CODE_500 = 500;
 
+    public static final int STATUS_CODE_110 = 110; // 登录已过期
+
     public static final int STATUS_CODE_410 = 410; // Gone
     public static final int STATUS_CODE_412 = 412; // 未满足前提条件
     public static final int STATUS_CODE_422 = 422; // 请求格式正确，但是由于含有语义错误，无法响应。

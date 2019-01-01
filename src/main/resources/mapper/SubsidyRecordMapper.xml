@@ -7,7 +7,7 @@
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.cardId},
-            #{item.cardSerialno},
+            #{item.cardSerialNo},
             #{item.userId},
             #{item.amount},
             #{item.type})

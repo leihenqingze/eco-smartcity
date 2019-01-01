@@ -13,9 +13,11 @@ import com.eco.wisdompark.enums.SubsidyType;
 import com.eco.wisdompark.mapper.*;
 import com.eco.wisdompark.service.SubsidyService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Triplet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 /**
  * 补助服务类
  */
+@Slf4j
 @Service
 public class SubsidyServiceImpl implements SubsidyService {
 
@@ -54,6 +57,8 @@ public class SubsidyServiceImpl implements SubsidyService {
     }
 
     @Override
+    @Scheduled(cron = "0 0 1 * * ?")
+//    @Scheduled(cron = "0 */1 * * * ?")
     public void automaticSubsidy() {
         List<SubsidyRule> subsidyRules = selectRevSubsidyRuleByNow();
         subsidyRules.forEach(subsidyRule -> {
@@ -65,7 +70,11 @@ public class SubsidyServiceImpl implements SubsidyService {
                 List<CpuCard> cpuCards = selectCpuCardsByUserIds(userIds);
                 Triplet<List<CpuCard>, List<SubsidyRecord>, List<ChangeAmount>>
                         triplet = buildSubsidy(subsidyRule, cpuCards);
-                saveAutomaticSubsidy(triplet);
+                try {
+                    saveAutomaticSubsidy(triplet);
+                } catch (Exception ex) {
+                    log.error("subsidyRules:" + subsidyRule.getId() + ",error", ex);
+                }
             }
         });
     }

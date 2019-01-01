@@ -1,5 +1,8 @@
 package com.eco.wisdompark.domain.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.time.LocalDateTime;
@@ -28,6 +31,7 @@ public class SysUser extends Model<SysUser> {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "系统用户Id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty(value = "系统用户名称")
@@ -36,14 +40,15 @@ public class SysUser extends Model<SysUser> {
     @ApiModelProperty(value = "系统用户手机号")
     private String sysUserPhone;
 
-    @ApiModelProperty(value = "系统用户所属部门（膳食处，财务处，保卫处等）")
-    private Boolean sysUserDepartment;
+    @ApiModelProperty(value = "系统用户所属部门（0.膳食处，1.财务处，2.保卫处等）")
+    private Integer sysUserDepartment;
 
     @ApiModelProperty(value = "系统用户登录密码")
     private String sysUserPass;
 
     @ApiModelProperty(value = "逻辑删除")
-    private Boolean del;
+    @TableLogic
+    private Integer del;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

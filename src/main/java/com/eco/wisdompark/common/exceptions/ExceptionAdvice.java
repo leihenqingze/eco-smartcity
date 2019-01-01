@@ -18,9 +18,9 @@ public class ExceptionAdvice {
     // 业务异常
     @ExceptionHandler(value = WisdomParkException.class)
     @ResponseBody
-    public ResponseData handleBaseException(BaseException e) {
+    public ResponseData handleBaseException(WisdomParkException e) {
         log.error("[业务异常]", e);
-        int status = e.getStatus() != 0 ? e.getStatus() : 400;
+        int status = e.getCode() != 0 ? e.getCode() : 400;
         return handleAjaxRequestException(e, status);
     }
 

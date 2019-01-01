@@ -5,10 +5,18 @@ import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.service.SubsidyRecordService;
+import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
+import com.eco.wisdompark.domain.model.SubsidyRecord;
+import com.eco.wisdompark.service.SubsidyRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -28,8 +36,9 @@ public class SubsidyRecordController {
 
     @RequestMapping(value = "/searchUserSubsidyRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员补助记录", httpMethod = "POST")
-    public ResponseData searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
-        return ResponseData.OK();
+    public ResponseData<IPage<SubsidyRecordDto>> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+         IPage<SubsidyRecordDto> result= subsidyRecordService.searchUserSubsidyRecordDtos(searchConsumeRecordDto);
+        return ResponseData.OK(result);
     }
 
     @RequestMapping(value = "/searchSubsidyRecordByRuleId", method = RequestMethod.POST)

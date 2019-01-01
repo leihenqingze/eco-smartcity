@@ -7,11 +7,14 @@ import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
+import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.ConsumeRecordMapper;
 import com.eco.wisdompark.service.ConsumeRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eco.wisdompark.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +30,9 @@ import java.util.List;
  */
 @Service
 public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, ConsumeRecord> implements ConsumeRecordService {
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public IPage<ConsumeRecordDto> searchUserConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
@@ -46,15 +52,13 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         result.setTotal(page.getTotal());
         List<ConsumeRecord> list = page.getRecords();
         if(!list.isEmpty()){
-            List<Integer> userIds = new ArrayList<>();
             List<ConsumeRecordDto> dtoList = new ArrayList<>();
             list.forEach(e->{
-                userIds.add(e.getUserId());
                 ConsumeRecordDto dto=new ConsumeRecordDto();
                 BeanUtils.copyProperties(e, dto);
                 dtoList.add(dto);
             });
-
+            result.setRecords(dtoList);
         }
         return result;
     }

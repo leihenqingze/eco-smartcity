@@ -2,6 +2,9 @@ package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
 import com.eco.wisdompark.domain.model.SubsidyRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -22,5 +25,8 @@ public interface SubsidyRecordService extends IService<SubsidyRecord> {
      * @return 补助详情
      */
     SubsidyDetailsDto searchDeptSubsidyRecord(SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq);
+    IPage<SubsidyRecordDto> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
+
+}
 
 }

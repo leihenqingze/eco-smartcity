@@ -73,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 cpuCards.forEach(c -> {
                     dtoList.forEach(dto -> {
                         if (c.getUserId().equals(dto.getId())) {
-                            dto.setCardSerialNo(c.getCardSerialNo());
+                            dto.setCardSerialno(c.getCardSerialno());
                             dto.setDeposit(c.getDeposit());
                             dto.setCardSource(c.getCardSource());
                             dto.setRechargeBalance(c.getRechargeBalance());
@@ -116,6 +116,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public List<User> getUsers(List<Integer> userIds) {
-        return null;
+        QueryWrapper<User> wrapper = new QueryWrapper<User>();
+        wrapper.in("id", userIds);
+        return baseMapper.selectList(wrapper);
     }
 }

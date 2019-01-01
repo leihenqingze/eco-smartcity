@@ -16,6 +16,7 @@ import com.eco.wisdompark.mapper.UserMapper;
 import com.eco.wisdompark.service.SubsidyRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,6 +26,9 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -92,6 +96,35 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         return userMapper.selectList(queryWrapper);
     }
 
+    @Override
+    public IPage<SubsidyRecordDto> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+        IPage<SubsidyRecordDto> result=new Page<>();
+        QueryWrapper<SubsidyRecord> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",searchConsumeRecordDto.getId());
+        if(org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getStartTime())){
+            wrapper.ge("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getStartTime()));
+        }
+        if(org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())){
+            wrapper.le("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getEndTime()));
+        }
+        IPage<SubsidyRecord> page = baseMapper.selectPage(new Page<>(searchConsumeRecordDto.getCurrentPage(), searchConsumeRecordDto.getPageSize()), wrapper);
+        result.setPages(page.getPages());
+        result.setCurrent(page.getCurrent());
+        result.setSize(page.getSize());
+        result.setTotal(page.getTotal());
+        List<SubsidyRecord> list = page.getRecords();
+        if(!list.isEmpty()){
+            List<SubsidyRecordDto> dtoList = new ArrayList<>();
+            list.forEach(e->{
+                SubsidyRecordDto dto=new SubsidyRecordDto();
+                BeanUtils.copyProperties(e, dto);
+                dtoList.add(dto);
+            });
+            result.setRecords(dtoList);
+        }
+        return result;
+    }
+}
     /**
      * 根据人员ID获取CPU卡
      *

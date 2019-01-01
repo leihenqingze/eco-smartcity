@@ -1,5 +1,6 @@
 package com.eco.wisdompark.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;

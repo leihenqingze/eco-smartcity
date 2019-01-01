@@ -1,8 +1,13 @@
 package com.eco.wisdompark.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
+import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyRecordListRespDto;
 import com.eco.wisdompark.domain.model.Dept;
@@ -28,7 +33,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -98,13 +102,13 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
 
     @Override
     public IPage<SubsidyRecordDto> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
-        IPage<SubsidyRecordDto> result=new Page<>();
+        IPage<SubsidyRecordDto> result = new Page<>();
         QueryWrapper<SubsidyRecord> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id",searchConsumeRecordDto.getId());
-        if(org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getStartTime())){
+        wrapper.eq("user_id", searchConsumeRecordDto.getId());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getStartTime())) {
             wrapper.ge("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getStartTime()));
         }
-        if(org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())){
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())) {
             wrapper.le("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getEndTime()));
         }
         IPage<SubsidyRecord> page = baseMapper.selectPage(new Page<>(searchConsumeRecordDto.getCurrentPage(), searchConsumeRecordDto.getPageSize()), wrapper);
@@ -113,10 +117,10 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         result.setSize(page.getSize());
         result.setTotal(page.getTotal());
         List<SubsidyRecord> list = page.getRecords();
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             List<SubsidyRecordDto> dtoList = new ArrayList<>();
-            list.forEach(e->{
-                SubsidyRecordDto dto=new SubsidyRecordDto();
+            list.forEach(e -> {
+                SubsidyRecordDto dto = new SubsidyRecordDto();
                 BeanUtils.copyProperties(e, dto);
                 dtoList.add(dto);
             });
@@ -124,7 +128,7 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         }
         return result;
     }
-}
+
     /**
      * 根据人员ID获取CPU卡
      *

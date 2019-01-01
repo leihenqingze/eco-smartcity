@@ -73,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 cpuCards.forEach(c -> {
                     dtoList.forEach(dto -> {
                         if (c.getUserId().equals(dto.getId())) {
-                            dto.setCardSerialno(c.getCardSerialno());
+                            dto.setCardSerialNo(c.getCardSerialNo());
                             dto.setDeposit(c.getDeposit());
                             dto.setCardSource(c.getCardSource());
                             dto.setRechargeBalance(c.getRechargeBalance());

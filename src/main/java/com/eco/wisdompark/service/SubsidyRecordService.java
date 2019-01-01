@@ -25,8 +25,7 @@ public interface SubsidyRecordService extends IService<SubsidyRecord> {
      * @return 补助详情
      */
     SubsidyDetailsDto searchDeptSubsidyRecord(SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq);
-    IPage<SubsidyRecordDto> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
 
-}
+    IPage<SubsidyRecordDto> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
 
 }

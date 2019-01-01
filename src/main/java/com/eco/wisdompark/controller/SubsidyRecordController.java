@@ -2,20 +2,17 @@ package com.eco.wisdompark.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.service.SubsidyRecordService;
 import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
-import com.eco.wisdompark.domain.model.SubsidyRecord;
-import com.eco.wisdompark.service.SubsidyRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,15 +35,21 @@ public class SubsidyRecordController {
     @RequestMapping(value = "/searchUserSubsidyRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员补助记录", httpMethod = "POST")
     public ResponseData<IPage<SubsidyRecordDto>> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
-         IPage<SubsidyRecordDto> result= subsidyRecordService.searchUserSubsidyRecordDtos(searchConsumeRecordDto);
+        IPage<SubsidyRecordDto> result = subsidyRecordService.searchUserSubsidyRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
     }
 
-    @RequestMapping(value = "/searchSubsidyRecordByRuleId", method = RequestMethod.POST)
+    @RequestMapping(value = "/searchAutoSubsidyRecord", method = RequestMethod.POST)
     @ApiOperation(value = "查询自动补助记录", httpMethod = "POST")
-    public ResponseData<SubsidyDetailsDto> searchDeptSubsidyRecord(
+    public ResponseData<SubsidyDetailsDto> searchAutoSubsidyRecord(
             @RequestBody SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq) {
-        return ResponseData.OK(subsidyRecordService.searchDeptSubsidyRecord(searchAutoSubsidyRecordReq));
+        return ResponseData.OK(subsidyRecordService.searchAutoSubsidyRecord(searchAutoSubsidyRecordReq));
+    }
+
+    @RequestMapping(value = "/searchManualSubsidyRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "查询手动补助记录", httpMethod = "POST")
+    public ResponseData<SubsidyDetailsDto> searchManualSubsidyRecord(@RequestBody PageReqDto<Integer> pageReqDto) {
+        return ResponseData.OK(subsidyRecordService.searchManualSubsidyRecord(pageReqDto));
     }
 
 }

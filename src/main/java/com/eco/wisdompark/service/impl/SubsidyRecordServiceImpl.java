@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
+import com.eco.wisdompark.converter.req.PageReqDtoToPageConverter;
+import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
 import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
@@ -14,12 +16,14 @@ import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.SubsidyRecord;
 import com.eco.wisdompark.domain.model.SubsidyRule;
 import com.eco.wisdompark.domain.model.User;
+import com.eco.wisdompark.enums.SubsidyType;
 import com.eco.wisdompark.mapper.DeptMapper;
 import com.eco.wisdompark.mapper.SubsidyRecordMapper;
 import com.eco.wisdompark.mapper.SubsidyRuleMapper;
 import com.eco.wisdompark.mapper.UserMapper;
 import com.eco.wisdompark.service.SubsidyRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import java.util.ArrayList;
@@ -56,35 +61,26 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
     private DeptMapper deptMapper;
 
     @Override
-    public SubsidyDetailsDto searchDeptSubsidyRecord(SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq) {
+    public SubsidyDetailsDto searchAutoSubsidyRecord(SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq) {
         SubsidyDetailsDto subsidyDetailsDto = new SubsidyDetailsDto();
         SubsidyRule subsidyRule = subsidyRuleMapper.selectById(searchAutoSubsidyRecordReq.getRuleId());
         List<User> users = selectUsersByDeptId(subsidyRule.getDeptId());
-        List<Integer> userIds = users.stream()
-                .map(user -> user.getId())
-                .collect(Collectors.toList());
-        List<SubsidyRecord> selectByUsersAndDate = selectByUsersAndDate(userIds,
-                searchAutoSubsidyRecordReq.getSubsidyTime());
-        Map<Integer, SubsidyRecord> subsidyRecordMap = selectByUsersAndDate.stream()
-                .collect(Collectors.toMap(SubsidyRecord::getUserId, a -> a, (k1, k2) -> k1));
-        List<SubsidyRecordListRespDto> subsidyRecordListRespDtos = users.stream().map(user -> {
-            SubsidyRecordListRespDto subsidyRecordListRespDto = new SubsidyRecordListRespDto();
-            subsidyRecordListRespDto.setUserName(user.getUserName());
-            subsidyRecordListRespDto.setUserCardNum(user.getUserCardNum());
-            if (subsidyRecordMap.containsKey(user.getId())) {
-                SubsidyRecord subsidyRecord = subsidyRecordMap.get(user.getId());
-                subsidyRecordListRespDto.setCardSerialNo(subsidyRecord.getCardSerialNo());
-                subsidyRecordListRespDto.setSubsidyAmount(subsidyRecord.getAmount());
-                return subsidyRecordListRespDto;
+        if (CollectionUtils.isNotEmpty(users)) {
+            List<Integer> userIds = users.stream()
+                    .map(user -> user.getId())
+                    .collect(Collectors.toList());
+            Map<Integer, User> userMap = users.stream()
+                    .collect(Collectors.toMap(User::getId, a -> a, (k1, k2) -> k1));
+            List<SubsidyRecord> selectByUsersAndDate = selectByUsersAndDate(userIds,
+                    searchAutoSubsidyRecordReq.getSubsidyTime());
+            List<SubsidyRecordListRespDto> subsidyRecordListRespDtos = converter(userMap, selectByUsersAndDate);
+            subsidyDetailsDto.setDeptName(getDeptName(subsidyRule.getDeptId()));
+            subsidyDetailsDto.setSubsidyRecords(subsidyRecordListRespDtos);
+            if (CollectionUtils.isNotEmpty(selectByUsersAndDate)) {
+                subsidyDetailsDto.setSubsidyAmount(selectByUsersAndDate.get(0).getAmount()
+                        .multiply(new BigDecimal(selectByUsersAndDate.size())));
+                subsidyDetailsDto.setSubsidyTime(selectByUsersAndDate.get(0).getCreateTime());
             }
-            return null;
-        }).collect(Collectors.toList());
-        subsidyDetailsDto.setDeptName(getDeptName(subsidyRule.getDeptId()));
-        subsidyDetailsDto.setSubsidyRecords(subsidyRecordListRespDtos);
-        if (CollectionUtils.isNotEmpty(selectByUsersAndDate)) {
-            subsidyDetailsDto.setSubsidyAmount(selectByUsersAndDate.get(0).getAmount()
-                    .multiply(new BigDecimal(selectByUsersAndDate.size())));
-            subsidyDetailsDto.setSubsidyTime(selectByUsersAndDate.get(0).getCreateTime());
         }
         return subsidyDetailsDto;
     }
@@ -129,10 +125,50 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         return result;
     }
 
+    @Override
+    public IPage<SubsidyRecordListRespDto> searchManualSubsidyRecord(PageReqDto<Integer> pageReqDto) {
+        IPage page = PageReqDtoToPageConverter.converter(pageReqDto);
+        List<SubsidyRecordListRespDto> subsidyRecordListRespDtos = Lists.newArrayList();
+        IPage<SubsidyRecord> subsidyRecordPage = null;
+        if (Objects.isNull(pageReqDto.getQuery())) {
+            subsidyRecordPage = selectByUsers(null, page);
+            List<SubsidyRecord> subsidyRecords = Lists.newArrayList();
+            List<Integer> subsidyRecordIds = subsidyRecords.stream()
+                    .map(subsidyRecord -> subsidyRecord.getUserId())
+                    .collect(Collectors.toList());
+            List<User> users = selectUsersBySubsidyRecordId(subsidyRecordIds);
+            if (CollectionUtils.isNotEmpty(users)) {
+                Map<Integer, User> userMap = users.stream()
+                        .collect(Collectors.toMap(User::getId, a -> a, (k1, k2) -> k1));
+                subsidyRecordListRespDtos = converter(userMap, subsidyRecordPage.getRecords());
+            }
+        } else {
+            List<User> users = selectUsersByDeptId(pageReqDto.getQuery());
+            if (CollectionUtils.isNotEmpty(users)) {
+                List<Integer> userIds = users.stream()
+                        .map(user -> user.getId())
+                        .collect(Collectors.toList());
+                Map<Integer, User> userMap = users.stream()
+                        .collect(Collectors.toMap(User::getId, a -> a, (k1, k2) -> k1));
+                subsidyRecordPage = selectByUsers(userIds, page);
+                subsidyRecordListRespDtos = converter(userMap, subsidyRecordPage.getRecords());
+            }
+        }
+        IPage<SubsidyRecordListRespDto> result = new Page<>();
+        result.setPages(subsidyRecordPage.getPages());
+        result.setCurrent(subsidyRecordPage.getCurrent());
+        result.setSize(subsidyRecordPage.getSize());
+        result.setTotal(subsidyRecordPage.getTotal());
+        result.setRecords(subsidyRecordListRespDtos);
+        return result;
+    }
+
     /**
-     * 根据人员ID获取CPU卡
+     * 根据人员ID获取自动补助记录
      *
-     * @return 补助规则
+     * @param userIds     用户ID
+     * @param subsidyTime 补助时间
+     * @return 自动补助记录
      */
     private List<SubsidyRecord> selectByUsersAndDate(List<Integer> userIds, LocalDate subsidyTime) {
         LocalDateTime start = LocalDateTime.of(subsidyTime, LocalTime.MIN);
@@ -141,6 +177,7 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         queryWrapper.in("user_id", userIds);
         queryWrapper.gt("create_time", start);
         queryWrapper.lt("create_time", end);
+        queryWrapper.in("type", SubsidyType.AUTOMATIC.getCode());
         return subsidyRecordMapper.selectList(queryWrapper);
     }
 
@@ -154,6 +191,50 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         Dept dept = deptMapper.selectById(deptId);
         Dept parent = deptMapper.selectById(dept.getDeptUpId());
         return parent.getDeptName() + "/" + dept.getDeptName();
+    }
+
+    /**
+     * 根据人员ID获取手动补助记录
+     *
+     * @param userIds 用户ID
+     * @return 手动补助记录
+     */
+    private IPage<SubsidyRecord> selectByUsers(List<Integer> userIds, IPage page) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.in("user_id", userIds);
+        queryWrapper.in("type", SubsidyType.MANUAL.getCode());
+        return subsidyRecordMapper.selectPage(page, queryWrapper);
+    }
+
+    /**
+     * 消费记录转换
+     *
+     * @param userMap        用户信息
+     * @param subsidyRecords 消费记录
+     * @return 消费记录
+     */
+    private List<SubsidyRecordListRespDto> converter(Map<Integer, User> userMap, List<SubsidyRecord> subsidyRecords) {
+        return subsidyRecords.stream().map(subsidyRecord -> {
+            SubsidyRecordListRespDto subsidyRecordListRespDto = new SubsidyRecordListRespDto();
+            User user = userMap.get(subsidyRecord.getUserId());
+            subsidyRecordListRespDto.setUserName(user.getUserName());
+            subsidyRecordListRespDto.setUserCardNum(user.getUserCardNum());
+            subsidyRecordListRespDto.setCardSerialNo(subsidyRecord.getCardSerialNo());
+            subsidyRecordListRespDto.setSubsidyAmount(subsidyRecord.getAmount());
+            return subsidyRecordListRespDto;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 根据消费记录ID获取人员信息
+     *
+     * @param subsidyRecordId 消费记录ID
+     * @return 人员信息
+     */
+    private List<User> selectUsersBySubsidyRecordId(List<Integer> subsidyRecordId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.in("id", subsidyRecordId);
+        return userMapper.selectList(queryWrapper);
     }
 
 }

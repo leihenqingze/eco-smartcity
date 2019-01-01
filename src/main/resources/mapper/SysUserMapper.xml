@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eco.wisdompark.mapper.SysUserMapper">
 
+    <update id="updateSysUserPass">
+        update tb_sys_user set sys_user_pass = #{passWord} where id = #{sysUserId}
+    </update>
+
+
+
 </mapper>

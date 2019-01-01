@@ -2,6 +2,7 @@ package com.eco.wisdompark.mapper;
 
 import com.eco.wisdompark.domain.model.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2018-12-28
  */
 public interface SysUserMapper extends BaseMapper<SysUser> {
+
+    int updateSysUserPass(@Param("sysUserId") int sysUserId,@Param("passWord") String passWord);
 
 }

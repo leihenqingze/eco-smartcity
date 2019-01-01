@@ -6,4 +6,12 @@
         UPDATE tb_cpu_card SET recharge_balance = recharge_balance + amount WHERE card_id = cardId
     </select>
 
+    <update id="updateBatchSubsidy" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=",">
+            UPDATE tb_cpu_card SET
+            subsidy_balance = #{item.subsidyBalance}
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
 </mapper>

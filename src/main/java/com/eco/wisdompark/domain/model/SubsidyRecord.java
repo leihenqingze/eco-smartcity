@@ -36,7 +36,7 @@ public class SubsidyRecord extends Model<SubsidyRecord> {
     private Integer id;
 
     @ApiModelProperty(value = "卡ID")
-    private Integer cardId;
+    private String cardId;
 
     @ApiModelProperty(value = "卡序列号")
     @TableField("card_serialNo")

@@ -36,68 +36,66 @@ public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
 
-    @RequestMapping(value="/getSysUserList",method = RequestMethod.POST)
-    @ApiOperation(value = "分页查询系统用户",httpMethod = "POST")
-    public ResponseData<IPage<SysUser>> getSysUserList(@RequestBody SysUserDto sysUserDto){
+    @RequestMapping(value = "/getSysUserList", method = RequestMethod.POST)
+    @ApiOperation(value = "分页查询系统用户", httpMethod = "POST")
+    public ResponseData<IPage<SysUser>> getSysUserList(@RequestBody SysUserDto sysUserDto) {
         log.debug(">>>>>getSysUserList,param is :{}", JSON.toJSONString(sysUserDto));
         IPage<SysUser> sysUserPage = sysUserService.getSysUserPage(sysUserDto);
         return ResponseData.OK(sysUserPage);
     }
 
-    @RequestMapping(value="/saveSysUser",method = RequestMethod.POST)
-    @ApiOperation(value = "添加系统用户",httpMethod = "POST")
-    public ResponseData saveSysUser(@RequestBody SysUserDto sysUserDto){
+    @RequestMapping(value = "/saveSysUser", method = RequestMethod.POST)
+    @ApiOperation(value = "添加系统用户", httpMethod = "POST")
+    public ResponseData saveSysUser(@RequestBody SysUserDto sysUserDto) {
         log.debug(">>>>>saveSysUser,param is :{}", JSON.toJSONString(sysUserDto));
-        if(sysUserDto == null) {
+        if (sysUserDto == null) {
             return ResponseData.ERROR("保存失败!");
         }
         SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(sysUserDto,sysUser);
+        BeanUtils.copyProperties(sysUserDto, sysUser);
         int result = sysUserService.saveSysUser(sysUser);
-        if(result <= 0){
+        if (result <= 0) {
             return ResponseData.ERROR("保存失败!");
         }
         return ResponseData.OK();
     }
 
-    @RequestMapping(value="/updateSysUserPass",method = RequestMethod.POST)
-    @ApiOperation(value = "修改系统用户密码",httpMethod = "POST")
+    @RequestMapping(value = "/updateSysUserPass", method = RequestMethod.POST)
+    @ApiOperation(value = "修改系统用户密码", httpMethod = "POST")
     public ResponseData updateSysUserPass(HttpServletRequest request,
-                                          @RequestParam(value = "oldPassWord",required = false) String oldPassWord,
-                                          @RequestParam(value = "confirmOldPassWord",required = false) String confirmOldPassWord,
-                                          @RequestParam(value = "newPassWord",required = false) String newPassWord){
-        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmOldPassWord:{},newPassWord:{}", oldPassWord,confirmOldPassWord,newPassWord);
-        if(!StringUtils.trim(oldPassWord).equals(StringUtils.trim(confirmOldPassWord))){
+                                          @RequestParam(value = "oldPassWord", required = false) String oldPassWord,
+                                          @RequestParam(value = "confirmOldPassWord", required = false) String confirmOldPassWord,
+                                          @RequestParam(value = "newPassWord", required = false) String newPassWord) {
+        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmOldPassWord:{},newPassWord:{}", oldPassWord, confirmOldPassWord, newPassWord);
+        if (!StringUtils.trim(oldPassWord).equals(StringUtils.trim(confirmOldPassWord))) {
             return ResponseData.ERROR("两次密码输入不一致!");
         }
         SysUser sysUser = (SysUser) request.getSession().getAttribute("Authentication");
-        if(sysUser == null){
-            return ResponseData.ERROR("登录已过期!");
-        }
-        int result = sysUserService.updateSysUserPass(sysUser.getId(),oldPassWord,newPassWord);
-        if(result <=0 ){
+        int result = sysUserService.updateSysUserPass(sysUser.getId(), oldPassWord, newPassWord);
+        if (result <= 0) {
             return ResponseData.ERROR("修改密码失败!");
         }
         return ResponseData.OK();
     }
 
-    @RequestMapping(value="sysUserLogin",method = RequestMethod.GET)
-    @ApiOperation(value= "系统用户登录",httpMethod = "GET")
+    @RequestMapping(value = "sysUserLogin", method = RequestMethod.GET)
+    @ApiOperation(value = "系统用户登录", httpMethod = "GET")
     public ResponseData sysUserLogin(HttpServletRequest request,
-                                     @RequestParam(value = "keyWord",required = false) String keyWord,
-                                     @RequestParam(value = "passWord",required = false) String passWord){
-        log.debug(">>>>>sysUserLogin,keyWord:{},passWord:{},newPassWord:{}", keyWord,passWord);
+                                     @RequestParam(value = "keyWord", required = false) String keyWord,
+                                     @RequestParam(value = "passWord", required = false) String passWord) {
+        log.debug(">>>>>sysUserLogin,keyWord:{},passWord:{},newPassWord:{}", keyWord, passWord);
         SysUser sysUser = null;
-        if(RegexUtils.isPhone(StringUtils.trim(keyWord))){
-            sysUser = sysUserService.phoneLogin(keyWord,passWord);
-        }else{
-            sysUser = sysUserService.userNameLogin(keyWord,passWord);
+        if (RegexUtils.isPhone(StringUtils.trim(keyWord))) {
+            sysUser = sysUserService.phoneLogin(keyWord, passWord);
+        } else {
+            sysUser = sysUserService.userNameLogin(keyWord, passWord);
         }
-        if(sysUser == null){
+        if (sysUser == null) {
             return ResponseData.ERROR("登录失败!");
         }
         HttpSession session = request.getSession();
-        session.setAttribute("Authentication",sysUser);
+        session.setAttribute("Authentication", sysUser);
+        session.setMaxInactiveInterval(3600);
         return ResponseData.OK(sysUser.getSysUserDepartment());
 
     }

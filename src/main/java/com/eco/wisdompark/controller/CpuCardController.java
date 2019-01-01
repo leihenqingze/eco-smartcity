@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 2018-12-28
  */
 @RestController
-@RequestMapping("/cpu-card")
+@RequestMapping("api/cpu-card")
 @Api(value = "CPU卡相关API", description = "CPU卡相关API")
 public class CpuCardController {
 
@@ -32,21 +32,21 @@ public class CpuCardController {
 
     @RequestMapping(value = "/making", method = RequestMethod.POST)
     @ApiOperation(value = "制卡/卡片激活接口", httpMethod = "POST")
-    public ResponseData makingCpuCard(@RequestBody MakingCpuCardDto makingCpuCardDto) {
+    public ResponseData<RespMakingCpuCardDto> makingCpuCard(@RequestBody MakingCpuCardDto makingCpuCardDto) {
         RespMakingCpuCardDto respMakingCpuCardDto = cpuCardService.makingCpuCard(makingCpuCardDto);
         return ResponseData.OK(respMakingCpuCardDto);
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
-    public ResponseData queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
+    public ResponseData<RespQueryCardInfoDto> queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
         RespQueryCardInfoDto respQueryCardInfoDto = cpuCardService.queryCardInfo(queryCardInfoDto);
         return ResponseData.OK(respQueryCardInfoDto);
     }
 
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     @ApiOperation(value = "卡片余额充值接口", httpMethod = "POST")
-    public ResponseData recharge(@RequestBody RechargeCardDto rechargeCardDto) {
+    public ResponseData<Boolean> recharge(@RequestBody RechargeCardDto rechargeCardDto) {
         Boolean rechargeResult = cpuCardService.rechargeSingle(rechargeCardDto);
         return ResponseData.OK(rechargeResult);
     }

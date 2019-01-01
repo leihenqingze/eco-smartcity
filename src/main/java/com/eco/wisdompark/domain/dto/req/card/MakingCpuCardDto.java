@@ -18,14 +18,14 @@ public class MakingCpuCardDto {
 
     @ApiModelProperty(value = "CUP卡面印刷的序列号")
     @NotNull(message = "CUP卡序列号不能为空")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "CUP卡押金")
     @NotNull(message = "CUP卡押金不能为空")
     @Min(value = 0, message = "CUP卡押金需>=0元")
     private BigDecimal deposit;
 
-    @ApiModelProperty(value = "CUP卡来源，1制卡，2激活")
+    @ApiModelProperty(value = "CUP卡来源，0制卡，1激活")
     private Integer cardSource;
 
     @ApiModelProperty(value = "人员姓名")

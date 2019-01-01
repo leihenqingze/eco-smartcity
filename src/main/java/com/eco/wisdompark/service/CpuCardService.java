@@ -77,6 +77,14 @@ public interface CpuCardService extends IService<CpuCard> {
     RespQueryCardInfoDto queryCardInfoByCardId(String cardId);
 
     /**
+     * 查询CPU卡片信息 是否存在？
+     * @param cardId
+     * @param cardSerialNo
+     * @return
+     */
+    boolean queryCardInfoIsExist(String cardId, String cardSerialNo);
+
+    /**
      * 查询人员对应CPU卡信息
      * @param userIds
      * @return
@@ -89,5 +97,11 @@ public interface CpuCardService extends IService<CpuCard> {
      * */
     CpuCard getCpuCarByUserId(Integer userId);
 
+
+    /**
+     * 更新cpu卡信息
+     * @param cpuCard
+     */
+    int updateCpuCard(CpuCard cpuCard);
 
 }

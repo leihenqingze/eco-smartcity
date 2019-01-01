@@ -50,4 +50,11 @@ public interface UserService extends IService<User> {
     List<User> getUsers(List<Integer> userIds);
 
 
+    /**
+     * 查询人员信息
+     * @param userId
+     * @return
+     */
+    User queryByUserId(Integer userId);
+
 }

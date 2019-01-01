@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.converter.req.CpuCardConverter;
+import com.eco.wisdompark.converter.resp.RespMakingCpuCardDtoConverter;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
@@ -60,14 +62,13 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     @Transactional
     public RespMakingCpuCardDto makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
-        RespMakingCpuCardDto respMakingCpuCardDto = new RespMakingCpuCardDto();
         // 1.校验用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum());
         List<User> userList = userService.list(queryWrapper);
         if (!CollectionUtils.isEmpty(userList)){
             log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
-            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "user already exist");
+            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "用户已存在，不能制卡或激活");
         }
         // 2.保存用户信息
         User user = saveUser(makingCpuCardDto);
@@ -75,11 +76,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         Integer userId = user.getId();
         CpuCard cpuCard = saveCpuCardInfo(makingCpuCardDto, userId);
         // 4.封装返回信息
-        respMakingCpuCardDto.setId(cpuCard.getId());
-        respMakingCpuCardDto.setUserName(user.getUserName());
-        respMakingCpuCardDto.setPhoneNum(user.getPhoneNum());
-        respMakingCpuCardDto.setDeptId(user.getDeptId());
-        respMakingCpuCardDto.setDeposit(cpuCard.getDeposit());
+        RespMakingCpuCardDto respMakingCpuCardDto = RespMakingCpuCardDtoConverter.create(cpuCard, user);
         return respMakingCpuCardDto;
     }
 
@@ -111,7 +108,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     @Transactional
     public boolean rechargeSingle(RechargeCardDto rechargeCardDto) {
-        // 1.校验CPU卡是否存在
+        // 1.校验CPU卡是否存在getUsers
         InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
         if (innerCpuCardInfoDto == null){
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
@@ -125,6 +122,14 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return null;
     }
 
+
+    @Override
+    public int updateCpuCard(CpuCard cpuCard) {
+        if (cpuCard != null){
+            return baseMapper.updateById(cpuCard);
+        }
+        return 0;
+    }
 
     /**
      * 查询 卡信息 内部使用
@@ -140,15 +145,17 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("card_id", cardId);
         CpuCard cpuCard = getOne(queryWrapper);
-        if (cpuCard != null){
+        if (cpuCard == null){
             log.info("queryCardInfoByCardId  inner cardId:{}, no data...", cardId);
             return null;
         }
 
         InnerCpuCardInfoDto cardInfoDto = new InnerCpuCardInfoDto();
         cardInfoDto.setCardId(cardId);
-        cardInfoDto.setCardSerialNo(cpuCard.getCardSerialno());
+        cardInfoDto.setCardSerialNo(cpuCard.getCardSerialNo());
         cardInfoDto.setUserId(cpuCard.getUserId());
+        cardInfoDto.setRechargeBalance(cpuCard.getRechargeBalance());
+        cardInfoDto.setSubsidyBalance(cpuCard.getSubsidyBalance());
         return cardInfoDto;
     }
 
@@ -158,7 +165,6 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             return null;
         }
 
-        // TODO 可以加一层缓存
         QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("card_id", cardId);
         List<CpuCard> cpuCards = list(queryWrapper);
@@ -211,14 +217,11 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
      */
     private boolean rechargeBalance(InnerCpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount){
         //  1.充值操作
-        int result = cpuCardMapper.recharge(cardId, amount);
-        if (result <= 0){
-            return false;
-        }
+        cpuCardMapper.recharge(cardId, amount);
         // 2.保存充值记录
         rechargeRecordService.saveRechargeRecord(cardInfoDto, amount, RechargeType.MANUAL, null);
         // 3.保存金额变更记录
-        changeAmountService.saveChanageAmountRecord(cardInfoDto, amount, AmountChangeType.TOP_UP);
+        changeAmountService.saveRechargeChanageAmountRecord(cardInfoDto, amount, AmountChangeType.TOP_UP);
         return true;
     }
 
@@ -303,21 +306,35 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     }
 
     private CpuCard saveCpuCardInfo(MakingCpuCardDto makingCpuCardDto, Integer userId){
-        CpuCard cpuCard = new CpuCard();
-        cpuCard.setUserId(userId);
-        cpuCard.setCardId(makingCpuCardDto.getCardId());
-        cpuCard.setCardSerialno(makingCpuCardDto.getCardSerialno());
-        cpuCard.setCardType(CardType.CPU.getCode());
-        cpuCard.setCardSource(makingCpuCardDto.getCardSource());
-        cpuCard.setCreateTime(LocalDateTime.now());
-        cpuCard.setDeposit(makingCpuCardDto.getDeposit());
-        cpuCard.setRechargeBalance(new BigDecimal(0));
-        cpuCard.setSubsidyBalance(new BigDecimal(0));
-        cpuCard.setDel(YesNo.NO.getCode());
-        cpuCard.setReportLossStstus(ReportLossStstus.IN_USE.getCode());
+        // 校验CPU卡物理id是否存在
+        boolean isExist = queryCardInfoIsExist(makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo());
+        if (isExist){
+            log.error("saveCpuCardInfo cardId:{} or cardSerialNo:{} exists...",
+                    makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo());
+            throw new WisdomParkException(ResponseData.STATUS_CODE_602, "卡ID或卡序列号已存在");
+        }
+
+        CardSource cardSource = CardSource.valueOf(makingCpuCardDto.getCardSource());
+        CpuCard cpuCard = CpuCardConverter.create(userId, makingCpuCardDto.getCardId(), makingCpuCardDto.getCardSerialNo(),
+                CardType.CPU, cardSource, makingCpuCardDto.getDeposit(),
+                new BigDecimal(0), new BigDecimal(0));
+
         boolean res = save(cpuCard);
         log.info("saveCpuCardInfo phoneNum:{}, res:{}", makingCpuCardDto.getPhoneNum(), res);
         return cpuCard;
     }
 
+
+    @Override
+    public boolean queryCardInfoIsExist(String cardId, String cardSerialNo) {
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("card_id", cardId)
+                .or()
+                .eq("card_serialNo", cardSerialNo);
+        List<CpuCard> cpuCardList = baseMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(cpuCardList)){
+            return true;
+        }
+        return false;
+    }
 }

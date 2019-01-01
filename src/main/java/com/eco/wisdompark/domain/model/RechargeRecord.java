@@ -40,7 +40,7 @@ public class RechargeRecord extends Model<RechargeRecord> {
 
     @ApiModelProperty(value = "卡序列号")
     @TableField("card_serialNo")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "充值金额")
     private BigDecimal amount;

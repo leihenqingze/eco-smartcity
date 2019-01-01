@@ -31,7 +31,7 @@ public class ConsumeRecordConverter {
                                              CpuCard cpuCard, DiningType diningType) {
         ConsumeRecord consumeRecord = new ConsumeRecord();
         consumeRecord.setCardId(cpuCard.getCardId());
-        consumeRecord.setCardSerialno(cpuCard.getCardSerialno());
+        consumeRecord.setCardSerialNo(cpuCard.getCardSerialNo());
         consumeRecord.setUserId(cpuCard.getUserId());
         consumeRecord.setRechargeAmount(rechargeAmount);
         consumeRecord.setSubsidyAmount(subsidyAmount);

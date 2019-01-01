@@ -28,10 +28,10 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
                                       RechargeType rechargeType, String importSerialNo) {
         RechargeRecord rechargeRecord = new RechargeRecord();
         rechargeRecord.setCardId(cardInfoDto.getCardId());
-        rechargeRecord.setCardSerialno(cardInfoDto.getCardSerialNo());
+        rechargeRecord.setCardSerialNo(cardInfoDto.getCardSerialNo());
         rechargeRecord.setAmount(amount);
         rechargeRecord.setRechargeType(rechargeType.getCode());
-        if (StringUtils.isEmpty(importSerialNo)){
+        if (!StringUtils.isEmpty(importSerialNo)){
             rechargeRecord.setImportSerialno(importSerialNo);
         }
         rechargeRecord.setUserId(cardInfoDto.getUserId());

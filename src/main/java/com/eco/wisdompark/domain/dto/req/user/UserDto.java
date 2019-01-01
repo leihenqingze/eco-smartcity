@@ -40,7 +40,7 @@ public class UserDto {
     private LocalDateTime ts;
 
     @ApiModelProperty(value = "CUP卡面印刷的序列号")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "CUP卡押金")
     private BigDecimal deposit;

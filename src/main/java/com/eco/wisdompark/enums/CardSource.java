@@ -5,7 +5,7 @@ package com.eco.wisdompark.enums;
  * @author litao, 2018/12/29
  * @version 1.0
  */
-public enum CardSource implements  CommonEnum<CardSource> {
+public enum CardSource implements CommonEnum<CardSource> {
     MAKE_CARD(0, "制卡"),
     ACTIVATION(1, "激活");
 
@@ -31,7 +31,7 @@ public enum CardSource implements  CommonEnum<CardSource> {
                 return item;
             }
         }
-        throw new IllegalArgumentException("未知的");
+        throw new IllegalArgumentException("当前的CPU卡来源暂不支持");
     }
 
 

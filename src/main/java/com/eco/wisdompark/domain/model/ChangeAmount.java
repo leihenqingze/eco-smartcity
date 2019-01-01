@@ -39,7 +39,7 @@ public class ChangeAmount extends Model<ChangeAmount> {
 
     @ApiModelProperty(value = "CUP卡面印刷的序列号")
     @TableField("card_serialNo")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "人员Id")
     private Integer userId;

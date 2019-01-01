@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eco.wisdompark.mapper.CpuCardMapper">
 
-    <select id="recharge" resultType="java.lang.Integer">
-        UPDATE tb_cpu_card SET recharge_balance = recharge_balance + amount WHERE card_id = cardId
+    <select id="recharge">
+        UPDATE tb_cpu_card SET recharge_balance = recharge_balance + #{amount} WHERE card_id = #{cardId}
     </select>
 
     <update id="updateBatchSubsidy" parameterType="java.util.List">

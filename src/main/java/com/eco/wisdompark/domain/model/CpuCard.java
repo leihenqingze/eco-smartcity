@@ -40,7 +40,7 @@ public class CpuCard extends Model<CpuCard> {
 
     @ApiModelProperty(value = "CUP卡面印刷的序列号")
     @TableField("card_serialNo")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "用户Id")
     private Integer userId;

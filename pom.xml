@@ -93,7 +93,11 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.25</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>1.1</version>
+        </dependency>
         <!-- spring-boot-devtools热启动依赖包 start-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

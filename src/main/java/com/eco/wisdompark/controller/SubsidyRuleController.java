@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2018-12-28
  */
 @RestController
-@RequestMapping("/subsidy-rule")
+@RequestMapping("api/subsidyRule")
 public class SubsidyRuleController {
 
     @Autowired

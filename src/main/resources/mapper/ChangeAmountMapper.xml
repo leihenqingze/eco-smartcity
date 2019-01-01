@@ -2,4 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eco.wisdompark.mapper.ChangeAmountMapper">
 
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO tb_change_amount (card_id, card_serialNo, user_id,change_amount,change_ago_recharge,
+        change_after_recharge,change_ago_subsidy,change_after_subsidy,change_type)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.cardId},
+            #{item.cardSerialno},
+            #{item.userId},
+            #{item.changeAmount},
+            #{item.changeAgoRecharge},
+            #{item.changeAfterRecharge},
+            #{item.changeAgoSubsidy},
+            #{item.changeAfterSubsidy},
+            #{item.changeType})
+        </foreach>
+    </insert>
+
 </mapper>

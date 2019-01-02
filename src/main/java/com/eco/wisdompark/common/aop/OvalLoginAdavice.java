@@ -19,23 +19,23 @@ import javax.servlet.http.HttpSession;
   * @author zhangkai
   * @date 2019/1/1 下午11:02
   */
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class OvalLoginAdavice {
 
-    @Pointcut("execution(public * com.eco.wisdompark.controller..*.*(..))")
-    public void checkLogin() {
-    }
-
-    @Before("checkLogin()")
-    public void doBefore(JoinPoint joinPoint) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        HttpSession session = request.getSession();
-        String methodName = joinPoint.getSignature().getName();
-        if(!methodName.equals("sysUserLogin") && session.getAttribute("Authentication")==null){
-            throw new WisdomParkException(ResponseData.STATUS_CODE_110,"登录已过期");
-        }
-    }
+//    @Pointcut("execution(public * com.eco.wisdompark.controller..*.*(..))")
+//    public void checkLogin() {
+//    }
+//
+//    @Before("checkLogin()")
+//    public void doBefore(JoinPoint joinPoint) {
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        HttpSession session = request.getSession();
+//        String methodName = joinPoint.getSignature().getName();
+//        if(!methodName.equals("sysUserLogin") && session.getAttribute("Authentication")==null){
+//            throw new WisdomParkException(ResponseData.STATUS_CODE_110,"登录已过期");
+//        }
+//    }
 
 
 }

@@ -5,6 +5,7 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
+import com.eco.wisdompark.domain.dto.resp.ManualSubsidyRecordListRespDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.service.SubsidyRecordService;
 import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -48,7 +51,7 @@ public class SubsidyRecordController {
 
     @RequestMapping(value = "/searchManualSubsidyRecord", method = RequestMethod.POST)
     @ApiOperation(value = "查询手动补助记录", httpMethod = "POST")
-    public ResponseData<SubsidyDetailsDto> searchManualSubsidyRecord(@RequestBody PageReqDto<Integer> pageReqDto) {
+    public ResponseData<List<ManualSubsidyRecordListRespDto>> searchManualSubsidyRecord(@RequestBody PageReqDto<Integer> pageReqDto) {
         return ResponseData.OK(subsidyRecordService.searchManualSubsidyRecord(pageReqDto));
     }
 

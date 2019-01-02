@@ -12,6 +12,7 @@ import com.eco.wisdompark.domain.dto.req.subsidy.UpdateSubsidyRuleDto;
 import com.eco.wisdompark.domain.model.SubsidyRule;
 import com.eco.wisdompark.enums.SubsidyStatus;
 import com.eco.wisdompark.service.SubsidyRuleService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("api/subsidyRule")
+@Api(value = "补助规则API", description = "补助规则API")
 public class SubsidyRuleController {
 
     @Autowired

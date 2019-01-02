@@ -1,16 +1,13 @@
 package com.eco.wisdompark.controller;
 
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.req.dept.AddLevel1DeptDto;
+import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
 import com.eco.wisdompark.service.ConsumeRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,11 +30,36 @@ public class ConsumeRecordController {
     private ConsumeRecordService consumeRecordService;
 
 
-    @RequestMapping(value = "/searchUserConsumeRecordDtos", method = RequestMethod.POST)
-    @ApiOperation(value = "查询人员消费记录", httpMethod = "POST")
-    public ResponseData<IPage<ConsumeRecordDto>> searchUserConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
-         IPage<ConsumeRecordDto> result=  consumeRecordService.searchUserConsumeRecordDtos(searchConsumeRecordDto);
-        return ResponseData.OK(result);
+    @RequestMapping(value = "/trainingStaffRecord", method = RequestMethod.GET)
+    @ApiOperation(value = "训练局职工消费记录", httpMethod = "GET")
+    public ResponseData<ConsomeRecordRespDto> trainingStaffRecord(@Param("deptId") Integer deptId,
+                                                                  @Param("posPositionId") Integer posPositionId,
+                                                                  @Param("startTime") String startTime,
+                                                                  @Param("endTime") String endTime) {
+        return ResponseData.OK();
+    }
+
+    @RequestMapping(value = "/notTrainingStaffRecord", method = RequestMethod.GET)
+    @ApiOperation(value = "非训练局职工消费记录", httpMethod = "GET")
+    public ResponseData<ConsomeRecordRespDto> notTrainingStaffRecord(@Param("deptId") Integer deptId,
+                                                                  @Param("consomeType") Integer consomeType,
+                                                                  @Param("startTime") String startTime,
+                                                                  @Param("endTime") String endTime) {
+        return ResponseData.OK();
+    }
+
+    @RequestMapping(value = "/securityRecord", method = RequestMethod.GET)
+    @ApiOperation(value = "保安消费记录", httpMethod = "GET")
+    public ResponseData<ConsomeRecordRespDto> securityRecord(@Param("startTime") String startTime,
+                                                             @Param("endTime") String endTime) {
+        return ResponseData.OK();
+    }
+
+    @RequestMapping(value = "/cleaningRecord", method = RequestMethod.GET)
+    @ApiOperation(value = "保洁消费记录", httpMethod = "GET")
+    public ResponseData<ConsomeRecordRespDto> cleaningRecord(@Param("startTime") String startTime,
+                                                             @Param("endTime") String endTime) {
+        return ResponseData.OK();
     }
 
 }

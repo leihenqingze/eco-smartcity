@@ -3,14 +3,11 @@ package com.eco.wisdompark.domain.dto.req.card;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import net.sf.oval.constraint.Min;
 import net.sf.oval.constraint.NotNull;
 
-import java.math.BigDecimal;
-
 @Data
-@ApiModel(value="制卡", description="制卡")
-public class MakingCpuCardDto {
+@ApiModel(value="卡片激活Dto", description="卡片激活Dto")
+public class ActiveCpuCardDto {
 
     @ApiModelProperty(value = "CUP卡物理Id")
     @NotNull(message = "CUP卡信息未读取成功")
@@ -19,11 +16,6 @@ public class MakingCpuCardDto {
     @ApiModelProperty(value = "CUP卡面印刷的序列号")
     @NotNull(message = "CUP卡序列号不能为空")
     private String cardSerialNo;
-
-    @ApiModelProperty(value = "CUP卡押金")
-    @NotNull(message = "CUP卡押金不能为空")
-    @Min(value = 0, message = "CUP卡押金需>=0元")
-    private BigDecimal deposit;
 
     @ApiModelProperty(value = "人员姓名")
     @NotNull(message = "人员姓名不能为空")
@@ -39,11 +31,5 @@ public class MakingCpuCardDto {
 
     @ApiModelProperty(value = "组织架构Id")
     private Integer deptId;
-
-//    @ApiModelProperty(value = "CUP卡充值余额")
-//    private BigDecimal rechargeBalance;
-//
-//    @ApiModelProperty(value = "CUP卡补助余额")
-//    private BigDecimal subsidyBalance;
 
 }

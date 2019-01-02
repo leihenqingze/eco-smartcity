@@ -2,9 +2,11 @@ package com.eco.wisdompark.controller;
 
 
 import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.domain.dto.req.card.ActiveCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
+import com.eco.wisdompark.domain.dto.resp.RespActiveCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.service.CpuCardService;
@@ -16,11 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
- * CPU卡 前端控制器
+ * CPU卡相关 控制器
  * </p>
  *
- * @author litao
- * @since 2018-12-28
+ * @author haihao
+ * @since 2018-12-30
  */
 @RestController
 @RequestMapping("api/cpu-card")
@@ -31,10 +33,18 @@ public class CpuCardController {
     private CpuCardService cpuCardService;
 
     @RequestMapping(value = "/making", method = RequestMethod.POST)
-    @ApiOperation(value = "制卡/卡片激活接口", httpMethod = "POST")
+    @ApiOperation(value = "制卡接口", httpMethod = "POST")
     public ResponseData<RespMakingCpuCardDto> makingCpuCard(@RequestBody MakingCpuCardDto makingCpuCardDto) {
         RespMakingCpuCardDto respMakingCpuCardDto = cpuCardService.makingCpuCard(makingCpuCardDto);
         return ResponseData.OK(respMakingCpuCardDto);
+    }
+
+
+    @RequestMapping(value = "/active", method = RequestMethod.POST)
+    @ApiOperation(value = "卡片激活接口", httpMethod = "POST")
+    public ResponseData<RespActiveCpuCardDto> active(@RequestBody ActiveCpuCardDto activeCpuCardDto) {
+        RespActiveCpuCardDto respActiveCpuCardDto = cpuCardService.activeCpuCard(activeCpuCardDto);
+        return ResponseData.OK(respActiveCpuCardDto);
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
@@ -51,19 +61,19 @@ public class CpuCardController {
         return ResponseData.OK(rechargeResult);
     }
 
-    @RequestMapping(value = "/recharge/batch", method = RequestMethod.POST)
-    @ApiOperation(value = "批量充值接口", httpMethod = "POST")
-    public ResponseData rechargeBatch(@RequestParam("file") MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-//        try {
-//            a = testService.batchImport(fileName, file);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        return ResponseData.OK();
-    }
-
-
+//    @RequestMapping(value = "/recharge/batch/upload", method = RequestMethod.POST)
+//    @ApiOperation(value = "批量充值接口", httpMethod = "POST")
+//    public ResponseData rechargeBatch(@RequestParam("file") MultipartFile file) {
+//        Boolean rechargeResult = cpuCardService.rechargeBatch(file);
+//        return ResponseData.OK();
+//    }
+//
+//    @RequestMapping(value = "/recharge/batch", method = RequestMethod.POST)
+//    @ApiOperation(value = "批量充值接口", httpMethod = "POST")
+//    public ResponseData<Boolean> rechargeBatch(@RequestParam("file") MultipartFile file) {
+////        Boolean rechargeResult = cpuCardService.rechargeBatch(file);
+//        return ResponseData.OK();
+//    }
 
 
 }

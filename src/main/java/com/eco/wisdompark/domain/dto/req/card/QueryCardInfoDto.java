@@ -10,13 +10,4 @@ public class QueryCardInfoDto {
 
     @ApiModelProperty(value = "CUP卡物理Id")
     private String cardId;
-
-    @ApiModelProperty(value = "人员姓名")
-    private String userName;
-
-    @ApiModelProperty(value = "人员手机号")
-    private String phoneNum;
-
-    @ApiModelProperty(value = "组织架构Id")
-    private Integer deptId;
 }

@@ -21,6 +21,6 @@ public interface ReportLossRecordService extends IService<ReportLossRecord> {
      * @param reissueCardDto
      * @return
      */
-    RespReissueCardDto reissueCard(ReissueCardDto reissueCardDto);
+    boolean reissueCard(ReissueCardDto reissueCardDto);
 
 }

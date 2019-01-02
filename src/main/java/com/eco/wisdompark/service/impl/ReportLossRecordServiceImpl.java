@@ -54,7 +54,7 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
 
     @Override
     @Transactional
-    public RespReissueCardDto reissueCard(ReissueCardDto reissueCardDto) {
+    public boolean reissueCard(ReissueCardDto reissueCardDto) {
         // 1.查询原CPU卡信息
         int userId = reissueCardDto.getUserId();
         List<Integer> userIds = new ArrayList<>();
@@ -100,11 +100,7 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
         // 6.插入挂失记录
         ReportLossRecord reportLossRecord = ReportLossRecordConverter.create(userId, oldCardId, newCardId, newCardSerialNo, oldCardSerialNo);
         baseMapper.insert(reportLossRecord);
-
-        // 7.封装返回数据
-        BigDecimal totalBalance  = rechargeBalance.add(subsidyBalance);
-        RespReissueCardDto respReissueCardDto = RespReissueCardDtoConverter.create(oldCardId,  newCardId, totalBalance, user);
-        return respReissueCardDto;
+        return true;
     }
 
 

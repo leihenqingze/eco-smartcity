@@ -1,14 +1,11 @@
 package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
-import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
-import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
-import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
-import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
-import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoListDto;
+import com.eco.wisdompark.domain.dto.req.card.*;
+import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -24,26 +21,39 @@ import java.util.List;
 public interface CpuCardService extends IService<CpuCard> {
 
     /**
-     * 制卡/卡片激活接口
+     * 制卡接口
      * @param makingCpuCardDto
      * @return
      */
     RespMakingCpuCardDto makingCpuCard(MakingCpuCardDto makingCpuCardDto);
 
     /**
-     * 查询卡片信息接口
+     * 卡片激活接口
+     * @param activeCpuCardDto
+     * @return
+     */
+    RespActiveCpuCardDto activeCpuCard(ActiveCpuCardDto activeCpuCardDto);
+
+    /**
+     * 查询卡片信息接口【充值使用】
      * @param queryCardInfoDto
      * @return
      */
     RespQueryCardInfoDto queryCardInfo(QueryCardInfoDto queryCardInfoDto);
 
     /**
-     * 查询人员卡信息接口
-     * @param queryCardInfoDto
-     * @param param 标记、没有实际意义
+     * 查询人员卡信息列表接口【挂失使用】
+     * @param lossQueryCardInfoDto
+   * @return
+     */
+    RespQueryCardInfoListDto queryCardInfoList(LossQueryCardInfoDto lossQueryCardInfoDto);
+
+    /**
+     * 挂失查询人员卡信息确认接口【挂失使用】
+     * @param lossQueryConfirmDto
      * @return
      */
-    RespQueryCardInfoListDto queryCardInfo(QueryCardInfoDto queryCardInfoDto, String param);
+    RespLossQueryConfirmDto queryCardInfo(LossQueryConfirmDto lossQueryConfirmDto);
 
     /**
      * 查询人员卡卡信息接口
@@ -63,11 +73,10 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 卡片批量充值接口
-     * @param fileName
      * @param file
      * @return
      */
-    ResponseData rechargeBatch(String fileName, File file);
+    ResponseData rechargeBatch(MultipartFile file);
 
     /**
      * 查询CPU卡片信息 by cardId

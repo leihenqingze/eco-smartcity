@@ -38,6 +38,9 @@ public class ResponseData<T> implements Serializable {
     public static final int STATUS_CODE_600 = 600; // 用户已存在
     public static final int STATUS_CODE_601 = 601; // 用户或卡信息不存在
     public static final int STATUS_CODE_602 = 602; // 卡ID或卡序列号已存在
+    public static final int STATUS_CODE_603 = 603; // 批量充值文件不能为空
+    public static final int STATUS_CODE_604 = 604; // 批量充值处理异常
+    public static final int STATUS_CODE_605 = 605; // 文件格式不正确
 
     public static final String STATUS_MESSAGE_200 = "OK";
     public static final String STATUS_MESSAGE_400 = "Error";

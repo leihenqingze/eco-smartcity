@@ -10,6 +10,7 @@ import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
 import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
+import com.eco.wisdompark.domain.dto.resp.ManualSubsidyRecordListRespDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyRecordListRespDto;
 import com.eco.wisdompark.domain.model.Dept;
@@ -96,6 +97,43 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         return userMapper.selectList(queryWrapper);
     }
 
+    /**
+     * 根据人员ID获取自动补助记录
+     *
+     * @param userIds     用户ID
+     * @param subsidyTime 补助时间
+     * @return 自动补助记录
+     */
+    private List<SubsidyRecord> selectByUsersAndDate(List<Integer> userIds, LocalDate subsidyTime) {
+        LocalDateTime start = LocalDateTime.of(subsidyTime, LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(subsidyTime, LocalTime.MAX);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.in("user_id", userIds);
+        queryWrapper.gt("create_time", start);
+        queryWrapper.lt("create_time", end);
+        queryWrapper.eq("type", SubsidyType.AUTOMATIC.getCode());
+        return subsidyRecordMapper.selectList(queryWrapper);
+    }
+
+    /**
+     * 消费记录转换
+     *
+     * @param userMap        用户信息
+     * @param subsidyRecords 消费记录
+     * @return 消费记录
+     */
+    private List<SubsidyRecordListRespDto> converter(Map<Integer, User> userMap, List<SubsidyRecord> subsidyRecords) {
+        return subsidyRecords.stream().map(subsidyRecord -> {
+            SubsidyRecordListRespDto subsidyRecordListRespDto = new SubsidyRecordListRespDto();
+            User user = userMap.get(subsidyRecord.getUserId());
+            subsidyRecordListRespDto.setUserName(user.getUserName());
+            subsidyRecordListRespDto.setUserCardNum(user.getUserCardNum());
+            subsidyRecordListRespDto.setCardSerialNo(subsidyRecord.getCardSerialNo());
+            subsidyRecordListRespDto.setSubsidyAmount(subsidyRecord.getAmount());
+            return subsidyRecordListRespDto;
+        }).collect(Collectors.toList());
+    }
+
     @Override
     public IPage<SubsidyRecordDto> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<SubsidyRecordDto> result = new Page<>();
@@ -126,21 +164,21 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
     }
 
     @Override
-    public IPage<SubsidyRecordListRespDto> searchManualSubsidyRecord(PageReqDto<Integer> pageReqDto) {
+    public IPage<ManualSubsidyRecordListRespDto> searchManualSubsidyRecord(PageReqDto<Integer> pageReqDto) {
         IPage page = PageReqDtoToPageConverter.converter(pageReqDto);
-        List<SubsidyRecordListRespDto> subsidyRecordListRespDtos = Lists.newArrayList();
+        List<ManualSubsidyRecordListRespDto> subsidyRecordListRespDtos = Lists.newArrayList();
         IPage<SubsidyRecord> subsidyRecordPage = null;
         if (Objects.isNull(pageReqDto.getQuery())) {
             subsidyRecordPage = selectByUsers(null, page);
-            List<SubsidyRecord> subsidyRecords = Lists.newArrayList();
-            List<Integer> subsidyRecordIds = subsidyRecords.stream()
+            List<SubsidyRecord> subsidyRecords = subsidyRecordPage.getRecords();
+            List<Integer> userIds = subsidyRecords.stream()
                     .map(subsidyRecord -> subsidyRecord.getUserId())
                     .collect(Collectors.toList());
-            List<User> users = selectUsersBySubsidyRecordId(subsidyRecordIds);
+            List<User> users = selectUsersBySubsidyRecordId(userIds);
             if (CollectionUtils.isNotEmpty(users)) {
                 Map<Integer, User> userMap = users.stream()
                         .collect(Collectors.toMap(User::getId, a -> a, (k1, k2) -> k1));
-                subsidyRecordListRespDtos = converter(userMap, subsidyRecordPage.getRecords());
+                subsidyRecordListRespDtos = manualConverter(null, userMap, subsidyRecordPage.getRecords());
             }
         } else {
             List<User> users = selectUsersByDeptId(pageReqDto.getQuery());
@@ -151,10 +189,11 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
                 Map<Integer, User> userMap = users.stream()
                         .collect(Collectors.toMap(User::getId, a -> a, (k1, k2) -> k1));
                 subsidyRecordPage = selectByUsers(userIds, page);
-                subsidyRecordListRespDtos = converter(userMap, subsidyRecordPage.getRecords());
+                subsidyRecordListRespDtos = manualConverter(pageReqDto.getQuery(),
+                        userMap, subsidyRecordPage.getRecords());
             }
         }
-        IPage<SubsidyRecordListRespDto> result = new Page<>();
+        IPage<ManualSubsidyRecordListRespDto> result = new Page<>();
         result.setPages(subsidyRecordPage.getPages());
         result.setCurrent(subsidyRecordPage.getCurrent());
         result.setSize(subsidyRecordPage.getSize());
@@ -164,21 +203,28 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
     }
 
     /**
-     * 根据人员ID获取自动补助记录
+     * 消费记录转换
      *
-     * @param userIds     用户ID
-     * @param subsidyTime 补助时间
-     * @return 自动补助记录
+     * @param userMap        用户信息
+     * @param subsidyRecords 消费记录
+     * @return 消费记录
      */
-    private List<SubsidyRecord> selectByUsersAndDate(List<Integer> userIds, LocalDate subsidyTime) {
-        LocalDateTime start = LocalDateTime.of(subsidyTime, LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.of(subsidyTime, LocalTime.MAX);
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.in("user_id", userIds);
-        queryWrapper.gt("create_time", start);
-        queryWrapper.lt("create_time", end);
-        queryWrapper.in("type", SubsidyType.AUTOMATIC.getCode());
-        return subsidyRecordMapper.selectList(queryWrapper);
+    private List<ManualSubsidyRecordListRespDto> manualConverter(Integer deptId, Map<Integer, User> userMap,
+                                                                 List<SubsidyRecord> subsidyRecords) {
+        return subsidyRecords.stream().map(subsidyRecord -> {
+            ManualSubsidyRecordListRespDto manualSubsidyRecordListRespDto = new ManualSubsidyRecordListRespDto();
+            User user = userMap.get(subsidyRecord.getUserId());
+            if (Objects.isNull(deptId)) {
+                manualSubsidyRecordListRespDto.setDeptName(getDeptName(user.getDeptId()));
+            } else {
+                manualSubsidyRecordListRespDto.setDeptName(getDeptName(deptId));
+            }
+            manualSubsidyRecordListRespDto.setUserName(user.getUserName());
+            manualSubsidyRecordListRespDto.setUserCardNum(user.getUserCardNum());
+            manualSubsidyRecordListRespDto.setCardSerialNo(subsidyRecord.getCardSerialNo());
+            manualSubsidyRecordListRespDto.setSubsidyAmount(subsidyRecord.getAmount());
+            return manualSubsidyRecordListRespDto;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -197,32 +243,16 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
      * 根据人员ID获取手动补助记录
      *
      * @param userIds 用户ID
-     * @return 手动补助记录
+     * @return 手动补助记录selectByUsers
      */
     private IPage<SubsidyRecord> selectByUsers(List<Integer> userIds, IPage page) {
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.in("user_id", userIds);
-        queryWrapper.in("type", SubsidyType.MANUAL.getCode());
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            queryWrapper.in("user_id", userIds);
+        }
+        queryWrapper.eq("type", SubsidyType.MANUAL.getCode());
+        queryWrapper.orderByDesc("create_time");
         return subsidyRecordMapper.selectPage(page, queryWrapper);
-    }
-
-    /**
-     * 消费记录转换
-     *
-     * @param userMap        用户信息
-     * @param subsidyRecords 消费记录
-     * @return 消费记录
-     */
-    private List<SubsidyRecordListRespDto> converter(Map<Integer, User> userMap, List<SubsidyRecord> subsidyRecords) {
-        return subsidyRecords.stream().map(subsidyRecord -> {
-            SubsidyRecordListRespDto subsidyRecordListRespDto = new SubsidyRecordListRespDto();
-            User user = userMap.get(subsidyRecord.getUserId());
-            subsidyRecordListRespDto.setUserName(user.getUserName());
-            subsidyRecordListRespDto.setUserCardNum(user.getUserCardNum());
-            subsidyRecordListRespDto.setCardSerialNo(subsidyRecord.getCardSerialNo());
-            subsidyRecordListRespDto.setSubsidyAmount(subsidyRecord.getAmount());
-            return subsidyRecordListRespDto;
-        }).collect(Collectors.toList());
     }
 
     /**

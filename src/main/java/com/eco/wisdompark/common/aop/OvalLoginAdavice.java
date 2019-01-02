@@ -19,8 +19,8 @@ import javax.servlet.http.HttpSession;
   * @author zhangkai
   * @date 2019/1/1 下午11:02
   */
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class OvalLoginAdavice {
 
 //    @Pointcut("execution(public * com.eco.wisdompark.controller..*.*(..))")

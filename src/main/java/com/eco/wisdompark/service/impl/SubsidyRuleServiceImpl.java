@@ -106,7 +106,7 @@ public class SubsidyRuleServiceImpl extends ServiceImpl<SubsidyRuleMapper, Subsi
 
         QueryWrapper<SubsidyRule> subsidyRuleQuery = new QueryWrapper<>();
         subsidyRuleQuery.in("dept_id", deptIds);
-
+        subsidyRuleQuery.orderByDesc("create_time");
         IPage<SubsidyRule> subsidyRuleIPage = page(PageReqDtoToPageConverter.converter(pageReqDto),
                 subsidyRuleQuery);
         return Pair.of(subsidyRuleIPage, depts);

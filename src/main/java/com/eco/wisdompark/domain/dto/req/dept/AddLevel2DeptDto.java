@@ -16,4 +16,9 @@ public class AddLevel2DeptDto {
 
     @ApiModelProperty(value = "组织架构名称")
     private String deptName;
+
+    @ApiModelProperty(value = "消费身份")
+    private Integer consumeIdentity;
+
+
 }

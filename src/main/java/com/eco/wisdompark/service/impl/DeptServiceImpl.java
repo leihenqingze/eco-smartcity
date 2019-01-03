@@ -73,6 +73,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (StringUtils.isNotBlank(getLevel1DeptDto.getDeptName())) {
             wrapper.like("dept_name", getLevel1DeptDto.getDeptName());
         }
+        if(getLevel1DeptDto.getConsumeIdentity() != null){
+            wrapper.eq("consume_identity",getLevel1DeptDto.getConsumeIdentity());
+        }
         List<Dept> depts = baseMapper.selectList(wrapper);
         return this.convertDto(depts);
     }
@@ -84,6 +87,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         wrapper.eq("dept_up_id", addLevel2DeptDto.getId());
         if (StringUtils.isNotBlank(addLevel2DeptDto.getDeptName())) {
             wrapper.like("dept_name", addLevel2DeptDto.getDeptName());
+        }
+        if(addLevel2DeptDto.getConsumeIdentity() != null){
+            wrapper.eq("consume_identity",addLevel2DeptDto.getConsumeIdentity());
         }
         List<Dept> depts = baseMapper.selectList(wrapper);
         return this.convertDto(depts);

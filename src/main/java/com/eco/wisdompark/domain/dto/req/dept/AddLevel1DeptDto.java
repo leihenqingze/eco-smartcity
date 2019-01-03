@@ -14,7 +14,7 @@ public class AddLevel1DeptDto {
     @NotNull( message = "组织架构不能为空")
     private String deptName;
 
-    @ApiModelProperty(value = "消费身份：1训练局职工，2非训练局职工，3保安，4保洁")
+    @ApiModelProperty(value = "消费身份：0训练局职工，1非训练局职工，2保安，3保洁, 4物业")
     @NotNull( message = "消费身份不能为空")
     private  Integer consumeIdentity;
 

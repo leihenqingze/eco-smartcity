@@ -12,6 +12,7 @@ import com.eco.wisdompark.mapper.UserMapper;
 import com.eco.wisdompark.service.CpuCardService;
 import com.eco.wisdompark.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return baseMapper.selectById(userId);
         }
         return null;
+    }
+
+    @Override
+    public List<User> getUserListByDeptId(Integer deptId) {
+        if(deptId == null){
+            return Lists.newArrayList();
+        }
+        QueryWrapper<User> wrapper = new QueryWrapper<User>();
+        wrapper.eq("dept_id", deptId);
+        return baseMapper.selectList(wrapper);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.eco.wisdompark.service;
 import com.eco.wisdompark.domain.dto.req.dept.*;
 import com.eco.wisdompark.domain.model.Dept;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eco.wisdompark.enums.ConsumeIdentity;
 
 import java.util.List;
 
@@ -55,6 +56,5 @@ public interface DeptService extends IService<Dept> {
      * @return
      */
     public Integer delDept(DelDeptDto delDeptDto);
-
 
 }

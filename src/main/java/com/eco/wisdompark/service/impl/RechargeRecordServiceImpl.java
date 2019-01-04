@@ -72,6 +72,7 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
             list.forEach(e->{
                 RechargeRecordDto dto=new RechargeRecordDto();
                 BeanUtils.copyProperties(e, dto);
+                dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
                 dtoList.add(dto);
             });
             result.setRecords(dtoList);

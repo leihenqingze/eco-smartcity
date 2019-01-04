@@ -57,4 +57,10 @@ public interface DeptService extends IService<Dept> {
      */
     public Integer delDept(DelDeptDto delDeptDto);
 
+    /**
+     * 获取全部的组织架构信息、
+     *
+     * */
+    public List<DeptAllDto> getDeptAll();
+
 }

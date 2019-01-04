@@ -15,13 +15,13 @@ public class RechargeRecordDto {
     private String cardId;
 
     @ApiModelProperty(value = "卡序列号")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "充值金额")
     private BigDecimal amount;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createTime;
+    private String createTime;
 
     @ApiModelProperty(value = "充值类型：0手动，1批量导入")
     private Integer rechargeType;

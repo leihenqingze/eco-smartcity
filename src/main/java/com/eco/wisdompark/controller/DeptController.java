@@ -54,6 +54,13 @@ public class DeptController {
         return ResponseData.OK(result);
     }
 
+    @RequestMapping(value = "/getDeptAll", method = RequestMethod.POST)
+    @ApiOperation(value = "获取全部的组织架构信息", httpMethod = "POST")
+    public ResponseData<List<DeptAllDto>> getDeptAll( ) {
+        List<DeptAllDto> result=deptService.getDeptAll();
+        return ResponseData.OK(result);
+    }
+
 
     @RequestMapping(value = "/getLevel2Dept", method = RequestMethod.POST)
     @ApiOperation(value = "查询组织架构二级", httpMethod = "POST")

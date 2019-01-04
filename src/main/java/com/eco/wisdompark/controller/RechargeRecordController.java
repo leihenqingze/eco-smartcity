@@ -9,6 +9,7 @@ import com.eco.wisdompark.service.RechargeRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +33,7 @@ public class RechargeRecordController {
 
     @RequestMapping(value = "/searchUserRechargeRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员充值记录", httpMethod = "POST")
-    public ResponseData searchUserRechargeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+    public ResponseData searchUserRechargeRecordDtos( @RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<RechargeRecordDto> result = rechargeRecordService.searchUserRechargeRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
     }

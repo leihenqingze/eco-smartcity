@@ -156,6 +156,7 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
             list.forEach(e -> {
                 SubsidyRecordDto dto = new SubsidyRecordDto();
                 BeanUtils.copyProperties(e, dto);
+                dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
                 dtoList.add(dto);
             });
             result.setRecords(dtoList);

@@ -1,7 +1,10 @@
 package com.eco.wisdompark.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.GetLevel1DeptDto;
@@ -21,6 +24,7 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,7 +64,7 @@ public class ConsumeRecordController {
                                                                   @Param("endTime") String endTime) {
 
         // 获取用户ID集合
-        List<Integer> userIdList = getUserIdListByConsumeIdentity(deptId,ConsumeIdentity.TB_STAFF,true);
+        List<Integer> userIdList = getUserIdListByConsumeIdentity(deptId, ConsumeIdentity.TB_STAFF,true);
 
         // 获取POS机编号集合
         List<String> posNumList = getPosNumList(posPositionId);
@@ -103,6 +107,14 @@ public class ConsumeRecordController {
 
         return ResponseData.OK();
     }
+
+    @RequestMapping(value = "/searchUserConsumeRecordDtos", method = RequestMethod.POST)
+    @ApiOperation(value = "查询人员消费记录", httpMethod = "POST")
+    public ResponseData<IPage<ConsumeRecordDto>> searchUserConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
+        IPage<ConsumeRecordDto> result=  consumeRecordService.searchUserConsumeRecordDtos(searchConsumeRecordDto);
+        return ResponseData.OK(result);
+    }
+
 
     private List<Integer> getUserIdListByConsumeIdentity(Integer deptId,ConsumeIdentity consumeIdentity,boolean isLevle1) {
 

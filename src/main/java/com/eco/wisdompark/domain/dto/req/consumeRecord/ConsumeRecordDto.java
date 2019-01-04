@@ -15,7 +15,7 @@ public class ConsumeRecordDto {
     private String cardId;
 
     @ApiModelProperty(value = "卡序列号（冗余字段）")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "用户ID")
     private Integer userId;
@@ -36,7 +36,7 @@ public class ConsumeRecordDto {
     private Integer diningType;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createTime;
+    private String createTime;
 
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;

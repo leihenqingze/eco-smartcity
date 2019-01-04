@@ -11,12 +11,13 @@ import java.time.LocalDateTime;
 @Data
 @ApiModel(value="CPU卡补助记录", description="CPU卡-补助记录表")
 public class SubsidyRecordDto {
+
     @ApiModelProperty(value = "卡ID")
-    private Integer cardId;
+    private String cardId;
 
     @ApiModelProperty(value = "卡序列号")
     @TableField("card_serialNo")
-    private String cardSerialno;
+    private String cardSerialNo;
 
     @ApiModelProperty(value = "用户ID")
     private Integer userId;
@@ -28,7 +29,7 @@ public class SubsidyRecordDto {
     private Integer type;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createTime;
+    private String createTime;
 
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;

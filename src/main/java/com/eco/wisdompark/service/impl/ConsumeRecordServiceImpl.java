@@ -56,6 +56,7 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             list.forEach(e->{
                 ConsumeRecordDto dto=new ConsumeRecordDto();
                 BeanUtils.copyProperties(e, dto);
+                dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
                 dtoList.add(dto);
             });
             result.setRecords(dtoList);

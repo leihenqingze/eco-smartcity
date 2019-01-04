@@ -37,7 +37,7 @@ public class SubsidyRecordController {
 
     @RequestMapping(value = "/searchUserSubsidyRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员补助记录", httpMethod = "POST")
-    public ResponseData<IPage<SubsidyRecordDto>> searchUserSubsidyRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+    public ResponseData<IPage<SubsidyRecordDto>> searchUserSubsidyRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<SubsidyRecordDto> result = subsidyRecordService.searchUserSubsidyRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
     }

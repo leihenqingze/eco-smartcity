@@ -11,6 +11,6 @@ public class LocalDateTimeUtils {
     }
     public static LocalDateTime localTime(String time){
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse("2017-09-28 17:07:05",df);
+        return LocalDateTime.parse(time,df);
     }
 }

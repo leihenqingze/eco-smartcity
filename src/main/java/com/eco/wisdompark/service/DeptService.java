@@ -3,7 +3,6 @@ package com.eco.wisdompark.service;
 import com.eco.wisdompark.domain.dto.req.dept.*;
 import com.eco.wisdompark.domain.model.Dept;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.eco.wisdompark.enums.ConsumeIdentity;
 
 import java.util.List;
 
@@ -49,6 +48,7 @@ public interface DeptService extends IService<Dept> {
      */
     public List<DeptDto> getLevel2Dept(AddLevel2DeptDto addLevel2DeptDto);
 
+
     /**
      * 删除组织架构
      *
@@ -62,5 +62,7 @@ public interface DeptService extends IService<Dept> {
      *
      * */
     public List<DeptAllDto> getDeptAll();
+
+    public List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto);
 
 }

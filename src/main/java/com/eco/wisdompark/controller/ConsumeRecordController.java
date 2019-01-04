@@ -4,10 +4,12 @@ package com.eco.wisdompark.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.GetLevel1DeptDto;
+import com.eco.wisdompark.domain.dto.req.dept.GetLevel2DeptDto;
 import com.eco.wisdompark.domain.dto.req.pos.SearchPosDto;
 import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
 import com.eco.wisdompark.domain.model.Pos;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -55,13 +59,17 @@ public class ConsumeRecordController {
     @Autowired
     private PosService posService;
 
+    private static final BigDecimal Tax_Rate = BigDecimal.valueOf(1.06);
+
 
     @RequestMapping(value = "/trainingStaffRecord", method = RequestMethod.GET)
     @ApiOperation(value = "训练局职工消费记录", httpMethod = "GET")
     public ResponseData<ConsomeRecordRespDto> trainingStaffRecord(@Param("deptId") Integer deptId,
                                                                   @Param("posPositionId") Integer posPositionId,
                                                                   @Param("startTime") String startTime,
-                                                                  @Param("endTime") String endTime) {
+                                                                  @Param("endTime") String endTime,
+                                                                  @Param("currentPage") Integer currentPage,
+                                                                  @Param("pageSize") Integer pageSize) {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(deptId, ConsumeIdentity.TB_STAFF,true);
@@ -69,8 +77,15 @@ public class ConsumeRecordController {
         // 获取POS机编号集合
         List<String> posNumList = getPosNumList(posPositionId);
 
+        FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
+        financeConsumeRecordDto.setUserIdList(userIdList);
+        financeConsumeRecordDto.setPosNumList(posNumList);
+        financeConsumeRecordDto.setStartTime(startTime);
+        financeConsumeRecordDto.setEndTime(endTime);
+        financeConsumeRecordDto.setCurrentPage(currentPage);
+        financeConsumeRecordDto.setPageSize(pageSize);
 
-        return ResponseData.OK();
+        return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
     @RequestMapping(value = "/notTrainingStaffRecord", method = RequestMethod.GET)
@@ -78,34 +93,62 @@ public class ConsumeRecordController {
     public ResponseData<ConsomeRecordRespDto> notTrainingStaffRecord(@Param("deptId") Integer deptId,
                                                                      @Param("consomeType") Integer consomeType,
                                                                      @Param("startTime") String startTime,
-                                                                     @Param("endTime") String endTime) {
+                                                                     @Param("endTime") String endTime,
+                                                                     @Param("currentPage") Integer currentPage,
+                                                                     @Param("pageSize") Integer pageSize) {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(deptId,ConsumeIdentity.TB_STAFF,true);
 
-        return ResponseData.OK();
+        FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
+        financeConsumeRecordDto.setUserIdList(userIdList);
+        financeConsumeRecordDto.setConsomeType(consomeType);
+        financeConsumeRecordDto.setStartTime(startTime);
+        financeConsumeRecordDto.setEndTime(endTime);
+        financeConsumeRecordDto.setCurrentPage(currentPage);
+        financeConsumeRecordDto.setPageSize(pageSize);
+
+        return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
     @RequestMapping(value = "/securityRecord", method = RequestMethod.GET)
     @ApiOperation(value = "保安消费记录", httpMethod = "GET")
     public ResponseData<ConsomeRecordRespDto> securityRecord(@Param("startTime") String startTime,
-                                                             @Param("endTime") String endTime) {
+                                                             @Param("endTime") String endTime,
+                                                             @Param("currentPage") Integer currentPage,
+                                                             @Param("pageSize") Integer pageSize) {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.PAC,false);
 
-        return ResponseData.OK();
+        FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
+        financeConsumeRecordDto.setUserIdList(userIdList);
+        financeConsumeRecordDto.setStartTime(startTime);
+        financeConsumeRecordDto.setEndTime(endTime);
+        financeConsumeRecordDto.setCurrentPage(currentPage);
+        financeConsumeRecordDto.setPageSize(pageSize);
+
+        return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
     @RequestMapping(value = "/cleaningRecord", method = RequestMethod.GET)
     @ApiOperation(value = "保洁消费记录", httpMethod = "GET")
     public ResponseData<ConsomeRecordRespDto> cleaningRecord(@Param("startTime") String startTime,
-                                                             @Param("endTime") String endTime) {
+                                                             @Param("endTime") String endTime,
+                                                             @Param("currentPage") Integer currentPage,
+                                                             @Param("pageSize") Integer pageSize) {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.GD,false);
 
-        return ResponseData.OK();
+        FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
+        financeConsumeRecordDto.setUserIdList(userIdList);
+        financeConsumeRecordDto.setStartTime(startTime);
+        financeConsumeRecordDto.setEndTime(endTime);
+        financeConsumeRecordDto.setCurrentPage(currentPage);
+        financeConsumeRecordDto.setPageSize(pageSize);
+
+        return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
     @RequestMapping(value = "/searchUserConsumeRecordDtos", method = RequestMethod.POST)
@@ -135,11 +178,10 @@ public class ConsumeRecordController {
         List<Integer> level2DeptIdList = Lists.newArrayList();
 
         if(!isLevle1){
-            AddLevel2DeptDto addLevel2DeptDto = new AddLevel2DeptDto();
-            addLevel2DeptDto.setId(ConsumeIdentity.PROPERTY.getCode());
-            addLevel2DeptDto.setConsumeIdentity(consumeIdentity.getCode());
+            GetLevel2DeptDto getLevel2DeptDto = new GetLevel2DeptDto();
+            getLevel2DeptDto.setConsumeIdentity(consumeIdentity.getCode());
 
-            List<DeptDto> level2DeptList = deptService.getLevel2Dept(addLevel2DeptDto);
+            List<DeptDto> level2DeptList = deptService.getLevel2Dept(getLevel2DeptDto);
 
             if(!CollectionUtils.isEmpty(level2DeptList)){
                 level2DeptIdList = Lists.transform(level2DeptList, new Function<DeptDto, Integer>() {
@@ -237,5 +279,35 @@ public class ConsumeRecordController {
         }
 
         return userIdList;
+    }
+
+    private ConsomeRecordRespDto getConsomeRecordRespDto(FinanceConsumeRecordDto financeConsumeRecordDto){
+
+        ConsomeRecordRespDto consomeRecordRespDto = new ConsomeRecordRespDto();
+        IPage<ConsumeRecordDto> consumeRecordDtoPage = consumeRecordService.searchFinanceConsumeRecordDtos(financeConsumeRecordDto);
+
+        BigDecimal currentPageAmount = BigDecimal.ZERO;
+        BigDecimal currentPageAfterTaxAmount = BigDecimal.ZERO;
+
+        if(consumeRecordDtoPage != null && !CollectionUtils.isEmpty(consumeRecordDtoPage.getRecords())){
+            List<ConsumeRecordDto> consumeRecordDtoList = consumeRecordDtoPage.getRecords();
+            for(ConsumeRecordDto consumeRecordDto : consumeRecordDtoList){
+                currentPageAmount = currentPageAmount.add(consumeRecordDto.getRechargeAmount()).add(consumeRecordDto.getSubsidyAmount());
+            }
+            currentPageAfterTaxAmount = currentPageAmount.divide(Tax_Rate);
+
+        }
+
+        BigDecimal totalAmount = consumeRecordService.totalConsomeRecordAmount(financeConsumeRecordDto);
+        BigDecimal totalAfterTaxAmount = totalAmount.divide(Tax_Rate);
+
+        consomeRecordRespDto.setConsumeRecordDtoPage(consumeRecordDtoPage);
+        consomeRecordRespDto.setCurrentPageAmount(currentPageAmount);
+        consomeRecordRespDto.setCurrentPageAfterTaxAmount(currentPageAfterTaxAmount);
+        consomeRecordRespDto.setTotalAmount(totalAmount);
+        consomeRecordRespDto.setTotalAfterTaxAmount(totalAfterTaxAmount);
+        consomeRecordRespDto.setConsumeRecordDtoPage(consumeRecordDtoPage);
+
+        return consomeRecordRespDto;
     }
 }

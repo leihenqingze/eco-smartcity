@@ -22,8 +22,8 @@ public class SysUserDto {
     private Integer sysUserDepartment;
 
     @ApiModelProperty(value = "当前页")
-    private  Integer currentPage;
+    private  Integer currentPage=0;
 
     @ApiModelProperty(value = "每页长度")
-    private Integer pageSize;
+    private Integer pageSize=20;
 }

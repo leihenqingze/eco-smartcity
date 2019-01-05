@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
  * @since 2018-12-28
  */
 @RestController
-@RequestMapping("/sys-user")
+@RequestMapping("api/sys-user")
 @Api(value = "系统用户管理API", description = "系统用户管理API")
 @Slf4j
 public class SysUserController {
@@ -36,9 +36,9 @@ public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
 
-    @RequestMapping(value = "/getSysUserList", method = RequestMethod.POST)
-    @ApiOperation(value = "分页查询系统用户", httpMethod = "POST")
-    public ResponseData<IPage<SysUser>> getSysUserList(@RequestBody SysUserDto sysUserDto) {
+    @RequestMapping(value = "/getSysUserList", method = RequestMethod.GET)
+    @ApiOperation(value = "分页查询系统用户", httpMethod = "GET")
+    public ResponseData<IPage<SysUser>> getSysUserList(SysUserDto sysUserDto) {
         log.debug(">>>>>getSysUserList,param is :{}", JSON.toJSONString(sysUserDto));
         IPage<SysUser> sysUserPage = sysUserService.getSysUserPage(sysUserDto);
         return ResponseData.OK(sysUserPage);
@@ -46,7 +46,7 @@ public class SysUserController {
 
     @RequestMapping(value = "/saveSysUser", method = RequestMethod.POST)
     @ApiOperation(value = "添加系统用户", httpMethod = "POST")
-    public ResponseData saveSysUser(@RequestBody SysUserDto sysUserDto) {
+    public ResponseData saveSysUser(SysUserDto sysUserDto) {
         log.debug(">>>>>saveSysUser,param is :{}", JSON.toJSONString(sysUserDto));
         if (sysUserDto == null) {
             return ResponseData.ERROR("保存失败!");
@@ -64,10 +64,10 @@ public class SysUserController {
     @ApiOperation(value = "修改系统用户密码", httpMethod = "POST")
     public ResponseData updateSysUserPass(HttpServletRequest request,
                                           @RequestParam(value = "oldPassWord", required = false) String oldPassWord,
-                                          @RequestParam(value = "confirmOldPassWord", required = false) String confirmOldPassWord,
-                                          @RequestParam(value = "newPassWord", required = false) String newPassWord) {
-        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmOldPassWord:{},newPassWord:{}", oldPassWord, confirmOldPassWord, newPassWord);
-        if (!StringUtils.trim(oldPassWord).equals(StringUtils.trim(confirmOldPassWord))) {
+                                          @RequestParam(value = "newPassWord", required = false) String newPassWord,
+                                          @RequestParam(value = "confirmNewPassWord", required = false) String confirmNewPassWord) {
+        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmNewPassWord:{},newPassWord:{}", oldPassWord, confirmNewPassWord, newPassWord);
+        if (!StringUtils.trim(newPassWord).equals(StringUtils.trim(confirmNewPassWord))) {
             return ResponseData.ERROR("两次密码输入不一致!");
         }
         SysUser sysUser = (SysUser) request.getSession().getAttribute("Authentication");

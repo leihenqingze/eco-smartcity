@@ -23,4 +23,8 @@ public class CpuCardBaseDto {
     @ApiModelProperty(value = "组织架构Id")
     private Integer deptId;
 
+    @ApiModelProperty(value = "组织名称")
+    private String deptName;
+
+
 }

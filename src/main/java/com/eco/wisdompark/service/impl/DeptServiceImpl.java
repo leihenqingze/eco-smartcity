@@ -146,6 +146,19 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         return result;
     }
 
+    @Override
+    public String getDeptName(Integer id) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (id != null && id > 0) {
+            Dept deptl2 = baseMapper.selectById(id);
+            if(deptl2!=null && deptl2.getDeptUpId()>0 ){
+                Dept deptl1 = baseMapper.selectById(deptl2.getDeptUpId());
+                stringBuffer.append(deptl1.getDeptName()+"/"+deptl2.getDeptName());
+            }
+        }
+        return stringBuffer.toString();
+    }
+
     private Integer isExists(String deptName) {
         QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
         wrapper.eq("dept_name", deptName);

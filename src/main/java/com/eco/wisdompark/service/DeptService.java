@@ -63,4 +63,9 @@ public interface DeptService extends IService<Dept> {
      * */
     public List<DeptAllDto> getDeptAll();
 
+    /**
+     * 很据二级Id获取 一级名称+二级名称
+     * */
+    String getDeptName(Integer id);
+
 }

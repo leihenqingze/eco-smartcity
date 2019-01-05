@@ -39,7 +39,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public IPage<SysUser> getSysUserPage(SysUserDto sysUserDto) {
 
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
-        if (sysUserDto.getSysUserDepartment() != null && sysUserDto.getSysUserDepartment() > 0) {
+        if(sysUserDto.getId() != null){
+            wrapper.eq("id", sysUserDto.getId());
+        }
+        if (sysUserDto.getSysUserDepartment() != null) {
             wrapper.eq("sys_user_department", sysUserDto.getSysUserDepartment());
         }
         if (StringUtils.isNotBlank(sysUserDto.getSysUserName())) {

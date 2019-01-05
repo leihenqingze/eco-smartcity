@@ -3,9 +3,7 @@ package com.eco.wisdompark.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.*;
 import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.GetLevel1DeptDto;
@@ -23,7 +21,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,91 +59,75 @@ public class ConsumeRecordController {
     private static final BigDecimal Tax_Rate = BigDecimal.valueOf(1.06);
 
 
-    @RequestMapping(value = "/trainingStaffRecord", method = RequestMethod.GET)
-    @ApiOperation(value = "训练局职工消费记录", httpMethod = "GET")
-    public ResponseData<ConsomeRecordRespDto> trainingStaffRecord(@Param("deptId") Integer deptId,
-                                                                  @Param("posPositionId") Integer posPositionId,
-                                                                  @Param("startTime") String startTime,
-                                                                  @Param("endTime") String endTime,
-                                                                  @Param("currentPage") Integer currentPage,
-                                                                  @Param("pageSize") Integer pageSize) {
+    @RequestMapping(value = "/trainingStaffRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "训练局职工消费记录", httpMethod = "POST")
+    public ResponseData<ConsomeRecordRespDto> trainingStaffRecord(@RequestBody TrainingStaffConsumeRecordDto trainingStaffConsumeRecordDto) {
 
         // 获取用户ID集合
-        List<Integer> userIdList = getUserIdListByConsumeIdentity(deptId, ConsumeIdentity.TB_STAFF,true);
+        List<Integer> userIdList = getUserIdListByConsumeIdentity(trainingStaffConsumeRecordDto.getDeptId(), ConsumeIdentity.TB_STAFF,true);
 
         // 获取POS机编号集合
-        List<String> posNumList = getPosNumList(posPositionId);
+        List<String> posNumList = getPosNumList(trainingStaffConsumeRecordDto.getPosPositionId());
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
         financeConsumeRecordDto.setPosNumList(posNumList);
-        financeConsumeRecordDto.setStartTime(startTime);
-        financeConsumeRecordDto.setEndTime(endTime);
-        financeConsumeRecordDto.setCurrentPage(currentPage);
-        financeConsumeRecordDto.setPageSize(pageSize);
+        financeConsumeRecordDto.setStartTime(trainingStaffConsumeRecordDto.getStartTime());
+        financeConsumeRecordDto.setEndTime(trainingStaffConsumeRecordDto.getEndTime());
+        financeConsumeRecordDto.setCurrentPage(trainingStaffConsumeRecordDto.getCurrentPage());
+        financeConsumeRecordDto.setPageSize(trainingStaffConsumeRecordDto.getPageSize());
 
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
-    @RequestMapping(value = "/notTrainingStaffRecord", method = RequestMethod.GET)
-    @ApiOperation(value = "非训练局职工消费记录", httpMethod = "GET")
-    public ResponseData<ConsomeRecordRespDto> notTrainingStaffRecord(@Param("deptId") Integer deptId,
-                                                                     @Param("consomeType") Integer consomeType,
-                                                                     @Param("startTime") String startTime,
-                                                                     @Param("endTime") String endTime,
-                                                                     @Param("currentPage") Integer currentPage,
-                                                                     @Param("pageSize") Integer pageSize) {
+    @RequestMapping(value = "/notTrainingStaffRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "非训练局职工消费记录", httpMethod = "POST")
+    public ResponseData<ConsomeRecordRespDto> notTrainingStaffRecord(@RequestBody NotTrainingStaffConsumeRecordDto notTrainingStaffConsumeRecordDto) {
 
         // 获取用户ID集合
-        List<Integer> userIdList = getUserIdListByConsumeIdentity(deptId,ConsumeIdentity.TB_STAFF,true);
+        List<Integer> userIdList = getUserIdListByConsumeIdentity(notTrainingStaffConsumeRecordDto.getDeptId(),ConsumeIdentity.TB_STAFF,true);
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
-        financeConsumeRecordDto.setConsomeType(consomeType);
-        financeConsumeRecordDto.setStartTime(startTime);
-        financeConsumeRecordDto.setEndTime(endTime);
-        financeConsumeRecordDto.setCurrentPage(currentPage);
-        financeConsumeRecordDto.setPageSize(pageSize);
+        financeConsumeRecordDto.setConsomeType(notTrainingStaffConsumeRecordDto.getConsomeType());
+        financeConsumeRecordDto.setStartTime(notTrainingStaffConsumeRecordDto.getStartTime());
+        financeConsumeRecordDto.setEndTime(notTrainingStaffConsumeRecordDto.getEndTime());
+        financeConsumeRecordDto.setCurrentPage(notTrainingStaffConsumeRecordDto.getCurrentPage());
+        financeConsumeRecordDto.setPageSize(notTrainingStaffConsumeRecordDto.getPageSize());
 
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
-    @RequestMapping(value = "/securityRecord", method = RequestMethod.GET)
-    @ApiOperation(value = "保安消费记录", httpMethod = "GET")
-    public ResponseData<ConsomeRecordRespDto> securityRecord(@Param("startTime") String startTime,
-                                                             @Param("endTime") String endTime,
-                                                             @Param("currentPage") Integer currentPage,
-                                                             @Param("pageSize") Integer pageSize) {
+    @RequestMapping(value = "/securityRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "保安消费记录", httpMethod = "POST")
+    public ResponseData<ConsomeRecordRespDto> securityRecord(@RequestBody PropertyConsumeRecordDto propertyConsumeRecordDto) {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.PAC,false);
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
-        financeConsumeRecordDto.setStartTime(startTime);
-        financeConsumeRecordDto.setEndTime(endTime);
-        financeConsumeRecordDto.setCurrentPage(currentPage);
-        financeConsumeRecordDto.setPageSize(pageSize);
+        financeConsumeRecordDto.setStartTime(propertyConsumeRecordDto.getStartTime());
+        financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
+        financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
+        financeConsumeRecordDto.setPageSize(propertyConsumeRecordDto.getPageSize());
 
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
-    @RequestMapping(value = "/cleaningRecord", method = RequestMethod.GET)
-    @ApiOperation(value = "保洁消费记录", httpMethod = "GET")
-    public ResponseData<ConsomeRecordRespDto> cleaningRecord(@Param("startTime") String startTime,
-                                                             @Param("endTime") String endTime,
-                                                             @Param("currentPage") Integer currentPage,
-                                                             @Param("pageSize") Integer pageSize) {
+    @RequestMapping(value = "/cleaningRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "保洁消费记录", httpMethod = "POST")
+    public ResponseData<ConsomeRecordRespDto> cleaningRecord(@RequestBody PropertyConsumeRecordDto propertyConsumeRecordDto) {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.GD,false);
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
-        financeConsumeRecordDto.setStartTime(startTime);
-        financeConsumeRecordDto.setEndTime(endTime);
-        financeConsumeRecordDto.setCurrentPage(currentPage);
-        financeConsumeRecordDto.setPageSize(pageSize);
+        financeConsumeRecordDto.setStartTime(propertyConsumeRecordDto.getStartTime());
+        financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
+        financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
+        financeConsumeRecordDto.setPageSize(propertyConsumeRecordDto.getPageSize());
 
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }

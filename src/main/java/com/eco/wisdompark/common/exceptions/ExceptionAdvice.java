@@ -37,6 +37,10 @@ public class ExceptionAdvice {
     @ResponseBody
     public ResponseData handleException(Throwable e) {
         log.error("[其他]", e);
+        if (e.getMessage().indexOf("Maximum upload size exceeded") != -1){
+            log.error("[上传的文件过大]");
+            return handleAjaxRequestException("上传的文件过大，请拆分后上传", 500);
+        }
         return handleAjaxRequestException("系统内部异常,请联系管理员", 500);
     }
 

@@ -43,6 +43,7 @@ public class ResponseData<T> implements Serializable {
     public static final int STATUS_CODE_605 = 605; // 文件格式不正确
     public static final int STATUS_CODE_606 = 606; // 文件读取异常
     public static final int STATUS_CODE_607 = 607; // 文件code不能为空
+    public static final int STATUS_CODE_608 = 608; // 批量充值最大限制200条
 
     public static final String STATUS_MESSAGE_200 = "OK";
     public static final String STATUS_MESSAGE_400 = "Error";

@@ -49,6 +49,7 @@ public interface DeptService extends IService<Dept> {
      */
     public List<DeptDto> getLevel2Dept(AddLevel2DeptDto addLevel2DeptDto);
 
+
     /**
      * 删除组织架构
      *
@@ -67,5 +68,7 @@ public interface DeptService extends IService<Dept> {
      * 很据二级Id获取 一级名称+二级名称
      * */
     String getDeptName(Integer id);
+
+    public List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto);
 
 }

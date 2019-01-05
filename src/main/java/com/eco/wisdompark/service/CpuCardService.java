@@ -73,10 +73,10 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 卡片批量充值接口
-     * @param file
+     * @param fileCode
      * @return
      */
-    ResponseData rechargeBatch(MultipartFile file);
+    boolean rechargeBatch(String fileCode);
 
     /**
      * 查询CPU卡片信息 by cardId
@@ -112,5 +112,8 @@ public interface CpuCardService extends IService<CpuCard> {
      * @param cpuCard
      */
     int updateCpuCard(CpuCard cpuCard);
+
+
+    RespRechargeBatchDataDto fileUpload(MultipartFile file);
 
 }

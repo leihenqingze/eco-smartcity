@@ -9,6 +9,7 @@ import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespActiveCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
+import com.eco.wisdompark.domain.dto.resp.RespRechargeBatchDataDto;
 import com.eco.wisdompark.service.CpuCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,19 +62,19 @@ public class CpuCardController {
         return ResponseData.OK(rechargeResult);
     }
 
-//    @RequestMapping(value = "/recharge/batch/upload", method = RequestMethod.POST)
-//    @ApiOperation(value = "批量充值接口", httpMethod = "POST")
-//    public ResponseData rechargeBatch(@RequestParam("file") MultipartFile file) {
-//        Boolean rechargeResult = cpuCardService.rechargeBatch(file);
-//        return ResponseData.OK();
-//    }
-//
-//    @RequestMapping(value = "/recharge/batch", method = RequestMethod.POST)
-//    @ApiOperation(value = "批量充值接口", httpMethod = "POST")
-//    public ResponseData<Boolean> rechargeBatch(@RequestParam("file") MultipartFile file) {
-////        Boolean rechargeResult = cpuCardService.rechargeBatch(file);
-//        return ResponseData.OK();
-//    }
+    @RequestMapping(value = "/recharge/batch/fileUpload", method = RequestMethod.POST)
+    @ApiOperation(value = "批量充值Excel文件上传接口", httpMethod = "POST")
+    public ResponseData<RespRechargeBatchDataDto> fileUpload(@RequestParam("file") MultipartFile file) {
+        RespRechargeBatchDataDto respRechargeBatchDataDto = cpuCardService.fileUpload(file);
+        return ResponseData.OK(respRechargeBatchDataDto);
+    }
+
+    @RequestMapping(value = "/recharge/batch", method = RequestMethod.POST)
+    @ApiOperation(value = "批量充值确认接口", httpMethod = "POST")
+    public ResponseData<Boolean> rechargeBatch(@RequestParam String fileCode) {
+        Boolean rechargeResult = cpuCardService.rechargeBatch(fileCode);
+        return ResponseData.OK(rechargeResult);
+    }
 
 
 }

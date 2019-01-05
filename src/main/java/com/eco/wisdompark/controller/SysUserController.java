@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
  * @since 2018-12-28
  */
 @RestController
-@RequestMapping("/sys-user")
+@RequestMapping("api/sys-user")
 @Api(value = "系统用户管理API", description = "系统用户管理API")
 @Slf4j
 public class SysUserController {

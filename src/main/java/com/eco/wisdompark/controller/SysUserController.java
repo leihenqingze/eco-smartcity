@@ -36,9 +36,9 @@ public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
 
-    @RequestMapping(value = "/getSysUserList", method = RequestMethod.POST)
-    @ApiOperation(value = "分页查询系统用户", httpMethod = "POST")
-    public ResponseData<IPage<SysUser>> getSysUserList(@RequestBody SysUserDto sysUserDto) {
+    @RequestMapping(value = "/getSysUserList", method = RequestMethod.GET)
+    @ApiOperation(value = "分页查询系统用户", httpMethod = "GET")
+    public ResponseData<IPage<SysUser>> getSysUserList(SysUserDto sysUserDto) {
         log.debug(">>>>>getSysUserList,param is :{}", JSON.toJSONString(sysUserDto));
         IPage<SysUser> sysUserPage = sysUserService.getSysUserPage(sysUserDto);
         return ResponseData.OK(sysUserPage);
@@ -46,7 +46,7 @@ public class SysUserController {
 
     @RequestMapping(value = "/saveSysUser", method = RequestMethod.POST)
     @ApiOperation(value = "添加系统用户", httpMethod = "POST")
-    public ResponseData saveSysUser(@RequestBody SysUserDto sysUserDto) {
+    public ResponseData saveSysUser(SysUserDto sysUserDto) {
         log.debug(">>>>>saveSysUser,param is :{}", JSON.toJSONString(sysUserDto));
         if (sysUserDto == null) {
             return ResponseData.ERROR("保存失败!");

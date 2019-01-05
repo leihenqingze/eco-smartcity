@@ -5,7 +5,10 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.RegexUtils;
+import com.eco.wisdompark.domain.dto.req.sysUser.SaveSysUserDto;
 import com.eco.wisdompark.domain.dto.req.sysUser.SysUserDto;
+import com.eco.wisdompark.domain.dto.req.sysUser.SysUserLoginDto;
+import com.eco.wisdompark.domain.dto.req.sysUser.UpdateUserPassDto;
 import com.eco.wisdompark.domain.model.SysUser;
 import com.eco.wisdompark.service.SysUserService;
 import io.swagger.annotations.Api;
@@ -36,9 +39,9 @@ public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
 
-    @RequestMapping(value = "/getSysUserList", method = RequestMethod.GET)
-    @ApiOperation(value = "分页查询系统用户", httpMethod = "GET")
-    public ResponseData<IPage<SysUser>> getSysUserList(SysUserDto sysUserDto) {
+    @RequestMapping(value = "/getSysUserList", method = RequestMethod.POST)
+    @ApiOperation(value = "分页查询系统用户", httpMethod = "POST")
+    public ResponseData<IPage<SysUser>> getSysUserList(@RequestBody SysUserDto sysUserDto) {
         log.debug(">>>>>getSysUserList,param is :{}", JSON.toJSONString(sysUserDto));
         IPage<SysUser> sysUserPage = sysUserService.getSysUserPage(sysUserDto);
         return ResponseData.OK(sysUserPage);
@@ -46,13 +49,13 @@ public class SysUserController {
 
     @RequestMapping(value = "/saveSysUser", method = RequestMethod.POST)
     @ApiOperation(value = "添加系统用户", httpMethod = "POST")
-    public ResponseData saveSysUser(SysUserDto sysUserDto) {
-        log.debug(">>>>>saveSysUser,param is :{}", JSON.toJSONString(sysUserDto));
-        if (sysUserDto == null) {
+    public ResponseData saveSysUser(@RequestBody SaveSysUserDto saveSysUserDto) {
+        log.debug(">>>>>saveSysUser,param is :{}", JSON.toJSONString(saveSysUserDto));
+        if (saveSysUserDto == null) {
             return ResponseData.ERROR("保存失败!");
         }
         SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(sysUserDto, sysUser);
+        BeanUtils.copyProperties(saveSysUserDto, sysUser);
         int result = sysUserService.saveSysUser(sysUser);
         if (result <= 0) {
             return ResponseData.ERROR("保存失败!");
@@ -62,33 +65,32 @@ public class SysUserController {
 
     @RequestMapping(value = "/updateSysUserPass", method = RequestMethod.POST)
     @ApiOperation(value = "修改系统用户密码", httpMethod = "POST")
-    public ResponseData updateSysUserPass(HttpServletRequest request,
-                                          @RequestParam(value = "oldPassWord", required = false) String oldPassWord,
-                                          @RequestParam(value = "newPassWord", required = false) String newPassWord,
-                                          @RequestParam(value = "confirmNewPassWord", required = false) String confirmNewPassWord) {
-        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmNewPassWord:{},newPassWord:{}", oldPassWord, confirmNewPassWord, newPassWord);
-        if (!StringUtils.trim(newPassWord).equals(StringUtils.trim(confirmNewPassWord))) {
+    public ResponseData updateSysUserPass(@RequestBody UpdateUserPassDto updateUserPassDto,HttpServletRequest request) {
+        log.debug(">>>>>updateSysUserPass,updateUserPassDto:{}", JSON.toJSONString(updateUserPassDto));
+        if (!StringUtils.trim(updateUserPassDto.getNewPassWord()).equals(StringUtils.trim(updateUserPassDto.getConfirmNewPassWord()))) {
             return ResponseData.ERROR("两次密码输入不一致!");
         }
         SysUser sysUser = (SysUser) request.getSession().getAttribute("Authentication");
-        int result = sysUserService.updateSysUserPass(sysUser.getId(), oldPassWord, newPassWord);
+        if(sysUser == null){
+            return ResponseData.ERROR(ResponseData.STATUS_CODE_110,"登录已失效!");
+        }
+        int result = sysUserService.updateSysUserPass(sysUser.getId(), updateUserPassDto.getOldPassWord(), updateUserPassDto.getNewPassWord());
         if (result <= 0) {
             return ResponseData.ERROR("修改密码失败!");
         }
         return ResponseData.OK();
     }
 
-    @RequestMapping(value = "sysUserLogin", method = RequestMethod.GET)
-    @ApiOperation(value = "系统用户登录", httpMethod = "GET")
+    @RequestMapping(value = "sysUserLogin", method = RequestMethod.POST)
+    @ApiOperation(value = "系统用户登录", httpMethod = "POST")
     public ResponseData sysUserLogin(HttpServletRequest request,
-                                     @RequestParam(value = "keyWord", required = false) String keyWord,
-                                     @RequestParam(value = "passWord", required = false) String passWord) {
-        log.debug(">>>>>sysUserLogin,keyWord:{},passWord:{},newPassWord:{}", keyWord, passWord);
+                                     @RequestBody SysUserLoginDto sysUserLoginDto) {
+        log.debug(">>>>>sysUserLogin,sysUserLoginDto:{}", JSON.toJSONString(sysUserLoginDto));
         SysUser sysUser = null;
-        if (RegexUtils.isPhone(StringUtils.trim(keyWord))) {
-            sysUser = sysUserService.phoneLogin(keyWord, passWord);
+        if (RegexUtils.isPhone(StringUtils.trim(sysUserLoginDto.getKeyword()))) {
+            sysUser = sysUserService.phoneLogin(sysUserLoginDto.getKeyword(), sysUserLoginDto.getPassWord());
         } else {
-            sysUser = sysUserService.userNameLogin(keyWord, passWord);
+            sysUser = sysUserService.userNameLogin(sysUserLoginDto.getKeyword(), sysUserLoginDto.getPassWord());
         }
         if (sysUser == null) {
             return ResponseData.ERROR("登录失败!");

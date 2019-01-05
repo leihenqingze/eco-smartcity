@@ -16,11 +16,8 @@ import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.*;
 import com.eco.wisdompark.mapper.CpuCardMapper;
-import com.eco.wisdompark.service.ChangeAmountService;
-import com.eco.wisdompark.service.CpuCardService;
+import com.eco.wisdompark.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.eco.wisdompark.service.RechargeRecordService;
-import com.eco.wisdompark.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -61,6 +58,9 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Autowired
     private CpuCardMapper cpuCardMapper;
+
+    @Autowired
+    private DeptService deptService;
 
     private static final String SUFFIX_2003 = ".xls";
     private static final String SUFFIX_2007 = ".xlsx";
@@ -123,6 +123,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         if (!StringUtils.isEmpty(cardId)){
             respQueryCardInfoDto = queryCardInfoByCardId(cardId);
             if (respQueryCardInfoDto != null){
+                respQueryCardInfoDto.setDeptName(deptService.getDeptName(respQueryCardInfoDto.getDeptId()));
                 return respQueryCardInfoDto;
             }
         }

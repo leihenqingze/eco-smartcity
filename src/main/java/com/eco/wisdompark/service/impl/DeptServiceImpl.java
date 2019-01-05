@@ -147,6 +147,19 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
     @Override
+    public String getDeptName(Integer id) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (id != null && id > 0) {
+            Dept deptl2 = baseMapper.selectById(id);
+            if(deptl2!=null && deptl2.getDeptUpId()>0 ){
+                Dept deptl1 = baseMapper.selectById(deptl2.getDeptUpId());
+                stringBuffer.append(deptl1.getDeptName()+"/"+deptl2.getDeptName());
+            }
+        }
+        return stringBuffer.toString();
+    }
+
+    @Override
     public List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto) {
         QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
         if (StringUtils.isNotBlank(getLevel2DeptDto.getDeptName())) {

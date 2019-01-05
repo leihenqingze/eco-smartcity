@@ -64,10 +64,10 @@ public class SysUserController {
     @ApiOperation(value = "修改系统用户密码", httpMethod = "POST")
     public ResponseData updateSysUserPass(HttpServletRequest request,
                                           @RequestParam(value = "oldPassWord", required = false) String oldPassWord,
-                                          @RequestParam(value = "confirmOldPassWord", required = false) String confirmOldPassWord,
-                                          @RequestParam(value = "newPassWord", required = false) String newPassWord) {
-        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmOldPassWord:{},newPassWord:{}", oldPassWord, confirmOldPassWord, newPassWord);
-        if (!StringUtils.trim(oldPassWord).equals(StringUtils.trim(confirmOldPassWord))) {
+                                          @RequestParam(value = "newPassWord", required = false) String newPassWord,
+                                          @RequestParam(value = "confirmNewPassWord", required = false) String confirmNewPassWord) {
+        log.debug(">>>>>updateSysUserPass,oldPassWord:{},confirmNewPassWord:{},newPassWord:{}", oldPassWord, confirmNewPassWord, newPassWord);
+        if (!StringUtils.trim(newPassWord).equals(StringUtils.trim(confirmNewPassWord))) {
             return ResponseData.ERROR("两次密码输入不一致!");
         }
         SysUser sysUser = (SysUser) request.getSession().getAttribute("Authentication");

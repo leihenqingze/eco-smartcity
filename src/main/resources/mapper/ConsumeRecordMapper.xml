@@ -3,7 +3,7 @@
 <mapper namespace="com.eco.wisdompark.mapper.ConsumeRecordMapper">
 
     <select id="totalConsomeRecordRechargeAmount" resultType="BigDecimal" parameterType="com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto">
-        select sum(recharge_amount) as rechargeAmount from tb_consume_record where 1==1
+        select sum(recharge_amount) as rechargeAmount from tb_consume_record where 1=1
         <if test="userIdList !=null and userIdList.size!=0">
             and user_id in (
             <foreach collection="userIdList" item="item" index="index" separator=",">
@@ -30,7 +30,7 @@
     </select>
 
     <select id="totalConsomeRecordSubsidyAmount" resultType="BigDecimal" parameterType="com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto">
-        select sum(subsidy_amount) as subsidyAmount from tb_consume_record where 1==1
+        select sum(subsidy_amount) as subsidyAmount from tb_consume_record where 1=1
         <if test="userIdList !=null and userIdList.size!=0">
             and user_id in (
             <foreach collection="userIdList" item="item" index="index" separator=",">

@@ -61,6 +61,13 @@ public class DeptController {
         return ResponseData.OK(result);
     }
 
+    @RequestMapping(value = "/getDeptAllByConsumeIdentity", method = RequestMethod.POST)
+    @ApiOperation(value = "根据消费类型获取全部的组织架构信息", httpMethod = "POST")
+    public ResponseData<List<DeptAllDto>> getDeptAllByConsumeIdentity(@RequestBody GetLevel1DeptByIdentityDto getLevel1DeptByIdentityDto) {
+        List<DeptAllDto> result=deptService.getDeptAllByConsumeIdentity(getLevel1DeptByIdentityDto);
+        return ResponseData.OK(result);
+    }
+
 
     @RequestMapping(value = "/getLevel2Dept", method = RequestMethod.POST)
     @ApiOperation(value = "查询组织架构二级", httpMethod = "POST")

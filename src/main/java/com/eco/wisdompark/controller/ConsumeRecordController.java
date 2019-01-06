@@ -2,6 +2,7 @@ package com.eco.wisdompark.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.*;
 import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
@@ -66,6 +67,10 @@ public class ConsumeRecordController {
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(trainingStaffConsumeRecordDto.getDeptId(), ConsumeIdentity.TB_STAFF,true);
 
+        if(CollectionUtils.isEmpty(userIdList)){
+            return ResponseData.OK(getEmptyConsomerRecordResp());
+        }
+
         // 获取POS机编号集合
         List<String> posNumList = getPosNumList(trainingStaffConsumeRecordDto.getPosPositionId());
 
@@ -87,6 +92,10 @@ public class ConsumeRecordController {
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(notTrainingStaffConsumeRecordDto.getDeptId(),ConsumeIdentity.TB_STAFF,true);
 
+        if(CollectionUtils.isEmpty(userIdList)){
+            return ResponseData.OK(getEmptyConsomerRecordResp());
+        }
+
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
         financeConsumeRecordDto.setConsomeType(notTrainingStaffConsumeRecordDto.getConsomeType());
@@ -105,6 +114,10 @@ public class ConsumeRecordController {
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.PAC,false);
 
+        if(CollectionUtils.isEmpty(userIdList)){
+            return ResponseData.OK(getEmptyConsomerRecordResp());
+        }
+
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
         financeConsumeRecordDto.setStartTime(propertyConsumeRecordDto.getStartTime());
@@ -121,6 +134,10 @@ public class ConsumeRecordController {
 
         // 获取用户ID集合
         List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.GD,false);
+
+        if(CollectionUtils.isEmpty(userIdList)){
+            return ResponseData.OK(getEmptyConsomerRecordResp());
+        }
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
@@ -275,12 +292,12 @@ public class ConsumeRecordController {
             for(ConsumeRecordDto consumeRecordDto : consumeRecordDtoList){
                 currentPageAmount = currentPageAmount.add(consumeRecordDto.getRechargeAmount()).add(consumeRecordDto.getSubsidyAmount());
             }
-            currentPageAfterTaxAmount = currentPageAmount.divide(Tax_Rate);
+            currentPageAfterTaxAmount = currentPageAmount.divide(Tax_Rate,BigDecimal.ROUND_HALF_UP);
 
         }
 
         BigDecimal totalAmount = consumeRecordService.totalConsomeRecordAmount(financeConsumeRecordDto);
-        BigDecimal totalAfterTaxAmount = totalAmount.divide(Tax_Rate);
+        BigDecimal totalAfterTaxAmount = totalAmount.divide(Tax_Rate,BigDecimal.ROUND_HALF_UP);
 
         consomeRecordRespDto.setConsumeRecordDtoPage(consumeRecordDtoPage);
         consomeRecordRespDto.setCurrentPageAmount(currentPageAmount);
@@ -289,6 +306,12 @@ public class ConsumeRecordController {
         consomeRecordRespDto.setTotalAfterTaxAmount(totalAfterTaxAmount);
         consomeRecordRespDto.setConsumeRecordDtoPage(consumeRecordDtoPage);
 
+        return consomeRecordRespDto;
+    }
+
+    private ConsomeRecordRespDto getEmptyConsomerRecordResp(){
+        ConsomeRecordRespDto consomeRecordRespDto = new ConsomeRecordRespDto();
+        consomeRecordRespDto.setConsumeRecordDtoPage(new Page<>());
         return consomeRecordRespDto;
     }
 }

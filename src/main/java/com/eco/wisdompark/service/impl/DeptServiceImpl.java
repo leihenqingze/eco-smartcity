@@ -164,6 +164,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto) {
         QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
+        wrapper.gt("dept_up_id", 0);
         if (StringUtils.isNotBlank(getLevel2DeptDto.getDeptName())) {
             wrapper.like("dept_name", getLevel2DeptDto.getDeptName());
         }
@@ -178,7 +179,6 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public List<DeptAllDto> getDeptAllByConsumeIdentity(GetLevel1DeptByIdentityDto getLevel1DeptByIdentityDto) {
         List<DeptAllDto> result=new ArrayList<>();
         QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
-        wrapper.eq("dept_up_id", 0);
         if(getLevel1DeptByIdentityDto.getConsumeIdentity() != null){
             wrapper.eq("consume_identity",getLevel1DeptByIdentityDto.getConsumeIdentity());
         }

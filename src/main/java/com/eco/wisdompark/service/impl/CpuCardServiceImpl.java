@@ -36,9 +36,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -177,16 +175,23 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             log.error("fileUpload file isEmpty...");
             return null;
         }
+        boolean checkResult = checkExcelSize(file);
+        if (!checkResult){
+            log.error("fileUpload limit 200... ERROR");
+            throw new WisdomParkException(ResponseData.STATUS_CODE_608, "批量充值Excel文件单次限制200条");
+        }
+
         String fileName = file.getOriginalFilename();
         int size = (int) file.getSize();
         log.info("fileUpload originalFileName:{}, size:{}" , fileName, size);
-        if (StringUtils.isEmpty(UPLOAD_FILE_PATH)){
-            UPLOAD_FILE_PATH = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "file" + File.separator + "recharge" + File.separator + LocalDate.now() + File.separator;
-            log.info("fileUpload path not config, use default:{}", UPLOAD_FILE_PATH );
+        String uploadPath = UPLOAD_FILE_PATH;
+        if (StringUtils.isEmpty(uploadPath)){
+            uploadPath = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "file" + File.separator + "recharge" + File.separator + LocalDate.now() + File.separator;
+            log.info("fileUpload path not config, use default:{}", uploadPath );
         }
         // 新文件名时间戳
         String newFileName = "recharge_" + System.currentTimeMillis() + SUFFIX_2007;
-        File newFile = new File(UPLOAD_FILE_PATH + newFileName);
+        File newFile = new File(uploadPath + newFileName);
         // 判断文件父目录是否存在
         if(!newFile.getParentFile().exists()){
             newFile.getParentFile().mkdirs();
@@ -209,6 +214,38 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     }
 
 
+    /**
+     * 校验Excel条数 每次上传不能大于200条
+     * @param file
+     * @return
+     */
+    private boolean checkExcelSize(MultipartFile file){
+        //获取文件的名字
+        String originalFilename = file.getOriginalFilename();
+        Workbook workbook = null;
+        try {
+            if (originalFilename.endsWith(SUFFIX_2003)) {
+                workbook = new HSSFWorkbook(file.getInputStream());
+            } else if (originalFilename.endsWith(SUFFIX_2007)) {
+                workbook = new XSSFWorkbook(file.getInputStream());
+            } else {
+                throw new WisdomParkException(ResponseData.STATUS_CODE_605, "文件格式不正确");
+            }
+            Sheet sheet = workbook.getSheetAt(0);
+            int rows = sheet.getLastRowNum();
+            if (rows > 200){
+                log.info("checkExcelSize Excel rows:{} > 200", rows);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("readExcel fileName:{}, Exception...", originalFilename);
+            e.printStackTrace();
+            throw new WisdomParkException(ResponseData.STATUS_CODE_606, "文件读取异常");
+        }
+        return true;
+    }
+
+
     private void fileUploadRetData(List<BatchRechargeDataDto> batchRechargeDataDtoList,
                                                          RespRechargeBatchDataDto respRechargeBatchDataDto){
         if (respRechargeBatchDataDto == null){
@@ -216,6 +253,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         }
 
         List<BatchRechargeDataDto> newBatchRechargeDataDtoList = new ArrayList<>();
+        List<BatchRechargeDataDto> infoErrorDtoList = new ArrayList<>();
         if (CollectionUtils.isEmpty(batchRechargeDataDtoList)){
             log.error("fileUploadRetData source batchRechargeDataDtoList isEmpty...");
             respRechargeBatchDataDto.setBatchRechargeDataDtoList(newBatchRechargeDataDtoList);
@@ -233,11 +271,14 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 batchRechargeDataDto.setDeptId(user.getDeptId());
                 batchRechargeDataDto.setUserCardNum(IdCardUtils.idCardHidden(user.getUserCardNum()));
                 newBatchRechargeDataDtoList.add(batchRechargeDataDto);
+            }else {
+                infoErrorDtoList.add(batchRechargeDataDto);
             }
         });
         BigDecimal totalAmt = batchRechargeDataDtoList.stream().map(BatchRechargeDataDto::getRechargeAmt).reduce(BigDecimal::add).get();
         respRechargeBatchDataDto.setTotalAmt(totalAmt);
         respRechargeBatchDataDto.setBatchRechargeDataDtoList(newBatchRechargeDataDtoList);
+        respRechargeBatchDataDto.setInfoErrorList(infoErrorDtoList);
     }
 
 
@@ -277,7 +318,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                     continue;
                 }
                 BatchRechargeDataDto batchRechargeDataDto = new BatchRechargeDataDto(cardSerialNo, new BigDecimal(rechargeAmt));
-                log.info("readExcel batch recharge data print:{}", JSON.toJSONString(batchRechargeDataDto));
+//                log.info("readExcel batch recharge data print:{}", JSON.toJSONString(batchRechargeDataDto));
                 batchRechargeDataDtoList.add(batchRechargeDataDto);
             }
         } catch (Exception e) {
@@ -293,11 +334,12 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         if (StringUtils.isEmpty(fileCode)) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_607, "批量充值文件不能为空");
         }
-        if (StringUtils.isEmpty(UPLOAD_FILE_PATH)){
-            UPLOAD_FILE_PATH = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "file" + File.separator + "recharge" + File.separator + LocalDate.now() + File.separator;
+        String filePath = UPLOAD_FILE_PATH;
+        if (StringUtils.isEmpty(filePath)){
+            filePath = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "file" + File.separator + "recharge" + File.separator + LocalDate.now() + File.separator;
         }
-        UPLOAD_FILE_PATH = UPLOAD_FILE_PATH + fileCode;
-        FileItem fileItem = FileUtils.createFileItem(UPLOAD_FILE_PATH, fileCode);
+        filePath += fileCode;
+        FileItem fileItem = FileUtils.createFileItem(filePath, fileCode);
 
         MultipartFile xlsFile = new CommonsMultipartFile(fileItem);
         List<BatchRechargeDataDto> rechargeDataDtoList = readExcel(xlsFile);

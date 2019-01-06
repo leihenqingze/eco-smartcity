@@ -16,7 +16,6 @@ import com.eco.wisdompark.mapper.DeptMapper;
 import com.eco.wisdompark.mapper.SubsidyRuleMapper;
 import com.eco.wisdompark.service.SubsidyRuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,29 +64,53 @@ public class SubsidyRuleServiceImpl extends ServiceImpl<SubsidyRuleMapper, Subsi
      */
     @Override
     public IPage<ListSubsidyRuleRespDto> findByDeptIdPage(PageReqDto<ListSubsidyRuleReqDto> pageReqDto) {
-        IPage<SubsidyRule> subsidyRuleIPage;
-        List<Dept> depts = Lists.newArrayList();
         if (Objects.isNull(pageReqDto.getQuery()) || Objects.isNull(pageReqDto.getQuery().getDeptId())) {
-            subsidyRuleIPage = page(PageReqDtoToPageConverter.converter(pageReqDto),
-                    null);
+            return findAllByPage(pageReqDto);
         } else {
             Pair<IPage<SubsidyRule>, List<Dept>> pair = findDeptsByPage(pageReqDto);
-            subsidyRuleIPage = pair.getLeft();
-            depts = pair.getRight();
+            List<Dept> depts = pair.getRight();
+
+            IPage<ListSubsidyRuleRespDto> listSubsidyRuleDtoIPage = new Page<>();
+            BeanUtils.copyProperties(pair.getLeft(), listSubsidyRuleDtoIPage);
+            List<SubsidyRule> subsidyRuleList = pair.getLeft().getRecords();
+
+            if (CollectionUtils.isNotEmpty(subsidyRuleList)) {
+                Dept dept = deptMapper.selectById(subsidyRuleList.get(0).getDeptId());
+                depts.add(dept);
+                Dept parent = deptMapper.selectById(dept.getDeptUpId());
+                depts.add(dept);
+                listSubsidyRuleDtoIPage.setRecords(ListSubsidyRuleRespDtoConverter
+                        .converterList(subsidyRuleList, parent, depts));
+            }
+            return listSubsidyRuleDtoIPage;
         }
+    }
+
+    /**
+     * 自动补助规则分页查询
+     *
+     * @param pageReqDto 分页信息
+     * @return 自动补助规则列表
+     */
+    public IPage<ListSubsidyRuleRespDto> findAllByPage(PageReqDto<ListSubsidyRuleReqDto> pageReqDto) {
+        IPage<SubsidyRule> subsidyRuleIPage = page(PageReqDtoToPageConverter.converter(pageReqDto),
+                null);
+
         IPage<ListSubsidyRuleRespDto> listSubsidyRuleDtoIPage = new Page<>();
         BeanUtils.copyProperties(subsidyRuleIPage, listSubsidyRuleDtoIPage);
         List<SubsidyRule> subsidyRuleList = subsidyRuleIPage.getRecords();
+
         if (CollectionUtils.isNotEmpty(subsidyRuleList)) {
-            Dept dept = deptMapper.selectById(subsidyRuleList.get(0).getDeptId());
-            depts.add(dept);
-            Dept parent = deptMapper.selectById(dept.getDeptUpId());
-            depts.add(dept);
-            listSubsidyRuleDtoIPage.setRecords(ListSubsidyRuleRespDtoConverter
-                    .converter(subsidyRuleList, parent, depts));
+            List<ListSubsidyRuleRespDto> listSubsidyRuleRespDtos = subsidyRuleList.stream().map(subsidyRule -> {
+                Dept dept = deptMapper.selectById(subsidyRule.getDeptId());
+                Dept parent = deptMapper.selectById(dept.getDeptUpId());
+                return ListSubsidyRuleRespDtoConverter.converter(subsidyRule, parent, dept);
+            }).collect(Collectors.toList());
+            listSubsidyRuleDtoIPage.setRecords(listSubsidyRuleRespDtos);
         }
         return listSubsidyRuleDtoIPage;
     }
+
 
     /**
      * 查询子部门和部门下的自动补助规则

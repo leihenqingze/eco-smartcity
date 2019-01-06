@@ -20,4 +20,10 @@ public class RespRechargeBatchDataDto {
     @ApiModelProperty(value = "文件code，确认充值时回传过来")
     private String fileCode;
 
+    /**
+     * Excel 中的 cardSerialNo 未找到卡信息的数据
+     */
+    @ApiModelProperty(value = "充值信息有误Dto集合")
+    private List<BatchRechargeDataDto> infoErrorList;
+
 }

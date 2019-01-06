@@ -41,6 +41,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         Dept dept = new Dept();
         dept.setDeptUpId(0);
         dept.setDeptName(addLevel1DeptDto.getDeptName());
+        dept.setDeptUpDownStr("0");
         ConsumeIdentity consumeIdentity = ConsumeIdentity.valueOf(addLevel1DeptDto.getConsumeIdentity());
         if (consumeIdentity == null) throw new WisdomParkException(ResponseData.STATUS_CODE_464, "未匹配到消费类型");
         dept.setConsumeIdentity(consumeIdentity.getCode());
@@ -61,6 +62,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             dept.setDeptUpId(l1Dept.getId());
             dept.setDeptName(addLevel2DeptDto.getDeptName());
             dept.setConsumeIdentity(l1Dept.getConsumeIdentity());
+            dept.setDeptUpDownStr(l1Dept.getDeptUpDownStr() + "|" + l1Dept.getId());
             result = baseMapper.insert(dept);
         }
         return result;
@@ -73,8 +75,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (StringUtils.isNotBlank(getLevel1DeptDto.getDeptName())) {
             wrapper.like("dept_name", getLevel1DeptDto.getDeptName());
         }
-        if(getLevel1DeptDto.getConsumeIdentity() != null){
-            wrapper.eq("consume_identity",getLevel1DeptDto.getConsumeIdentity());
+        if (getLevel1DeptDto.getConsumeIdentity() != null) {
+            wrapper.eq("consume_identity", getLevel1DeptDto.getConsumeIdentity());
         }
         List<Dept> depts = baseMapper.selectList(wrapper);
         return this.convertDto(depts);
@@ -88,8 +90,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (StringUtils.isNotBlank(addLevel2DeptDto.getDeptName())) {
             wrapper.like("dept_name", addLevel2DeptDto.getDeptName());
         }
-        if(addLevel2DeptDto.getConsumeIdentity() != null){
-            wrapper.eq("consume_identity",addLevel2DeptDto.getConsumeIdentity());
+        if (addLevel2DeptDto.getConsumeIdentity() != null) {
+            wrapper.eq("consume_identity", addLevel2DeptDto.getConsumeIdentity());
         }
         List<Dept> depts = baseMapper.selectList(wrapper);
         return this.convertDto(depts);
@@ -114,23 +116,23 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public List<DeptAllDto> getDeptAll() {
-        List<DeptAllDto> result=new ArrayList<>();
+        List<DeptAllDto> result = new ArrayList<>();
         QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
         wrapper.eq("dept_up_id", 0);
-        List<Dept> level1=baseMapper.selectList(wrapper);
-        if(!level1.isEmpty() ){
-            level1.forEach(l1->{
-                DeptAllDto dto=new DeptAllDto();
+        List<Dept> level1 = baseMapper.selectList(wrapper);
+        if (!level1.isEmpty()) {
+            level1.forEach(l1 -> {
+                DeptAllDto dto = new DeptAllDto();
                 dto.setValue(l1.getId());
                 dto.setLabel(l1.getDeptName());
-                if(l1.getId()!=null && l1.getId()>0 ){
+                if (l1.getId() != null && l1.getId() > 0) {
                     QueryWrapper<Dept> l2wrapper = new QueryWrapper<Dept>();
                     l2wrapper.eq("dept_up_id", l1.getId());
-                    List<Dept> level2=baseMapper.selectList(l2wrapper);
-                    if(!level2.isEmpty()){
-                        List<DeptAllDto> children=new ArrayList<>();
-                        level2.forEach(l2->{
-                            DeptAllDto l2Dto=new DeptAllDto();
+                    List<Dept> level2 = baseMapper.selectList(l2wrapper);
+                    if (!level2.isEmpty()) {
+                        List<DeptAllDto> children = new ArrayList<>();
+                        level2.forEach(l2 -> {
+                            DeptAllDto l2Dto = new DeptAllDto();
                             l2Dto.setValue(l2.getId());
                             l2Dto.setLabel(l2.getDeptName());
                             children.add(l2Dto);
@@ -151,9 +153,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         StringBuffer stringBuffer = new StringBuffer();
         if (id != null && id > 0) {
             Dept deptl2 = baseMapper.selectById(id);
-            if(deptl2!=null && deptl2.getDeptUpId()>0 ){
+            if (deptl2 != null && deptl2.getDeptUpId() > 0) {
                 Dept deptl1 = baseMapper.selectById(deptl2.getDeptUpId());
-                stringBuffer.append(deptl1.getDeptName()+"/"+deptl2.getDeptName());
+                stringBuffer.append(deptl1.getDeptName() + "/" + deptl2.getDeptName());
             }
         }
         return stringBuffer.toString();
@@ -165,8 +167,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (StringUtils.isNotBlank(getLevel2DeptDto.getDeptName())) {
             wrapper.like("dept_name", getLevel2DeptDto.getDeptName());
         }
-        if(getLevel2DeptDto.getConsumeIdentity() != null){
-            wrapper.eq("consume_identity",getLevel2DeptDto.getConsumeIdentity());
+        if (getLevel2DeptDto.getConsumeIdentity() != null) {
+            wrapper.eq("consume_identity", getLevel2DeptDto.getConsumeIdentity());
         }
         List<Dept> depts = baseMapper.selectList(wrapper);
         return this.convertDto(depts);
@@ -226,6 +228,5 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             });
         }
         return result;
-
     }
 }

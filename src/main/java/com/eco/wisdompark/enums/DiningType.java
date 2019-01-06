@@ -1,5 +1,6 @@
 package com.eco.wisdompark.enums;
 
+import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 
 import java.time.LocalTime;
@@ -71,7 +72,7 @@ public enum DiningType implements CommonEnum<DiningType> {
                 return item;
             }
         }
-        throw new WisdomParkException(400, "该时间段不可以用餐");
+        throw new WisdomParkException(ResponseData.STATUS_CODE_470, "该时间段不可以用餐");
     }
 
 }

@@ -2,6 +2,7 @@ package com.eco.wisdompark.common.exceptions;
 
 import com.eco.wisdompark.common.dto.ResponseData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,7 +38,8 @@ public class ExceptionAdvice {
     @ResponseBody
     public ResponseData handleException(Throwable e) {
         log.error("[其他]", e);
-        if (e.getMessage().indexOf("Maximum upload size exceeded") != -1){
+        if (StringUtils.isNotBlank(e.getMessage()) &&
+                e.getMessage().indexOf("Maximum upload size exceeded") != -1) {
             log.error("[上传的文件过大]");
             return handleAjaxRequestException("上传的文件过大，请拆分后上传", 500);
         }

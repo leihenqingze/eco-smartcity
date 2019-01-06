@@ -1,6 +1,7 @@
 package com.eco.wisdompark.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.converter.req.ChangeAmountConverter;
 import com.eco.wisdompark.converter.req.ConsumeRecordConverter;
@@ -96,7 +97,7 @@ public class ConsumeServiceImpl implements ConsumeService {
 
         BigDecimal totalAmount = consumeAfter.getRechargeBalance().add(consumeAfter.getSubsidyBalance());
         if (totalAmount.compareTo(amount) == -1) {
-            throw new WisdomParkException(400, "卡内余额不足");
+            throw new WisdomParkException(ResponseData.STATUS_CODE_469, "卡内余额不足");
         } else {
             if (consumeAfter.getRechargeBalance().compareTo(amount) == -1) {
                 BigDecimal rechargeAmount = consumeAfter.getRechargeBalance();

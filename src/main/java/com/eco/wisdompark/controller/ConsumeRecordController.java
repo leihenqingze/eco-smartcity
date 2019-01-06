@@ -112,7 +112,7 @@ public class ConsumeRecordController {
     public ResponseData<ConsomeRecordRespDto> securityRecord(@RequestBody PropertyConsumeRecordDto propertyConsumeRecordDto) {
 
         // 获取用户ID集合
-        List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.PAC,false);
+        List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.PAC,true);
 
         if(CollectionUtils.isEmpty(userIdList)){
             return ResponseData.OK(getEmptyConsomerRecordResp());
@@ -133,7 +133,7 @@ public class ConsumeRecordController {
     public ResponseData<ConsomeRecordRespDto> cleaningRecord(@RequestBody PropertyConsumeRecordDto propertyConsumeRecordDto) {
 
         // 获取用户ID集合
-        List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.GD,false);
+        List<Integer> userIdList = getUserIdListByConsumeIdentity(null,ConsumeIdentity.GD,true);
 
         if(CollectionUtils.isEmpty(userIdList)){
             return ResponseData.OK(getEmptyConsomerRecordResp());

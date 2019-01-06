@@ -48,7 +48,7 @@ public class CpuCard extends Model<CpuCard> {
     @ApiModelProperty(value = "CUP卡押金")
     private BigDecimal deposit;
 
-    @ApiModelProperty(value = "CUP卡挂失状态：1在用，2挂失")
+    @ApiModelProperty(value = "CUP卡挂失状态：0在用，1挂失，2退卡")
     private Integer reportLossStstus;
 
     @ApiModelProperty(value = "CUP卡类型，1ID，2IC，3CPU,4虚拟卡")

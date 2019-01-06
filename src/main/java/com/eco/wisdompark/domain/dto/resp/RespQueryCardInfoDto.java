@@ -8,7 +8,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-@ApiModel(value="查询CPU卡信息返回Dto", description="查询CPU卡信息返回Dto")
+@ApiModel(value = "查询CPU卡信息返回Dto", description = "查询CPU卡信息返回Dto")
 public class RespQueryCardInfoDto extends CpuCardBaseDto {
 
     @ApiModelProperty(value = "CUP卡充值余额")
@@ -19,5 +19,11 @@ public class RespQueryCardInfoDto extends CpuCardBaseDto {
 
     @ApiModelProperty(value = "CUP卡总余额")
     private BigDecimal totalBalance;
+
+    @ApiModelProperty(value = "押金")
+    private BigDecimal deposit;
+
+    @ApiModelProperty(value = "CUP卡挂失状态：0在用，1挂失，2退卡")
+    private Integer reportLossStstus;
 
 }

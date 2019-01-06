@@ -1,6 +1,5 @@
 package com.eco.wisdompark.controller;
 
-
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.ActiveCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
@@ -11,6 +10,7 @@ import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.RespRechargeBatchDataDto;
 import com.eco.wisdompark.service.CpuCardService;
+import com.eco.wisdompark.service.ReturnCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,8 @@ public class CpuCardController {
 
     @Autowired
     private CpuCardService cpuCardService;
+    @Autowired
+    private ReturnCardService returnCardService;
 
     @RequestMapping(value = "/making", method = RequestMethod.POST)
     @ApiOperation(value = "制卡接口", httpMethod = "POST")
@@ -76,5 +78,11 @@ public class CpuCardController {
         return ResponseData.OK(rechargeResult);
     }
 
+    @RequestMapping(value = "/returnCard", method = RequestMethod.POST)
+    @ApiOperation(value = "退卡", httpMethod = "POST")
+    public ResponseData<Boolean> rechargeBatch(@RequestBody QueryCardInfoDto queryCardInfoDto) {
+        Boolean result = returnCardService.returnCard(queryCardInfoDto.getCardId());
+        return ResponseData.OK(result);
+    }
 
 }

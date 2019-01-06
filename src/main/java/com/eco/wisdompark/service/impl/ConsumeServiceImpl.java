@@ -9,6 +9,7 @@ import com.eco.wisdompark.converter.resp.ConsumeRespDtoConverter;
 import com.eco.wisdompark.domain.dto.CalculateAmountDto;
 import com.eco.wisdompark.domain.dto.req.consume.ConsumeDto;
 import com.eco.wisdompark.domain.dto.resp.ConsumeRespDto;
+import com.eco.wisdompark.domain.dto.resp.ConsumeServiceRespDto;
 import com.eco.wisdompark.domain.model.*;
 import com.eco.wisdompark.enums.AmountChangeType;
 import com.eco.wisdompark.enums.ConsumeType;
@@ -54,7 +55,7 @@ public class ConsumeServiceImpl implements ConsumeService {
      * @return 消费金额
      */
     @Transactional
-    public ConsumeRespDto consume(ConsumeDto consumeDto) {
+    public ConsumeServiceRespDto consume(ConsumeDto consumeDto) {
         Pos pos = getPosByPosNum(consumeDto.getPosNum());
         ConsumeType consumeType = ConsumeType.valueOf(pos.getPosConsumeType());
         CpuCard cpuCardBefore = getCpuCardByCardId(consumeDto.getCardId());
@@ -65,18 +66,18 @@ public class ConsumeServiceImpl implements ConsumeService {
             if (ConsumeType.SHOP.equals(consumeType)) {
                 CpuCard consumeAfter = updateCpuCard(consumeDto.getAmount(),
                         pos, consumeType, null, cpuCardBefore);
-                return consumeRespDtoConverter.shopSuccess(user, parent, dept, consumeAfter, consumeDto.getAmount());
+                return consumeRespDtoConverter.shopConvert(user, parent, dept, consumeAfter, consumeDto.getAmount());
             } else if (ConsumeType.DINING.equals(consumeType)) {
                 DiningType diningType = DiningType.valueOf(LocalTime.now());
                 CalculateAmountDto calculateAmountDto = consumeStrategy
                         .calculateAmount(cpuCardBefore.getCardId(), dept, diningType);
                 CpuCard consumeAfter = updateCpuCard(calculateAmountDto.getAmount(), pos,
                         consumeType, diningType, cpuCardBefore);
-                return consumeRespDtoConverter.diningSuccess(user, parent, dept,
+                return consumeRespDtoConverter.diningConvert(user, parent, dept,
                         consumeAfter, diningType, calculateAmountDto);
             }
         } catch (WisdomParkException e) {
-            return consumeRespDtoConverter.convert(user, parent, dept, cpuCardBefore, e.getMessage());
+            return consumeRespDtoConverter.convert(user, parent, dept, cpuCardBefore, e.getMessage(), e.getCode());
         }
         return null;
     }

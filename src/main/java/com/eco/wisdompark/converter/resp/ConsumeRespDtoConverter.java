@@ -1,8 +1,7 @@
 package com.eco.wisdompark.converter.resp;
 
-import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.domain.dto.CalculateAmountDto;
-import com.eco.wisdompark.domain.dto.resp.ConsumeRespDto;
+import com.eco.wisdompark.domain.dto.resp.ConsumeServiceRespDto;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
@@ -33,17 +32,13 @@ public class ConsumeRespDtoConverter {
      * @param calculateAmountDto 计算出的用餐费用和用餐次数
      * @return 用餐返回信息
      */
-    public ConsumeRespDto diningSuccess(User user, Dept parent, Dept dept, CpuCard cpuCardAfter,
-                                        DiningType diningType, CalculateAmountDto calculateAmountDto) {
-        ConsumeRespDto changeAmount = convert(user, parent, dept, cpuCardAfter,
-                calculateAmountDto.getAmount().toString());
-        try {
-            BigDecimal nextConsume = consumeStrategy.calculateAmount(dept, diningType,
-                    calculateAmountDto.getConsumeTime() + 1);
-            changeAmount.setNextConsume(nextConsume.toString());
-        } catch (WisdomParkException e) {
-            changeAmount.setNextConsume(e.getMessage());
-        }
+    public ConsumeServiceRespDto diningConvert(User user, Dept parent, Dept dept, CpuCard cpuCardAfter,
+                                               DiningType diningType, CalculateAmountDto calculateAmountDto) {
+        ConsumeServiceRespDto changeAmount = convert(user, parent, dept, cpuCardAfter,
+                calculateAmountDto.getAmount().toString(), null);
+        BigDecimal nextConsume = consumeStrategy.calculateAmount(dept, diningType,
+                calculateAmountDto.getConsumeTime() + 1);
+        changeAmount.setNextConsume(nextConsume.toString());
         return changeAmount;
     }
 
@@ -57,14 +52,11 @@ public class ConsumeRespDtoConverter {
      * @param amount       消费金额
      * @return 用餐返回信息
      */
-    public ConsumeRespDto shopSuccess(User user, Dept parent, Dept dept, CpuCard cpuCardAfter,
-                                      BigDecimal amount) {
-        return convert(user, parent, dept, cpuCardAfter, amount.toString());
+    public ConsumeServiceRespDto shopConvert(User user, Dept parent, Dept dept, CpuCard cpuCardAfter,
+                                             BigDecimal amount) {
+        return convert(user, parent, dept, cpuCardAfter, amount.toString(), null);
     }
 
-    /**
-     *
-     */
     /**
      * 消费返回
      *
@@ -75,13 +67,15 @@ public class ConsumeRespDtoConverter {
      * @param amount       消费金额
      * @return 用餐返回信息
      */
-    public ConsumeRespDto convert(User user, Dept parent, Dept dept, CpuCard cpuCardAfter, String amount) {
-        ConsumeRespDto changeAmount = new ConsumeRespDto();
+    public ConsumeServiceRespDto convert(User user, Dept parent, Dept dept, CpuCard cpuCardAfter,
+                                         String amount, Integer errorCode) {
+        ConsumeServiceRespDto changeAmount = new ConsumeServiceRespDto();
         changeAmount.setUserName(user.getUserName());
         changeAmount.setDeptName(parent.getDeptName() + "-" + dept.getDeptName());
         changeAmount.setAmount(amount);
         BigDecimal balance = cpuCardAfter.getRechargeBalance().add(cpuCardAfter.getSubsidyBalance());
         changeAmount.setBalance(balance.toString());
+        changeAmount.setErrorCode(errorCode);
         return changeAmount;
     }
 

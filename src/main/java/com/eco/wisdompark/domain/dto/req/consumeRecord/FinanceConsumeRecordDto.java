@@ -20,6 +20,9 @@ public class FinanceConsumeRecordDto {
     @ApiModelProperty(value = "消费类型，0：用餐，1：购物")
     private Integer consomeType;
 
+    @ApiModelProperty(value = "用餐类型，0：早餐，1：午餐，2：晚餐")
+    private List<Integer> diningTypeList;
+
     @ApiModelProperty(value = "起始时间")
     private String startTime;
 

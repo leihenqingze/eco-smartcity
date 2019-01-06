@@ -14,6 +14,7 @@ import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
 import com.eco.wisdompark.domain.model.Pos;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.ConsumeIdentity;
+import com.eco.wisdompark.enums.DiningType;
 import com.eco.wisdompark.service.ConsumeRecordService;
 import com.eco.wisdompark.service.DeptService;
 import com.eco.wisdompark.service.PosService;
@@ -120,6 +121,7 @@ public class ConsumeRecordController {
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
+        financeConsumeRecordDto.setDiningTypeList(Lists.newArrayList(DiningType.LUNCH.getCode(),DiningType.DINNER.getCode()));
         financeConsumeRecordDto.setStartTime(propertyConsumeRecordDto.getStartTime());
         financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
@@ -141,6 +143,7 @@ public class ConsumeRecordController {
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);
+        financeConsumeRecordDto.setDiningTypeList(Lists.newArrayList(DiningType.LUNCH.getCode(),DiningType.DINNER.getCode()));
         financeConsumeRecordDto.setStartTime(propertyConsumeRecordDto.getStartTime());
         financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());

@@ -82,6 +82,9 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         if(!CollectionUtils.isEmpty(financeConsumeRecordDto.getPosNumList())){
             wrapper.in("pos_num",financeConsumeRecordDto.getPosNumList());
         }
+        if(!CollectionUtils.isEmpty(financeConsumeRecordDto.getDiningTypeList())){
+            wrapper.in("dining_type",financeConsumeRecordDto.getDiningTypeList());
+        }
         if(financeConsumeRecordDto.getConsomeType() != null){
             wrapper.eq("type",financeConsumeRecordDto.getConsomeType());
         }

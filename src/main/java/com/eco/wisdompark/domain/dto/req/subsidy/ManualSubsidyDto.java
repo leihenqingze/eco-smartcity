@@ -17,9 +17,9 @@ import java.math.BigDecimal;
 @ApiModel(value = "手动补助请求对象", description = "手动补助")
 public class ManualSubsidyDto {
 
-    @ApiModelProperty(value = "人员ID")
-    @NotNull(message = "人员ID不能为空")
-    private Integer userId;
+    @ApiModelProperty(value = "CPU卡ID")
+    @NotNull(message = "CPU卡ID为空")
+    private Integer cpuCardId;
 
     @NotNull(message = "补助金额不能为空")
     @Min(value = 0, message = "补助金额不能小于0")

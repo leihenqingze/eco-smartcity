@@ -2,6 +2,8 @@ package com.eco.wisdompark.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.converter.req.ChangeAmountConverter;
 import com.eco.wisdompark.converter.req.SubsidyRecordConverter;
 import com.eco.wisdompark.domain.dto.req.subsidy.ManualSubsidyDto;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +50,10 @@ public class SubsidyServiceImpl implements SubsidyService {
     @Transactional
     @Override
     public void manualSubsidy(ManualSubsidyDto manualSubsidyDto) {
-        CpuCard changeBefore = getCpuCardByUserId(manualSubsidyDto.getUserId());
+        CpuCard changeBefore = cpuCardMapper.selectById(manualSubsidyDto.getCpuCardId());
+        if (Objects.isNull(changeBefore) || !Objects.equals(ReportLossStstus.IN_USE.getCode(),
+                changeBefore.getReportLossStstus()))
+            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "该卡不能进行补助操作");
         CpuCard changeAfter = new CpuCard();
         BeanUtils.copyProperties(changeBefore, changeAfter);
         changeAfter.setSubsidyBalance(changeAfter.getSubsidyBalance().add(manualSubsidyDto.getSubsidyAmount()));
@@ -99,7 +105,7 @@ public class SubsidyServiceImpl implements SubsidyService {
      * @param userId 人员ID
      * @return CPU卡
      */
-    private CpuCard getCpuCardByUserId(Integer userId) {
+    private CpuCard getCpuCardByCardId(String userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id", userId);
         queryWrapper.eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode());

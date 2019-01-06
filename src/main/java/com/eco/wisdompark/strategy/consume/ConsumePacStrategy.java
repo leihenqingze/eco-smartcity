@@ -1,5 +1,6 @@
 package com.eco.wisdompark.strategy.consume;
 
+import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.enums.DiningType;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class ConsumePacStrategy {
             if (consumeTime == 0) {
                 return new BigDecimal(0);
             } else {
-                throw new WisdomParkException(400, "消费次数超过限制");
+                throw new WisdomParkException(ResponseData.STATUS_CODE_471, "用餐次数超过限制");
             }
         }
     }

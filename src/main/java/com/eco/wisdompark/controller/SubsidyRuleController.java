@@ -44,8 +44,8 @@ public class SubsidyRuleController {
         return ResponseData.OK();
     }
 
-    @RequestMapping(value = "/revStopSubsidyRule", method = RequestMethod.PUT)
-    @ApiOperation(value = "启停自动补助规则", httpMethod = "PUT")
+    @RequestMapping(value = "/revStopSubsidyRule", method = RequestMethod.POST)
+    @ApiOperation(value = "启停自动补助规则", httpMethod = "POST")
     public ResponseData revStopSubsidyRule(@RequestBody RevStopSubsidyRuleDto revStopSubsidyRuleDto) {
         SubsidyRule subsidyRule = new SubsidyRule();
         BeanUtils.copyProperties(revStopSubsidyRuleDto, subsidyRule);
@@ -53,8 +53,8 @@ public class SubsidyRuleController {
         return ResponseData.OK();
     }
 
-    @RequestMapping(value = "/updateSubsidyRule", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改自动补助规则", httpMethod = "PUT")
+    @RequestMapping(value = "/updateSubsidyRule", method = RequestMethod.POST)
+    @ApiOperation(value = "修改自动补助规则", httpMethod = "POST")
     public ResponseData updateSubsidyRule(@RequestBody UpdateSubsidyRuleDto updateSubsidyRuleDto) {
         SubsidyRule subsidyRule = new SubsidyRule();
         BeanUtils.copyProperties(updateSubsidyRuleDto, subsidyRule);

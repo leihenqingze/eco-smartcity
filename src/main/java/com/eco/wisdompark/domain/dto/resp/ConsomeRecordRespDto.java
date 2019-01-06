@@ -13,16 +13,16 @@ import java.math.BigDecimal;
 public class ConsomeRecordRespDto {
 
     @ApiModelProperty(value = "当前页总金额")
-    private BigDecimal currentPageAmount;
+    private BigDecimal currentPageAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "当前页税后总金额")
-    private BigDecimal currentPageAfterTaxAmount;
+    private BigDecimal currentPageAfterTaxAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "总金额")
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "税后总金额")
-    private BigDecimal totalAfterTaxAmount;
+    private BigDecimal totalAfterTaxAmount = BigDecimal.ZERO;
 
     @ApiModelProperty(value = "分页信息")
     private IPage<ConsumeRecordDto> consumeRecordDtoPage;

@@ -71,4 +71,6 @@ public interface DeptService extends IService<Dept> {
 
     public List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto);
 
+    public List<DeptAllDto> getDeptAllByConsumeIdentity(GetLevel1DeptByIdentityDto getLevel1DeptByIdentityDto);
+
 }

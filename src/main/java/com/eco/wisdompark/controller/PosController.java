@@ -1,10 +1,13 @@
 package com.eco.wisdompark.controller;
 
 import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.consume.ConsumeDto;
 import com.eco.wisdompark.domain.dto.resp.ConsumeRespDto;
 import com.eco.wisdompark.domain.dto.resp.ConsumeServiceRespDto;
+import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.service.ConsumeService;
+import com.eco.wisdompark.service.CpuCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ public class PosController {
     @Autowired
     private ConsumeService consumeService;
 
+    @Autowired
+    private CpuCardService cpuCardService;
+
     @RequestMapping(value = "/consume", method = RequestMethod.POST)
     @ApiOperation(value = "刷卡消费", httpMethod = "POST")
     public ResponseData<ConsumeRespDto> consume(@RequestBody ConsumeDto consumeDto) {
@@ -43,6 +49,13 @@ public class PosController {
             result.setData(consumeServiceRespDto);
             return result;
         }
+    }
+
+    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
+    public ResponseData<RespQueryCardInfoDto> queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
+        RespQueryCardInfoDto respQueryCardInfoDto = cpuCardService.queryCardInfo(queryCardInfoDto);
+        return ResponseData.OK(respQueryCardInfoDto);
     }
 
 }

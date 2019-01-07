@@ -43,6 +43,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.eco.wisdompark.common.dto.ResponseData.STATUS_CODE_601;
 
 /**
  * <p>
@@ -132,20 +135,13 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Override
     public RespQueryCardInfoDto queryCardInfo(QueryCardInfoDto queryCardInfoDto) {
-        RespQueryCardInfoDto respQueryCardInfoDto = null;
-        // 1.根据CPU卡id查询
-        String cardId = queryCardInfoDto.getCardId();
-        if (!StringUtils.isEmpty(cardId)) {
-            respQueryCardInfoDto = queryCardInfoByCardId(cardId);
-            if (respQueryCardInfoDto != null) {
-                respQueryCardInfoDto.setDeptName(deptService.getDeptName(respQueryCardInfoDto.getDeptId()));
-                return respQueryCardInfoDto;
-            }
+        RespQueryCardInfoDto respQueryCardInfoDto = queryCardInfoByCardId(queryCardInfoDto.getCardId());
+        if (Objects.isNull(respQueryCardInfoDto)) {
+            throw new WisdomParkException(STATUS_CODE_601, "无效的卡");
         }
-        log.error("queryCardInfo cpuCard not exists... cardId:{}", queryCardInfoDto.getCardId());
-        return null;
+        respQueryCardInfoDto.setDeptName(deptService.getDeptName(respQueryCardInfoDto.getDeptId()));
+        return respQueryCardInfoDto;
     }
-
 
     @Override
     public RespQueryCardInfoListDto queryCardInfoList(LossQueryCardInfoDto lossQueryCardInfoDto) {
@@ -163,7 +159,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         // 1.校验CPU卡是否存在getUsers
         InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
         if (innerCpuCardInfoDto == null) {
-            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
+            throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         // 2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
         return rechargeBalance(innerCpuCardInfoDto, rechargeCardDto.getCardId(), rechargeCardDto.getRechargeAmt());
@@ -512,19 +508,19 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     public RespLossQueryConfirmDto queryCardInfo(LossQueryConfirmDto lossQueryConfirmDto) {
         if (lossQueryConfirmDto.getCardId() == null || lossQueryConfirmDto.getCardId() <= 0) {
             log.error("queryCardInfo RespLossQueryConfirmDto param Error... param:{}", lossQueryConfirmDto);
-            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
+            throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         int cardId = lossQueryConfirmDto.getCardId();
         CpuCard cpuCard = baseMapper.selectById(cardId);
         if (cpuCard == null) {
             log.error("queryCardInfo RespLossQueryConfirmDto cpuCard not exists cardId:{}", cardId);
-            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
+            throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         int userId = cpuCard.getUserId();
         User user = userService.queryByUserId(userId);
         if (user == null) {
             log.error("queryCardInfo RespLossQueryConfirmDto user not exists userId:{}", userId);
-            throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
+            throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         RespLossQueryConfirmDto respLossQueryConfirmDto = RespLossQueryConfirmDtoConverter.create(cpuCard, user);
         return respLossQueryConfirmDto;

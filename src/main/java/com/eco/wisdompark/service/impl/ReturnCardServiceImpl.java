@@ -3,6 +3,7 @@ package com.eco.wisdompark.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.converter.req.ChangeAmountConverter;
 import com.eco.wisdompark.domain.model.ChangeAmount;
 import com.eco.wisdompark.domain.model.CpuCard;
@@ -39,7 +40,7 @@ public class ReturnCardServiceImpl implements ReturnCardService {
     @Transactional
     @Override
     public boolean returnCard(String cpuCardId) {
-        CpuCard changeBefore = queryCardInfoByCardId(cpuCardId);
+        CpuCard changeBefore = queryCardInfoByCardId(StringTools.cardDecimalToHexString(cpuCardId));
         if (changeBefore == null) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "该卡不能进行退卡操作");
         }

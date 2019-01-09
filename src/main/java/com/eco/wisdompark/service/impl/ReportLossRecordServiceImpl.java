@@ -2,6 +2,7 @@ package com.eco.wisdompark.service.impl;
 
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.converter.req.CpuCardConverter;
 import com.eco.wisdompark.converter.req.ReportLossRecordConverter;
 import com.eco.wisdompark.converter.resp.RespReissueCardDtoConverter;
@@ -72,7 +73,7 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "user or cpuCard not exist");
         }
 
-        String newCardId = reissueCardDto.getCardId();
+        String newCardId = StringTools.cardDecimalToHexString(reissueCardDto.getCardId());
         String newCardSerialNo = reissueCardDto.getCardSerialNo();
         CpuCard cpuCard = cpuCardList.get(0);
         String oldCardId = cpuCard.getCardId();

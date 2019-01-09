@@ -6,6 +6,7 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.common.utils.FileUtils;
 import com.eco.wisdompark.common.utils.IdCardUtils;
+import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.converter.req.CpuCardConverter;
 import com.eco.wisdompark.converter.req.UserConverter;
 import com.eco.wisdompark.converter.resp.RespActiveCpuCardDtoConverter;
@@ -101,7 +102,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 makingCpuCardDto.getUserCardNum(), makingCpuCardDto.getDeptId(), makingCpuCardDto.getPhoneNum());
         // 3.保存制卡信息
         Integer userId = user.getId();
-        CpuCard cpuCard = saveCpuCardInfo(makingCpuCardDto.getCardId(),
+        CpuCard cpuCard = saveCpuCardInfo(StringTools.cardDecimalToHexString(makingCpuCardDto.getCardId()),
                 makingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, makingCpuCardDto.getDeposit(), userId);
         // 4.封装返回信息
         RespMakingCpuCardDto respMakingCpuCardDto = RespMakingCpuCardDtoConverter.create(cpuCard, user);
@@ -126,7 +127,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         User user = saveUser(activeCpuCardDto.getUserName(),
                 activeCpuCardDto.getUserCardNum(), activeCpuCardDto.getDeptId(), activeCpuCardDto.getPhoneNum());
         // 3.保存制卡信息
-        CpuCard cpuCard = saveCpuCardInfo(activeCpuCardDto.getCardId(),
+        CpuCard cpuCard = saveCpuCardInfo(StringTools.cardDecimalToHexString(activeCpuCardDto.getCardId()),
                 activeCpuCardDto.getCardSerialNo(), CardSource.ACTIVATION, new BigDecimal(0), user.getId());
         // 4.封装返回信息
         RespActiveCpuCardDto respActiveCpuCardDto = RespActiveCpuCardDtoConverter.create(cpuCard, user);
@@ -157,7 +158,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Transactional
     public boolean rechargeSingle(RechargeCardDto rechargeCardDto) {
         // 1.校验CPU卡是否存在getUsers
-        InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
+        InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(StringTools.cardDecimalToHexString(rechargeCardDto.getCardId()), null);
         if (innerCpuCardInfoDto == null) {
             throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }

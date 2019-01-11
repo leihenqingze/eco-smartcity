@@ -97,6 +97,8 @@ public class SubsidyRuleServiceImpl extends ServiceImpl<SubsidyRuleMapper, Subsi
      * @return 自动补助规则列表
      */
     public IPage<ListSubsidyRuleRespDto> findAllByPage(PageReqDto<ListSubsidyRuleReqDto> pageReqDto) {
+        QueryWrapper<SubsidyRule> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
         IPage<SubsidyRule> subsidyRuleIPage = page(PageReqDtoToPageConverter.converter(pageReqDto),
                 null);
 

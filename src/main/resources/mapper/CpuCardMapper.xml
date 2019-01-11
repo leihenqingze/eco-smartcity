@@ -7,11 +7,17 @@
     </select>
 
     <update id="updateBatchSubsidy" parameterType="java.util.List">
-        <foreach collection="list" item="item" index="index" separator=",">
-            UPDATE tb_cpu_card SET
-            subsidy_balance = #{item.subsidyBalance}
-            WHERE id = #{item.id}
+        UPDATE tb_cpu_card SET
+        subsidy_balance = CASE id
+        <foreach collection="list" item="item" index="index">
+            WHEN #{item.id} THEN #{item.subsidyBalance}
         </foreach>
+        END
+        WHERE id IN (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item.id}
+        </foreach>
+        )
     </update>
 
 </mapper>

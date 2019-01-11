@@ -19,8 +19,4 @@ public class SearchAutoSubsidyRecordReq {
     @ApiModelProperty(value = "补助规则ID")
     private Integer ruleId;
 
-    @NotNull(message = "补助时间不能为空")
-    @ApiModelProperty(value = "补助时间")
-    private LocalDate subsidyTime;
-
 }

@@ -53,6 +53,10 @@ public class SubsidyRuleServiceImpl extends ServiceImpl<SubsidyRuleMapper, Subsi
         } else if (Objects.equals(0, dept.getDeptUpId())) {
             throw new WisdomParkException(400, "该部门下不能设置自动补助规则");
         }
+        SubsidyRule subsidyRule = findByDeptId(entity.getDeptId());
+        if(Objects.nonNull(subsidyRule)){
+            throw new WisdomParkException(400,"该部门下已存在自动补助规则");
+        }
         return super.save(entity);
     }
 
@@ -133,6 +137,18 @@ public class SubsidyRuleServiceImpl extends ServiceImpl<SubsidyRuleMapper, Subsi
         IPage<SubsidyRule> subsidyRuleIPage = page(PageReqDtoToPageConverter.converter(pageReqDto),
                 subsidyRuleQuery);
         return Pair.of(subsidyRuleIPage, depts);
+    }
+
+    /**
+     * 根据部门ID查询自动补助规则
+     * @param deptId 部门ID
+     * @return 自动补助规则
+     */
+    private SubsidyRule findByDeptId(Integer deptId){
+        QueryWrapper<SubsidyRule> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("dept_id",deptId);
+        SubsidyRule subsidyRule = baseMapper.selectOne(queryWrapper);
+        return subsidyRule;
     }
 
 }

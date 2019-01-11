@@ -30,9 +30,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,8 +70,7 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
                     .collect(Collectors.toList());
             Map<Integer, User> userMap = users.stream()
                     .collect(Collectors.toMap(User::getId, a -> a, (k1, k2) -> k1));
-            List<SubsidyRecord> selectByUsersAndDate = selectByUsersAndDate(userIds,
-                    searchAutoSubsidyRecordReq.getSubsidyTime());
+            List<SubsidyRecord> selectByUsersAndDate = selectByUsersAndDate(userIds);
             List<SubsidyRecordListRespDto> subsidyRecordListRespDtos = converter(userMap, selectByUsersAndDate);
             subsidyDetailsDto.setDeptName(getDeptName(subsidyRule.getDeptId()));
             subsidyDetailsDto.setSubsidyRecords(subsidyRecordListRespDtos);
@@ -101,16 +98,15 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
      * 根据人员ID获取自动补助记录
      *
      * @param userIds     用户ID
-     * @param subsidyTime 补助时间
      * @return 自动补助记录
      */
-    private List<SubsidyRecord> selectByUsersAndDate(List<Integer> userIds, LocalDate subsidyTime) {
-        LocalDateTime start = LocalDateTime.of(subsidyTime, LocalTime.MIN);
-        LocalDateTime end = LocalDateTime.of(subsidyTime, LocalTime.MAX);
+    private List<SubsidyRecord> selectByUsersAndDate(List<Integer> userIds) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = LocalDateTime.of(now.getYear(),now.getMonth(),1,0,0,0);
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("user_id", userIds);
-        queryWrapper.gt("create_time", start);
-        queryWrapper.lt("create_time", end);
+        queryWrapper.ge("create_time", start);
+        queryWrapper.le("create_time", now);
         queryWrapper.eq("type", SubsidyType.AUTOMATIC.getCode());
         return subsidyRecordMapper.selectList(queryWrapper);
     }

@@ -1,6 +1,7 @@
 package com.eco.wisdompark.controller;
 
 import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.domain.dto.req.card.ActiveCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
@@ -53,6 +54,7 @@ public class CpuCardController {
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
     public ResponseData<RespQueryCardInfoDto> queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
+        queryCardInfoDto.setCardId(StringTools.cardDecimalToHexString(queryCardInfoDto.getCardId()));
         RespQueryCardInfoDto respQueryCardInfoDto = cpuCardService.queryCardInfo(queryCardInfoDto);
         return ResponseData.OK(respQueryCardInfoDto);
     }

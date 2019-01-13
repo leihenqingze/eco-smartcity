@@ -405,7 +405,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         }
 
         QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("card_id", StringTools.cardDecimalToHexString(cardId));
+        queryWrapper.eq("card_id", cardId);
         List<CpuCard> cpuCards = list(queryWrapper);
         if (CollectionUtils.isEmpty(cpuCards)) {
             log.info("queryCardInfoByCardId cardId:{}, no data...", cardId);

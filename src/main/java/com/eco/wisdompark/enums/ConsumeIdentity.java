@@ -8,8 +8,7 @@ public enum ConsumeIdentity implements CommonEnum<ConsumeIdentity> {
     TB_STAFF(0, "训练局职工"),
     UN_TB_STAFF(1, "非训练局职工"),
     GD(2, "保洁"),
-    PAC(3, "保安"),
-    PROPERTY(4,"物业");
+    PAC(3, "保安");
 
     private final int code;
     private final String description;

@@ -73,7 +73,13 @@ public class ConsumeRecordController {
         }
 
         // 获取POS机编号集合
-        List<String> posNumList = getPosNumList(trainingStaffConsumeRecordDto.getPosPositionId());
+        List<String> posNumList = Lists.newArrayList();
+        if(trainingStaffConsumeRecordDto.getPosPositionId() != null){
+            posNumList = getPosNumList(trainingStaffConsumeRecordDto.getPosPositionId());
+            if(CollectionUtils.isEmpty(posNumList)){
+                return ResponseData.OK(getEmptyConsomerRecordResp());
+            }
+        }
 
         FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
         financeConsumeRecordDto.setUserIdList(userIdList);

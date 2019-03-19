@@ -97,7 +97,7 @@ public class ConsumeRecordController {
     public ResponseData<ConsomeRecordRespDto> notTrainingStaffRecord(@RequestBody NotTrainingStaffConsumeRecordDto notTrainingStaffConsumeRecordDto) {
 
         // 获取用户ID集合
-        List<Integer> userIdList = getUserIdListByConsumeIdentity(notTrainingStaffConsumeRecordDto.getDeptId(),ConsumeIdentity.TB_STAFF,true);
+        List<Integer> userIdList = getUserIdListByConsumeIdentity(notTrainingStaffConsumeRecordDto.getDeptId(),ConsumeIdentity.UN_TB_STAFF,true);
 
         if(CollectionUtils.isEmpty(userIdList)){
             return ResponseData.OK(getEmptyConsomerRecordResp());

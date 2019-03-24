@@ -2,7 +2,6 @@ package com.eco.wisdompark.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.eco.wisdompark.domain.model.Bus;
-import com.eco.wisdompark.domain.model.Pos;
 
  /**
   * <p>

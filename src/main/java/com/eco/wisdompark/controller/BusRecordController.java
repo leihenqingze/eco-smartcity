@@ -5,24 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.bus.BusRecordDto;
 import com.eco.wisdompark.domain.dto.req.bus.SearchBusRecordDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.TrainingStaffConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
-import com.eco.wisdompark.domain.model.SysUser;
-import com.eco.wisdompark.enums.ConsumeIdentity;
 import com.eco.wisdompark.service.BusRecordService;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * <p>

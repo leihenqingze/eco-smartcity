@@ -8,7 +8,6 @@ import com.eco.wisdompark.mapper.AthletesMapper;
 import com.eco.wisdompark.service.AthletesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.mybatis.spring.MyBatisSystemException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

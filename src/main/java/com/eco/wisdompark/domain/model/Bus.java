@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

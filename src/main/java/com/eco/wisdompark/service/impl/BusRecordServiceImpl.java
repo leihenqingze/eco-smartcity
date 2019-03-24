@@ -8,21 +8,18 @@ import com.eco.wisdompark.domain.dto.req.bus.SearchBusRecordDto;
 import com.eco.wisdompark.domain.model.Athletes;
 import com.eco.wisdompark.domain.model.AthletesTeam;
 import com.eco.wisdompark.domain.model.BusRecord;
-import com.eco.wisdompark.domain.model.SysUser;
 import com.eco.wisdompark.enums.Gender;
 import com.eco.wisdompark.mapper.BusRecordMapper;
 import com.eco.wisdompark.service.AthletesService;
 import com.eco.wisdompark.service.AthletesTeamService;
 import com.eco.wisdompark.service.BusRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.util.List;
 
 /**

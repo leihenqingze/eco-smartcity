@@ -26,8 +26,10 @@ public class Test extends Model<Test> {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    @Length(min = 10, max = 20, message = "设备名称在10到20个字符之间")
+
     private String name;
+
+    private String card_id;
 
     @Override
     protected Serializable pkVal() {

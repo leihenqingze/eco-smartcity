@@ -10,7 +10,9 @@ import net.sf.oval.constraint.Length;
 public class SaveTestDto {
 
     @ApiModelProperty(value = "设备名称")
-    @Length(min = 10, max = 20, message = "设备名称在10到20个字符之间")
     private String name;
+
+    @ApiModelProperty(value = "卡片ID")
+    private String card_id;
 
 }

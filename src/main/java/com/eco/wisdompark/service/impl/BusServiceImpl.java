@@ -49,25 +49,27 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
 
      @Override
      public void cardRideBus(RideBusDto rideBusDto) {
-         if(rideBusDto.getBusId() == null){
+         if(rideBusDto.getName() == null){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "班车id不能为空");
          }
-         Bus bus = getById(rideBusDto.getBusId());
+         Bus bus = getById(rideBusDto.getName());
          if(bus == null){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "班车信息不存在");
          }
-         if(StringUtils.isEmpty(rideBusDto.getCardId())){
+         if(StringUtils.isEmpty(rideBusDto.getCard_id())){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "卡id不能为空");
          }
-         Athletes athletes = athletesService.getByCardId(rideBusDto.getCardId());
+         Athletes athletes = athletesService.getByCardId(rideBusDto.getCard_id());
          if(athletes == null){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "运动员信息不存在");
          }
          BusRecord busRecord = new BusRecord();
-         BeanUtils.copyProperties(rideBusDto,busRecord);
-         busRecord.setBusNum(bus.getBusNum());
+        // BeanUtils.copyProperties(rideBusDto,busRecord);
+         busRecord.setCardId(athletes.getCardId());
          busRecord.setCardSerialno(athletes.getCardSerialno());
          busRecord.setUserId(athletes.getId());
+         busRecord.setBusId(bus.getId());
+         busRecord.setBusNum(bus.getBusNum());
          busRecord.setCreateTime(LocalDateTime.now());
          busRecordService.save(busRecord);
      }

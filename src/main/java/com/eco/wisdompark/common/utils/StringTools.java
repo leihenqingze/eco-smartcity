@@ -20,5 +20,4 @@ public class StringTools {
         String hex = new String(result);
         return hex;
     }
-
 }

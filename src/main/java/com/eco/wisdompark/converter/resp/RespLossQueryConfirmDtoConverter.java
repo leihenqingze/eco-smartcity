@@ -29,6 +29,7 @@ public class RespLossQueryConfirmDtoConverter {
         respLossQueryConfirmDto.setRechargeBalance(rechargeBalance);
         respLossQueryConfirmDto.setSubsidyBalance(subsidyBalance);
         respLossQueryConfirmDto.setBalance(rechargeBalance.add(subsidyBalance));
+        respLossQueryConfirmDto.setUserId(user.getId());
         return respLossQueryConfirmDto;
     }
 

@@ -3,6 +3,7 @@ package com.eco.wisdompark.domain.dto.resp;
 import com.eco.wisdompark.domain.dto.CpuCardBaseDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,6 +23,9 @@ public class RespLossQueryConfirmDto extends CpuCardBaseDto {
 
     @ApiModelProperty(value = "CUP卡补助余额")
     private BigDecimal subsidyBalance;
+
+    @ApiModelProperty(value = "用户ID")
+    private Integer  userId;
 
     /**
      * 总的余额（充值余额 + 补助余额）

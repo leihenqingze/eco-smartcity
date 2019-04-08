@@ -14,10 +14,10 @@ public class RideBusDto {
 
     @NotEmpty(message = "卡物理Id不能为空")
     @ApiModelProperty(value = "卡物理Id")
-    private String cardId;
+    private String card_id;
 
     @NotEmpty(message = "班车Id不能为空")
     @ApiModelProperty(value = "班车ID")
-    private Integer busId;
+    private Integer name;
 
 }

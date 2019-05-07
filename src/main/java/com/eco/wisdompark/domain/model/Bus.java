@@ -32,6 +32,9 @@ public class Bus extends Model<Bus> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+     @ApiModelProperty(value = "班车名称")
+     private Integer busId;
+
     @ApiModelProperty(value = "班车车牌号")
     private String busNum;
 

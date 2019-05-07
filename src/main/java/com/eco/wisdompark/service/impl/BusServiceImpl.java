@@ -9,6 +9,7 @@ import com.eco.wisdompark.domain.dto.req.bus.SearchBusDto;
 import com.eco.wisdompark.domain.model.Athletes;
 import com.eco.wisdompark.domain.model.Bus;
 import com.eco.wisdompark.domain.model.BusRecord;
+import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.BusMapper;
 import com.eco.wisdompark.service.AthletesService;
 import com.eco.wisdompark.service.BusRecordService;
@@ -52,10 +53,14 @@ public class BusServiceImpl extends ServiceImpl<BusMapper, Bus> implements BusSe
          if(rideBusDto.getName() == null){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "班车id不能为空");
          }
-         Bus bus = getById(rideBusDto.getName());
-         if(bus == null){
+
+         QueryWrapper<Bus> queryWrapper = new QueryWrapper<>();
+         queryWrapper.eq("bus_id", rideBusDto.getName());
+         List<Bus> list = this.list(queryWrapper);
+         if(list == null){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "班车信息不存在");
          }
+         Bus bus = list.get(0);
          if(StringUtils.isEmpty(rideBusDto.getCard_id())){
              throw new WisdomParkException(ResponseData.STATUS_CODE_400, "卡id不能为空");
          }

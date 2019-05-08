@@ -3,6 +3,8 @@ package com.eco.wisdompark.controller;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.Test;
 import com.eco.wisdompark.domain.dto.req.SaveTestDto;
+import com.eco.wisdompark.domain.dto.req.bus.RideBusDto;
+import com.eco.wisdompark.service.BusService;
 import com.eco.wisdompark.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,13 +30,20 @@ public class TestController {
     @Autowired
     public TestService testService;
 
+    @Autowired
+    private BusService busService;
+
     @RequestMapping(value = "/index", method = RequestMethod.POST)
     @ApiOperation(value = "硬件接口", httpMethod = "POST")
     public ResponseData getStr(SaveTestDto saveTestDto) {
-        Test test = new Test();
-        test.setName(saveTestDto.getName());
-        test.setCard_id(saveTestDto.getCard_id());
-        testService.save(test);
+        RideBusDto rideBusDto=new RideBusDto();
+        rideBusDto.setCard_id(saveTestDto.getCard_id());
+        rideBusDto.setName(Integer.parseInt(saveTestDto.getName()));
+        busService.cardRideBus(rideBusDto);
+//        Test test = new Test();
+//        test.setName(saveTestDto.getName());
+//        test.setCard_id(saveTestDto.getCard_id());
+//        testService.save(test);
         return ResponseData.OK(1);
     }
 

@@ -46,10 +46,10 @@ public class BusRecordServiceImpl extends ServiceImpl<BusRecordMapper, BusRecord
         QueryWrapper<BusRecord> wrapper = new QueryWrapper<>();
 
         if (searchBusRecordDto.getBusId() != null) {
-            wrapper.like("bus_id", searchBusRecordDto.getBusId());
+            wrapper.eq("bus_id", searchBusRecordDto.getBusId());
         }
         if (StringUtils.isNotBlank(searchBusRecordDto.getCardId())) {
-            wrapper.like("card_id", searchBusRecordDto.getCardId());
+            wrapper.eq("card_id", searchBusRecordDto.getCardId());
         }
         IPage<BusRecord> busRecordPage = baseMapper.selectPage(new Page<>(searchBusRecordDto.getCurrentPage(), searchBusRecordDto.getPageSize()), wrapper);
         if(busRecordPage == null){

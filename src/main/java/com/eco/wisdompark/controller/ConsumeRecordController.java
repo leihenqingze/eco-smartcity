@@ -168,7 +168,7 @@ public class ConsumeRecordController {
 
     @RequestMapping(value = "/searchUserConsumeRecordDtosForApp", method = RequestMethod.POST)
     @ApiOperation(value= "App端查询个人消费记录",httpMethod = "POST")
-    public ResponseData<List<ConsomeRecordRespDto>> searchUserConsumeRecordDtosForApp(@RequestBody String cardId){
+    public ResponseData<List<ConsumeRecordDto>> searchUserConsumeRecordDtosForApp(@RequestBody String cardId){
         if(StringUtils.isEmpty(cardId)){
             return ResponseData.ERROR(ResponseData.STATUS_CODE_609,"未绑卡!");
         }

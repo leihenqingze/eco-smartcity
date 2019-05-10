@@ -6,10 +6,7 @@ import com.eco.wisdompark.domain.dto.req.card.ActiveCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
 import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
 import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
-import com.eco.wisdompark.domain.dto.resp.RespActiveCpuCardDto;
-import com.eco.wisdompark.domain.dto.resp.RespMakingCpuCardDto;
-import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
-import com.eco.wisdompark.domain.dto.resp.RespRechargeBatchDataDto;
+import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.service.CpuCardService;
 import com.eco.wisdompark.service.ReturnCardService;
 import io.swagger.annotations.Api;
@@ -85,6 +82,13 @@ public class CpuCardController {
     public ResponseData<Boolean> rechargeBatch(@RequestBody QueryCardInfoDto queryCardInfoDto) {
         Boolean result = returnCardService.returnCard(queryCardInfoDto.getCardId());
         return ResponseData.OK(result);
+    }
+
+    @RequestMapping(value = "/amount", method = RequestMethod.POST)
+    @ApiOperation(value = "查询卡片总金额接口", httpMethod = "POST")
+    public ResponseData<RespQueryCardInfoDto> queryAmount(@RequestBody QueryCardInfoDto queryCardInfoDto) {
+        queryCardInfoDto.setCardId(StringTools.cardDecimalToHexString(queryCardInfoDto.getCardId()));
+        return ResponseData.OK(cpuCardService.queryAmount(queryCardInfoDto));
     }
 
 }

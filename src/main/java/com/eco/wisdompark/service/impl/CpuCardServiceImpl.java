@@ -212,6 +212,15 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return respRechargeBatchDataDto;
     }
 
+    @Override
+    public RespQueryAmountDto queryAmount(QueryCardInfoDto queryCardInfoDto) {
+        InnerCpuCardInfoDto cardInfoDto = queryCardInfoByCardId(queryCardInfoDto.getCardId(),null);
+        BigDecimal amount = cardInfoDto.getRechargeBalance().add(cardInfoDto.getSubsidyBalance());
+        RespQueryAmountDto dto = new RespQueryAmountDto();
+        dto.setTotalBalance(amount);
+        return dto;
+    }
+
 
     /**
      * 校验Excel条数 每次上传不能大于200条
@@ -600,4 +609,5 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         }
         return false;
     }
+
 }

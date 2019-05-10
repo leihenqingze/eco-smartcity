@@ -1,13 +1,12 @@
 package com.eco.wisdompark.service;
 
-import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.*;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -115,5 +114,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
 
     RespRechargeBatchDataDto fileUpload(MultipartFile file);
+
+    RespQueryAmountDto queryAmount(@RequestBody QueryCardInfoDto queryCardInfoDto);
 
 }

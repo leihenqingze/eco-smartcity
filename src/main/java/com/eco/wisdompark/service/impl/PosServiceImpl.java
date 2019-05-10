@@ -33,6 +33,9 @@ public class PosServiceImpl extends ServiceImpl<PosMapper, Pos> implements PosSe
         if (searchPosDto.getPosConsumeType() != null) {
             wrapper.like("pos_consume_type", searchPosDto.getPosConsumeType());
         }
+        if (searchPosDto.getPosNum() != null) {
+            wrapper.like("pos_num", searchPosDto.getPosNum());
+        }
         return baseMapper.selectList(wrapper);
     }
 }

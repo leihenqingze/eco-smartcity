@@ -6,6 +6,8 @@ import com.eco.wisdompark.domain.dto.req.bus.SearchBusRecordDto;
 import com.eco.wisdompark.domain.model.BusRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 班车乘车记录 服务类
@@ -22,5 +24,7 @@ public interface BusRecordService extends IService<BusRecord> {
      * @return
      */
     IPage<BusRecordDto>  getBusRecordByQuery(SearchBusRecordDto searchBusRecordDto);
+
+    List<BusRecordDto> getBusRecordByCardId(String cardId);
 
 }

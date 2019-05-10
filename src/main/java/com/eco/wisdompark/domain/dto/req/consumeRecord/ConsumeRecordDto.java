@@ -32,8 +32,14 @@ public class ConsumeRecordDto {
     @ApiModelProperty(value = "POS机编号")
     private String posNum;
 
+    @ApiModelProperty(value = "POS机位置")
+    private String posPosition;
+
     @ApiModelProperty(value = "消费类型，0：用餐，1：购物")
     private Integer type;
+
+    @ApiModelProperty(value = "消费类型说明")
+    private String consumeType;
 
     @ApiModelProperty(value = "用餐类型，0：早餐，1：午餐，2：晚餐")
     private Integer diningType;

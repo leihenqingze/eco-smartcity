@@ -9,10 +9,13 @@ import com.eco.wisdompark.service.BusRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -37,5 +40,16 @@ public class BusRecordController {
         IPage<BusRecordDto> busRecordDtoPage = busRecordService.getBusRecordByQuery(searchBusRecordDto);
 
         return ResponseData.OK(busRecordDtoPage);
+    }
+
+    @RequestMapping(value = "/app_list", method = RequestMethod.POST)
+    @ApiOperation(value = "App端查询个人乘车记录", httpMethod = "POST")
+    public ResponseData<List<BusRecordDto>> list(@RequestBody String cardId) {
+
+        if(StringUtils.isEmpty(cardId)){
+            return ResponseData.ERROR(ResponseData.STATUS_CODE_609,"未绑卡!");
+        }
+
+        return ResponseData.OK(busRecordService.getBusRecordByCardId(cardId));
     }
 }

@@ -14,4 +14,7 @@ public class SearchPosDto {
 
     @ApiModelProperty(value = "POS机消费类型：0用餐，1购物")
     private Integer posConsumeType;
+
+    @ApiModelProperty(value = "POS机编号")
+    private String posNum;
 }

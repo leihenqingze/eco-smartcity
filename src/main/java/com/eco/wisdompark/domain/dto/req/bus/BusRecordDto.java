@@ -49,4 +49,10 @@ public class BusRecordDto {
     @ApiModelProperty(value = "手机号")
     private String phone;
 
+    @ApiModelProperty(value = "乘车地点")
+    private String ridingAddress = "国家体育总局训练局";
+
+    @ApiModelProperty(value = "乘车线路")
+    private String ridingLine = "1号线路";
+
 }

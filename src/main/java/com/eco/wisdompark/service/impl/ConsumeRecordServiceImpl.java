@@ -7,18 +7,21 @@ import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.req.pos.SearchPosDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
+import com.eco.wisdompark.domain.model.Pos;
+import com.eco.wisdompark.enums.ConsumeType;
+import com.eco.wisdompark.enums.PosPosition;
 import com.eco.wisdompark.mapper.ConsumeRecordMapper;
 import com.eco.wisdompark.service.ConsumeRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.eco.wisdompark.service.UserService;
+import com.eco.wisdompark.service.PosService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -34,10 +37,10 @@ import java.util.List;
 public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, ConsumeRecord> implements ConsumeRecordService {
 
     @Autowired
-    private UserService userService;
+    private ConsumeRecordMapper consumeRecordMapper;
 
     @Autowired
-    private ConsumeRecordMapper consumeRecordMapper;
+    private PosService posService;
 
 
 
@@ -128,6 +131,11 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             BeanUtils.copyProperties(e, dto);
             dto.setAmount(e.getRechargeAmount().add(e.getSubsidyAmount()));
             dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
+            dto.setConsumeType(ConsumeType.valueOf(e.getType()).getDescription());
+            SearchPosDto searchPosDto = new SearchPosDto();
+            searchPosDto.setPosNum(e.getPosNum());
+            List<Pos> posList = posService.getPosByQuery(searchPosDto);
+            dto.setPosPosition((!CollectionUtils.isEmpty(posList) && posList.get(0).getPosPosition() != null) ? PosPosition.valueOf(posList.get(0).getPosPosition()).getDescription()+"POS" : "");
             consumeRecordDtoList.add(dto);
         });
 

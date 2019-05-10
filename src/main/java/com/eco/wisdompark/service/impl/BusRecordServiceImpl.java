@@ -61,11 +61,7 @@ public class BusRecordServiceImpl extends ServiceImpl<BusRecordMapper, BusRecord
             return busRecordDtoPage;
         }
         BeanUtils.copyProperties(busRecordPage,busRecordDtoPage);
-        if(!CollectionUtils.isEmpty(busRecordPage.getRecords())){
-            List<BusRecordDto> busRecordDtoList = Lists.newArrayList();
-
-            busRecordDtoPage.setRecords(busRecordDtoList);
-        }
+        busRecordDtoPage.setRecords(convertRecordListToDtoList(busRecordPage.getRecords()));
         return busRecordDtoPage;
     }
 
@@ -93,6 +89,7 @@ public class BusRecordServiceImpl extends ServiceImpl<BusRecordMapper, BusRecord
             BusRecordDto busRecordDto = new BusRecordDto();
             BeanUtils.copyProperties(e,busRecordDto);
             busRecordDto.setCardSerialNo(e.getCardSerialno());
+            busRecordDto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
             // 查询运动员信息
             Athletes athletes = athletesService.getById(e.getUserId());
             if(athletes != null){

@@ -32,7 +32,7 @@ public class BusRecordDto {
     private String busNum;
 
     @ApiModelProperty(value = "创建时间")
-    private LocalDateTime createTime;
+    private String createTime;
 
     @ApiModelProperty(value = "运动员名称")
     private String userName;

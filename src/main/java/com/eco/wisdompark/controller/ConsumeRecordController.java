@@ -25,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -163,6 +164,15 @@ public class ConsumeRecordController {
     public ResponseData<IPage<ConsumeRecordDto>> searchUserConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<ConsumeRecordDto> result=  consumeRecordService.searchUserConsumeRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
+    }
+
+    @RequestMapping(value = "/searchUserConsumeRecordDtosForApp", method = RequestMethod.POST)
+    @ApiOperation(value= "App端查询个人消费记录",httpMethod = "POST")
+    public ResponseData<List<ConsomeRecordRespDto>> searchUserConsumeRecordDtosForApp(@RequestBody String cardId){
+        if(StringUtils.isEmpty(cardId)){
+            return ResponseData.ERROR(ResponseData.STATUS_CODE_609,"未绑卡!");
+        }
+        return ResponseData.OK(consumeRecordService.searchUserConsumeRecordDtosByCardId(cardId));
     }
 
 

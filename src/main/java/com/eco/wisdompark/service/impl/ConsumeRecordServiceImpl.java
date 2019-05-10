@@ -12,6 +12,7 @@ import com.eco.wisdompark.mapper.ConsumeRecordMapper;
 import com.eco.wisdompark.service.ConsumeRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eco.wisdompark.service.UserService;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,17 +57,7 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         result.setCurrent(page.getCurrent());
         result.setSize(page.getSize());
         result.setTotal(page.getTotal());
-        List<ConsumeRecord> list = page.getRecords();
-        if(!list.isEmpty()){
-            List<ConsumeRecordDto> dtoList = new ArrayList<>();
-            list.forEach(e->{
-                ConsumeRecordDto dto=new ConsumeRecordDto();
-                BeanUtils.copyProperties(e, dto);
-                dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
-                dtoList.add(dto);
-            });
-            result.setRecords(dtoList);
-        }
+        result.setRecords(convertRecordListToDtoList(page.getRecords()));
         return result;
     }
 
@@ -99,17 +89,7 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         result.setCurrent(page.getCurrent());
         result.setSize(page.getSize());
         result.setTotal(page.getTotal());
-        List<ConsumeRecord> list = page.getRecords();
-        if(!list.isEmpty()){
-            List<ConsumeRecordDto> dtoList = new ArrayList<>();
-            list.forEach(e->{
-                ConsumeRecordDto dto=new ConsumeRecordDto();
-                BeanUtils.copyProperties(e, dto);
-                dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
-                dtoList.add(dto);
-            });
-            result.setRecords(dtoList);
-        }
+        result.setRecords(convertRecordListToDtoList(page.getRecords()));
         return result;
     }
 
@@ -120,5 +100,37 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         BigDecimal subsidyAmount = consumeRecordMapper.totalConsomeRecordSubsidyAmount(financeConsumeRecordDto);
 
         return (rechargeAmount == null ? BigDecimal.ZERO : rechargeAmount).add(subsidyAmount == null ? BigDecimal.ZERO : subsidyAmount);
+    }
+
+    @Override
+    public List<ConsumeRecordDto> searchUserConsumeRecordDtosByCardId(String cardId) {
+        List<ConsumeRecordDto> consumeRecordDtoList = Lists.newArrayList();
+
+        if(StringUtils.isBlank(cardId)){
+            return consumeRecordDtoList;
+        }
+        QueryWrapper<ConsumeRecord> wrapper = new QueryWrapper<>();
+        wrapper.eq("card_id",cardId);
+        List<ConsumeRecord> consumeRecordList = consumeRecordMapper.selectList(wrapper);
+
+        return convertRecordListToDtoList(consumeRecordList);
+    }
+
+    private List<ConsumeRecordDto> convertRecordListToDtoList(List<ConsumeRecord> consumeRecordList){
+
+        List<ConsumeRecordDto> consumeRecordDtoList = Lists.newArrayList();
+
+        if(CollectionUtils.isEmpty(consumeRecordList)){
+            return consumeRecordDtoList;
+        }
+        consumeRecordList.forEach(e->{
+            ConsumeRecordDto dto = new ConsumeRecordDto();
+            BeanUtils.copyProperties(e, dto);
+            dto.setAmount(e.getRechargeAmount().add(e.getSubsidyAmount()));
+            dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
+            consumeRecordDtoList.add(dto);
+        });
+
+        return consumeRecordDtoList;
     }
 }

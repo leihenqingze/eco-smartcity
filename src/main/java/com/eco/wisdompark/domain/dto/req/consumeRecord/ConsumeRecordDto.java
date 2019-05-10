@@ -20,6 +20,9 @@ public class ConsumeRecordDto {
     @ApiModelProperty(value = "用户ID")
     private Integer userId;
 
+    @ApiModelProperty(value = "消费金额")
+    private BigDecimal amount;
+
     @ApiModelProperty(value = "消费充值金额")
     private BigDecimal rechargeAmount;
 

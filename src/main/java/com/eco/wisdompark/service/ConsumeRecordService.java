@@ -8,6 +8,7 @@ import com.eco.wisdompark.domain.model.ConsumeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -24,5 +25,7 @@ public interface ConsumeRecordService extends IService<ConsumeRecord> {
     IPage<ConsumeRecordDto> searchFinanceConsumeRecordDtos(FinanceConsumeRecordDto financeConsumeRecordDto);
 
     BigDecimal totalConsomeRecordAmount(FinanceConsumeRecordDto financeConsumeRecordDto);
+
+    List<ConsumeRecordDto> searchUserConsumeRecordDtosByCardId(String cardId);
 
 }

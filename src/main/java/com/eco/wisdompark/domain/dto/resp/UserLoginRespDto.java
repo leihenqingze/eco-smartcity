@@ -12,5 +12,7 @@ public class UserLoginRespDto {
     private String userName;
     @ApiModelProperty(value = "CUP卡物理Id, -1:表示未绑卡")
     private String cardId;
+    @ApiModelProperty(value = "CUP卡物理Id十六进制, -1:表示未绑卡")
+    private String cardIdHex;
 
 }

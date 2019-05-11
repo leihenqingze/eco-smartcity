@@ -160,6 +160,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserLoginRespDto respDto = new UserLoginRespDto();
         CpuCard cpuCard = cpuCardService.getCpuCarByUserId(user.getId());
         if (Objects.nonNull(cpuCard)) {
+            respDto.setCardIdHex(cpuCard.getCardId());
             respDto.setCardId(StringTools.cardHexStringToDecimal(cpuCard.getCardId()));
         } else {
             respDto.setCardId("-1");

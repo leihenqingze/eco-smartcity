@@ -53,7 +53,7 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "人员登录", httpMethod = "POST")
-    public ResponseData<UserLoginDto> login(@RequestBody UserLoginDto dto) {
+    public ResponseData<UserLoginRespDto> login(@RequestBody UserLoginDto dto) {
         UserLoginRespDto result = userService.login(dto);
         return ResponseData.OK(result);
     }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.bus.BusRecordDto;
 import com.eco.wisdompark.domain.dto.req.bus.SearchBusRecordDto;
+import com.eco.wisdompark.domain.dto.req.consumeRecord.AppConsumeRecordDto;
 import com.eco.wisdompark.service.BusRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,12 +45,12 @@ public class BusRecordController {
 
     @RequestMapping(value = "/app_list", method = RequestMethod.POST)
     @ApiOperation(value = "App端查询个人乘车记录", httpMethod = "POST")
-    public ResponseData<List<BusRecordDto>> list(@RequestBody String cardId) {
+    public ResponseData<List<BusRecordDto>> list(@RequestBody AppConsumeRecordDto appConsumeRecordDto) {
 
-        if(StringUtils.isEmpty(cardId)){
+        if(StringUtils.isEmpty(appConsumeRecordDto.getCardId())){
             return ResponseData.ERROR(ResponseData.STATUS_CODE_609,"未绑卡!");
         }
 
-        return ResponseData.OK(busRecordService.getBusRecordByCardId(cardId));
+        return ResponseData.OK(busRecordService.getBusRecordByCardId(appConsumeRecordDto.getCardId()));
     }
 }

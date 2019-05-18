@@ -1,6 +1,13 @@
 package com.eco.wisdompark.common.utils;
 
 
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -9,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -17,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by haihao on  2019/1/5.
  */
 public class FileUtils {
+
 
 
     public static FileItem createFileItem(String filePath,String fileName) {
@@ -64,8 +71,13 @@ public class FileUtils {
 //        }
         return secretBytes.toString();
     }
-    public static void main(String args[]) {
-        System.out.println(FileUtils.md5("travel@qq.com27635"));
+    public static void main(String args[]) throws ClientException {
+
+
+
+
+
+
     }
 
 

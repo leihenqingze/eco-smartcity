@@ -36,14 +36,14 @@ public class TestController {
     @RequestMapping(value = "/index", method = RequestMethod.POST)
     @ApiOperation(value = "硬件接口", httpMethod = "POST")
     public ResponseData getStr(SaveTestDto saveTestDto) {
-        RideBusDto rideBusDto=new RideBusDto();
-        rideBusDto.setCard_id(saveTestDto.getCard_id());
-        rideBusDto.setName(Integer.parseInt(saveTestDto.getName()));
-        busService.cardRideBus(rideBusDto);
-//        Test test = new Test();
-//        test.setName(saveTestDto.getName());
-//        test.setCard_id(saveTestDto.getCard_id());
-//        testService.save(test);
+//        RideBusDto rideBusDto=new RideBusDto();
+//        rideBusDto.setCard_id(saveTestDto.getCard_id());
+//        rideBusDto.setName(Integer.parseInt(saveTestDto.getName()));
+//        busService.cardRideBus(rideBusDto);
+        Test test = new Test();
+        test.setName(saveTestDto.getName());
+        test.setCard_id(saveTestDto.getCard_id());
+        testService.save(test);
         return ResponseData.OK(1);
     }
 

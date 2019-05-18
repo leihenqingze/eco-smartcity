@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.common.utils.RedisUtil;
 import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
 import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
@@ -41,6 +42,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private CpuCardService cpuCardService;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
 
     @Override
     public Integer countByDept(Integer deptId) {
@@ -148,7 +153,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public UserLoginRespDto login(UserLoginDto dto) {
-        if (!isCaptcha(dto.getCaptcha())) {
+        if (!isCaptcha(dto.getPhoneNum(),dto.getCaptcha())) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_610, "验证码不正确");
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -175,8 +180,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param captcha 用户输入的验证码
      * @return 是否相等
      */
-    private boolean isCaptcha(String captcha) {
-        return "7980".equals(captcha);
+    private boolean isCaptcha(String phone,String captcha) {
+        return redisUtil.get(phone).equals(captcha);
     }
 
 }

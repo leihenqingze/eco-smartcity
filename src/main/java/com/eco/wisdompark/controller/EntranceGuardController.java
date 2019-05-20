@@ -158,7 +158,7 @@ public class EntranceGuardController {
 
         SearchEntranceGuardBusinessParam searchBusinessParam = new SearchEntranceGuardBusinessParam();
         searchBusinessParam.setAreaCode(area_code);
-        searchBusinessParam.setPersonCode("SZ006411"); // todo 根据当前登录用户查询personCode
+        searchBusinessParam.setPersonCode("SZ006399"); // todo 根据当前登录用户查询personCode
         commonRequestParam.setAttributes(searchBusinessParam);
 
         return commonRequestParam;

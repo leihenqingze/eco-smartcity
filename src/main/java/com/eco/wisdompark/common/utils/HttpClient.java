@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+
+import com.alibaba.fastjson.JSON;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -20,7 +22,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
 public class HttpClient {
+
 
     public static String doGet(String url) {
         CloseableHttpClient httpClient = null;
@@ -71,6 +79,7 @@ public class HttpClient {
     }
 
     public static String doPost(String url, Map<String, Object> paramMap) {
+
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         String result = "";
@@ -98,9 +107,9 @@ public class HttpClient {
                 Entry<String, Object> mapEntry = iterator.next();
                 nvps.add(new BasicNameValuePair(mapEntry.getKey(), mapEntry.getValue().toString()));
             }
-
             // 为httpPost设置封装好的请求参数
             try {
+                log.info(">>>>>>>>>POST请求参数：{}", JSON.toJSONString(nvps));
                 httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();

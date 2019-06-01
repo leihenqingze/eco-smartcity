@@ -36,9 +36,13 @@ public class ConsumeRespDtoConverter {
                                                DiningType diningType, CalculateAmountDto calculateAmountDto) {
         ConsumeServiceRespDto changeAmount = convert(user, parent, dept, cpuCardAfter,
                 calculateAmountDto.getAmount().toString(), null);
-        BigDecimal nextConsume = consumeStrategy.calculateAmount(dept, diningType,
-                calculateAmountDto.getConsumeTime() + 1);
-        changeAmount.setNextConsume(nextConsume.toString());
+        try {
+            BigDecimal nextConsume = consumeStrategy.calculateAmount(dept, diningType,
+                    calculateAmountDto.getConsumeTime() + 1);
+            changeAmount.setNextConsume(nextConsume.toString());
+        } catch (Exception ex) {
+            changeAmount.setNextConsume(ex.getMessage());
+        }
         return changeAmount;
     }
 

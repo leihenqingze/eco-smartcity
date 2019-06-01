@@ -10,6 +10,7 @@ import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.user.*;
 import com.eco.wisdompark.domain.dto.resp.RespQueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.resp.UserLoginRespDto;
+import com.eco.wisdompark.domain.dto.resp.UserSearchRespDto;
 import com.eco.wisdompark.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,8 +47,8 @@ public class UserController {
 
     @RequestMapping(value = "/searchUserDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员列表", httpMethod = "POST")
-    public ResponseData<IPage<UserDto>> searchUserDtos(@RequestBody SearchUserDto searchUserDto) {
-        IPage<UserDto> result = userService.searchUserDtos(searchUserDto);
+    public ResponseData<UserSearchRespDto> searchUserDtos(@RequestBody SearchUserDto searchUserDto) {
+        UserSearchRespDto result = userService.searchUserDtos(searchUserDto);
         return ResponseData.OK(result);
     }
 

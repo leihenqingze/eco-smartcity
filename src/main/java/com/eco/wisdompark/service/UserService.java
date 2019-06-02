@@ -67,6 +67,20 @@ public interface UserService extends IService<User> {
 
     UserLoginRespDto login(UserLoginDto dto);
 
+    /**
+     * 查询全部用户
+     *
+     * */
+    List<User> getAllUser();
+
+
+    /**
+     * 获取余额
+     * */
+
+    String getAb(String username);
+
+
 
 
 }

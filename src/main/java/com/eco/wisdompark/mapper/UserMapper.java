@@ -16,5 +16,9 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
 
+    String getABalance (String username);
+
+
+
 
 }

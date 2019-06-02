@@ -87,16 +87,16 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     @Transactional
     public RespMakingCpuCardDto makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
-        // 1.校验用户是否存在
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum())
-                .or()
-                .eq("user_card_num", makingCpuCardDto.getUserCardNum());
-        List<User> userList = userService.list(queryWrapper);
-        if (!CollectionUtils.isEmpty(userList)) {
-            log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
-            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "用户已存在，不能制卡");
-        }
+//        // 1.校验用户是否存在
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("phone_num", makingCpuCardDto.getPhoneNum())
+//                .or()
+//                .eq("user_card_num", makingCpuCardDto.getUserCardNum());
+//        List<User> userList = userService.list(queryWrapper);
+//        if (!CollectionUtils.isEmpty(userList)) {
+//            log.error("makingCpuCard phoneNum:{}, user already exist...", makingCpuCardDto.getPhoneNum());
+//            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "用户已存在，不能制卡");
+//        }
         // 2.保存用户信息
         User user = saveUser(makingCpuCardDto.getUserName(),
                 makingCpuCardDto.getUserCardNum(), makingCpuCardDto.getDeptId(), makingCpuCardDto.getPhoneNum());
@@ -219,6 +219,25 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         RespQueryAmountDto dto = new RespQueryAmountDto();
         dto.setTotalBalance(amount);
         return dto;
+    }
+
+    @Override
+    public int updateCpuCardBalance(Integer userId, BigDecimal rechargeBalance) {
+
+        CpuCard cpuCard =baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", userId));
+        cpuCard.setRechargeBalance(rechargeBalance);
+        baseMapper.updateById(cpuCard);
+        return 0;
+    }
+
+    @Override
+    public int updateCpuCardSBalance(Integer userId, BigDecimal subsidyBalance) {
+
+        CpuCard cpuCard =baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", userId));
+
+        cpuCard.setSubsidyBalance(cpuCard.getSubsidyBalance().add(subsidyBalance));
+        baseMapper.updateById(cpuCard);
+        return 0;
     }
 
 

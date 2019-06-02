@@ -10,6 +10,7 @@ import com.eco.wisdompark.service.ConsumeService;
 import com.eco.wisdompark.service.CpuCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ import java.util.Objects;
 @Api(value = "POS机配置API", description = "POS机配置API")
 @RestController
 @RequestMapping("/api/pos")
+@Slf4j
 public class PosController {
 
     @Autowired
@@ -40,6 +42,8 @@ public class PosController {
     @RequestMapping(value = "/consume", method = RequestMethod.POST)
     @ApiOperation(value = "刷卡消费", httpMethod = "POST")
     public ResponseData<ConsumeRespDto> consume(@RequestBody ConsumeDto consumeDto) {
+        log.error(">>>>>>>>>>pos num {}",consumeDto.getPosNum());
+        log.error(">>>>>>>>>>cardId  {}",consumeDto.getCardId());
         ConsumeServiceRespDto consumeServiceRespDto = consumeService.consume(consumeDto);
         if (Objects.isNull(consumeServiceRespDto.getErrorCode())) {
             return ResponseData.OK(consumeServiceRespDto);

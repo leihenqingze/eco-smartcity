@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 /**
- * 保洁消费策略
+ * 保安消费策略
  * 早餐5元，没有次数限制
  * 午餐和晚餐每天只能各刷一次，金额为0
  */

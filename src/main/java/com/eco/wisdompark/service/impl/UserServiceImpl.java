@@ -174,6 +174,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return respDto;
     }
 
+    @Override
+    public List<User> getAllUser() {
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public String getAb(String username) {
+
+
+        return  baseMapper.getABalance(username);
+    }
+
     /**
      * 比较验证码
      *

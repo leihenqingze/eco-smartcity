@@ -12,9 +12,9 @@ import java.time.LocalTime;
  * @version 1.0
  */
 public enum DiningType implements CommonEnum<DiningType> {
-    BREAKFAST(0, "早餐", LocalTime.of(6, 0), LocalTime.of(10, 0)),
-    LUNCH(1, "午餐", LocalTime.of(11, 0), LocalTime.of(14, 0)),
-    DINNER(2, "晚餐", LocalTime.of(16, 0), LocalTime.of(20, 0));
+    BREAKFAST(0, "早餐", LocalTime.of(5, 0), LocalTime.of(9, 59)),
+    LUNCH(1, "午餐", LocalTime.of(10, 0), LocalTime.of(15, 59)),
+    DINNER(2, "晚餐", LocalTime.of(16, 0), LocalTime.of(22, 59));
 
     private final int code;
     private final String description;

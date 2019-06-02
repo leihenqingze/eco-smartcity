@@ -6,6 +6,7 @@ import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserLoginDto;
 import com.eco.wisdompark.domain.dto.resp.UserLoginRespDto;
+import com.eco.wisdompark.domain.dto.resp.UserSearchRespDto;
 import com.eco.wisdompark.domain.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -34,7 +35,7 @@ public interface UserService extends IService<User> {
      * @param searchUserDto
      * @return
      * */
-     IPage<UserDto> searchUserDtos(SearchUserDto searchUserDto);
+    UserSearchRespDto searchUserDtos(SearchUserDto searchUserDto);
 
     /**
      * 查询人员详情

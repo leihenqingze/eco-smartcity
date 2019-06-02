@@ -7,15 +7,20 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.common.utils.RedisUtil;
 import com.eco.wisdompark.common.utils.StringTools;
+import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
+import com.eco.wisdompark.domain.dto.req.dept.DeptDto;
 import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
 import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import com.eco.wisdompark.domain.dto.req.user.UserLoginDto;
 import com.eco.wisdompark.domain.dto.resp.UserLoginRespDto;
+import com.eco.wisdompark.domain.dto.resp.UserSearchRespDto;
 import com.eco.wisdompark.domain.model.CpuCard;
+import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.UserMapper;
 import com.eco.wisdompark.service.CpuCardService;
+import com.eco.wisdompark.service.DeptService;
 import com.eco.wisdompark.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
@@ -25,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +52,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private DeptService deptService;
+
 
     @Override
     public Integer countByDept(Integer deptId) {
@@ -55,18 +64,60 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public IPage<UserDto> searchUserDtos(SearchUserDto searchUserDto) {
+    public UserSearchRespDto searchUserDtos(SearchUserDto searchUserDto) {
+
+        UserSearchRespDto userSearchRespDto = new UserSearchRespDto();
         IPage<UserDto> result = new Page<>();
-        QueryWrapper<User> wrapper = new QueryWrapper<User>();
-        if (searchUserDto.getDeptId() != null && searchUserDto.getDeptId() > 0) {
-            wrapper.eq("dept_id", searchUserDto.getDeptId());
+        BigDecimal currentPageRechargeAmount = BigDecimal.ZERO;
+        BigDecimal currentPageSubsidyAmount = BigDecimal.ZERO;
+        BigDecimal totalRechargeAmount = BigDecimal.ZERO;
+        BigDecimal totalSubsidyAmount = BigDecimal.ZERO;
+        List<Integer> deptIdList = Lists.newArrayList();
+
+        if(searchUserDto.getDeptId() != null){
+            deptIdList.add(searchUserDto.getDeptId());
+            // 查询二级部门
+            Dept dept = deptService.getById(searchUserDto.getDeptId());
+            if(dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)){
+                AddLevel2DeptDto addLevel2DeptDto = new AddLevel2DeptDto();
+                addLevel2DeptDto.setId(dept.getId());
+                List<DeptDto> level2DeptList = deptService.getLevel2Dept(addLevel2DeptDto);
+                if(!CollectionUtils.isEmpty(level2DeptList)){
+                    deptIdList.clear();
+                    level2DeptList.forEach(e->{
+                        deptIdList.add(e.getId());
+                    });
+                }
+            }
         }
+
+        QueryWrapper<User> wrapper = new QueryWrapper<User>();
+
         if (StringUtils.isNotBlank(searchUserDto.getUserName())) {
             wrapper.like("user_name", searchUserDto.getUserName());
         }
         if (StringUtils.isNotBlank(searchUserDto.getPhoneNum())) {
             wrapper.like("phone_num", searchUserDto.getPhoneNum());
         }
+        if(!CollectionUtils.isEmpty(deptIdList)){
+            wrapper.in("dept_id",deptIdList);
+        }
+        // 统计所有金额
+        List<User> userList = baseMapper.selectList(wrapper);
+        if (!userList.isEmpty()) {
+            List<Integer> userIds = new ArrayList<>();
+            userList.forEach(e -> {
+                userIds.add(e.getId());
+            });
+            List<CpuCard> cpuCards = cpuCardService.getCpuCardByUserIds(userIds);
+            if (!cpuCards.isEmpty()) {
+                for(CpuCard cpuCard : cpuCards){
+                    totalRechargeAmount = totalRechargeAmount.add(cpuCard.getRechargeBalance());
+                    totalSubsidyAmount = totalSubsidyAmount.add(cpuCard.getSubsidyBalance());
+                }
+            }
+        }
+        // 用户分页信息
         IPage<User> page = baseMapper.selectPage(new Page<>(searchUserDto.getCurrentPage(), searchUserDto.getPageSize()), wrapper);
         result.setPages(page.getPages());
         result.setCurrent(page.getCurrent());
@@ -84,21 +135,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             });
             List<CpuCard> cpuCards = cpuCardService.getCpuCardByUserIds(userIds);
             if (!cpuCards.isEmpty()) {
-                cpuCards.forEach(c -> {
-                    dtoList.forEach(dto -> {
+                for(CpuCard c : cpuCards){
+                    for(UserDto dto : dtoList){
                         if (c.getUserId().equals(dto.getId())) {
                             dto.setCardSerialNo(c.getCardSerialNo());
                             dto.setDeposit(c.getDeposit());
                             dto.setCardSource(c.getCardSource());
                             dto.setRechargeBalance(c.getRechargeBalance());
                             dto.setSubsidyBalance(c.getSubsidyBalance());
+                            currentPageRechargeAmount = currentPageRechargeAmount.add(c.getRechargeBalance());
+                            currentPageSubsidyAmount = currentPageSubsidyAmount.add(c.getSubsidyBalance());
                         }
-                    });
-                });
+                    }
+                }
             }
             result.setRecords(dtoList);
         }
-        return result;
+        userSearchRespDto.setUserDtoIPage(result);
+        userSearchRespDto.setCurrentPageRechargeAmount(currentPageRechargeAmount);
+        userSearchRespDto.setCurrentPageSubsidyAmount(currentPageSubsidyAmount);
+        userSearchRespDto.setTotalRechargeAmount(totalRechargeAmount);
+        userSearchRespDto.setTotalSubsidyAmount(totalSubsidyAmount);
+        return userSearchRespDto;
     }
 
 

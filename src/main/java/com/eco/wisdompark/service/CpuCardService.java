@@ -6,7 +6,6 @@ import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -121,5 +120,7 @@ public interface CpuCardService extends IService<CpuCard> {
     int updateCpuCardBalance(Integer userId, BigDecimal rechargeBalance);
 
     int updateCpuCardSBalance(Integer userId, BigDecimal subsidyBalance);
+
+    BatchMarkingCardRespDto batchMakingCard(MultipartFile file);
 
 }

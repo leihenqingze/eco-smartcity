@@ -91,4 +91,12 @@ public class CpuCardController {
         return ResponseData.OK(cpuCardService.queryAmount(queryCardInfoDto));
     }
 
+
+    @RequestMapping(value = "/making/batch/fileUpload", method = RequestMethod.POST)
+    @ApiOperation(value = "批量制卡Excel文件上传接口", httpMethod = "POST")
+    public ResponseData<BatchMarkingCardRespDto> batchMakingCard(@RequestParam("file") MultipartFile file) {
+        BatchMarkingCardRespDto batchMarkingCardRespDto = cpuCardService.batchMakingCard(file);
+        return ResponseData.OK(batchMarkingCardRespDto);
+    }
+
 }

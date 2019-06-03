@@ -14,6 +14,7 @@ import com.eco.wisdompark.converter.resp.RespLossQueryConfirmDtoConverter;
 import com.eco.wisdompark.converter.resp.RespMakingCpuCardDtoConverter;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.*;
+import com.eco.wisdompark.domain.dto.req.dept.DeptAllDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
@@ -37,14 +38,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.eco.wisdompark.common.dto.ResponseData.STATUS_CODE_601;
 
@@ -103,7 +101,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         // 3.保存制卡信息
         Integer userId = user.getId();
         CpuCard cpuCard = saveCpuCardInfo(StringTools.cardDecimalToHexString(makingCpuCardDto.getCardId()),
-                makingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, makingCpuCardDto.getDeposit(), userId);
+                makingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, makingCpuCardDto.getDeposit(),new BigDecimal(0), userId);
         // 4.封装返回信息
         RespMakingCpuCardDto respMakingCpuCardDto = RespMakingCpuCardDtoConverter.create(cpuCard, user);
         return respMakingCpuCardDto;
@@ -128,7 +126,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 activeCpuCardDto.getUserCardNum(), activeCpuCardDto.getDeptId(), activeCpuCardDto.getPhoneNum());
         // 3.保存制卡信息
         CpuCard cpuCard = saveCpuCardInfo(StringTools.cardDecimalToHexString(activeCpuCardDto.getCardId()),
-                activeCpuCardDto.getCardSerialNo(), CardSource.ACTIVATION, new BigDecimal(0), user.getId());
+                activeCpuCardDto.getCardSerialNo(), CardSource.ACTIVATION, new BigDecimal(0), new BigDecimal(0),user.getId());
         // 4.封装返回信息
         RespActiveCpuCardDto respActiveCpuCardDto = RespActiveCpuCardDtoConverter.create(cpuCard, user);
         return respActiveCpuCardDto;
@@ -239,7 +237,6 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         baseMapper.updateById(cpuCard);
         return 0;
     }
-
 
     /**
      * 校验Excel条数 每次上传不能大于200条
@@ -597,7 +594,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
 
     private CpuCard saveCpuCardInfo(String cardId, String cardSerialNo,
-                                    CardSource cardSource, BigDecimal deposit, Integer userId) {
+                                    CardSource cardSource, BigDecimal deposit,BigDecimal recharge, Integer userId) {
         // 校验CPU卡物理id是否存在
         boolean isExist = queryCardInfoIsExist(cardId, cardSerialNo);
         if (isExist) {
@@ -608,7 +605,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
         CpuCard cpuCard = CpuCardConverter.create(userId, cardId, cardSerialNo,
                 CardType.CPU, cardSource, deposit,
-                new BigDecimal(0), new BigDecimal(0));
+                recharge, new BigDecimal(0));
 
         boolean res = save(cpuCard);
         log.info("saveCpuCardInfo cardSerialNo:{}, res:{}", cardSerialNo, res);
@@ -628,5 +625,175 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         }
         return false;
     }
+
+
+    /**
+     * 批量制卡
+     * @param file
+     * @return
+     */
+    @Override
+    public BatchMarkingCardRespDto batchMakingCard(MultipartFile file) {
+        BatchMarkingCardRespDto batchMarkingCardRespDto = new BatchMarkingCardRespDto();
+        if (file.isEmpty()) {
+            log.error("batch_making_card fileUpload file isEmpty...");
+            throw new WisdomParkException(ResponseData.STATUS_CODE_612, "批量制卡Excel文件为空");
+        }
+        String fileName = file.getOriginalFilename();
+        int size = (int) file.getSize();
+        log.info("batch_making_card fileUpload originalFileName:{}, size:{}", fileName, size);
+        String uploadPath = UPLOAD_FILE_PATH;
+        if (StringUtils.isEmpty(uploadPath)) {
+            uploadPath = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "file" + File.separator + "making_card" + File.separator + LocalDate.now() + File.separator;
+            log.info("batch_making_card fileUpload path not config, use default:{}", uploadPath);
+        }
+        // 新文件名时间戳
+        String newFileName = "making_card" + System.currentTimeMillis() + SUFFIX_2007;
+        File newFile = new File(uploadPath + newFileName);
+        // 判断文件父目录是否存在
+        if (!newFile.getParentFile().exists()) {
+            newFile.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(newFile);
+            log.info("batch_making_card fileUpload success...");
+            FileItem fileItem = FileUtils.createFileItem(newFile.getPath(), newFileName);
+            MultipartFile xlsFile = new CommonsMultipartFile(fileItem);
+            batchMarkingCardRespDto = makingCardReadExcel(xlsFile);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return batchMarkingCardRespDto;
+    }
+
+    /**
+     * 读取制卡Excel文件
+     *
+     * @param file
+     */
+    private BatchMarkingCardRespDto makingCardReadExcel(MultipartFile file) {
+        BatchMarkingCardRespDto batchMarkingCardRespDto = new BatchMarkingCardRespDto();
+        Map<Integer,String> errorMap = new HashMap<>();
+        int successCount = 0 ;
+        int errorCount = 0 ;
+
+        //获取文件的名字
+        String originalFilename = file.getOriginalFilename();
+        Workbook workbook = null;
+        try {
+            if (originalFilename.endsWith(SUFFIX_2003)) {
+                workbook = new HSSFWorkbook(file.getInputStream());
+            } else if (originalFilename.endsWith(SUFFIX_2007)) {
+                workbook = new XSSFWorkbook(file.getInputStream());
+            } else {
+                throw new WisdomParkException(ResponseData.STATUS_CODE_605, "文件格式不正确");
+            }
+
+            // 第四行开始读
+            Sheet sheet = workbook.getSheetAt(0);
+            int rows = sheet.getLastRowNum();
+            for (int r = 3; r <= rows; r++) {
+                try{
+                    Row row = sheet.getRow(r);
+                    if (row == null) {
+                        continue;
+                    }
+                    BatchMakingCpuCardDto batchMakingCpuCardDto = new BatchMakingCpuCardDto();
+                    if(cellIsEmpty(row.getCell(1))){
+                        errorMap.put(r+1,"姓名为空");
+                        errorCount++;
+                        continue;
+                    }
+                    if(cellIsEmpty(row.getCell(2))){
+                        errorMap.put(r+1,"组织架构为空");
+                        errorCount++;
+                        continue;
+                    }
+                    if(cellIsEmpty(row.getCell(6))){
+                        errorMap.put(r+1,"卡编号为空");
+                        errorCount++;
+                        continue;
+                    }
+                    if(cellIsEmpty(row.getCell(7))){
+                        errorMap.put(r+1,"卡id为空");
+                        errorCount++;
+                        continue;
+                    }
+                    String deptname = row.getCell(2).getStringCellValue();
+                    Integer deptid = getdeptId(deptname);
+                    if(deptid == 0){
+                        errorMap.put(r+1,"组织架构不存在");
+                        errorCount++;
+                        continue;
+                    }
+                    batchMakingCpuCardDto.setUserName(row.getCell(1).getStringCellValue());
+                    batchMakingCpuCardDto.setUserCardNum(row.getCell(3).getStringCellValue());
+                    batchMakingCpuCardDto.setDeptId(deptid);
+                    batchMakingCpuCardDto.setPhoneNum(row.getCell(4).getStringCellValue());
+                    batchMakingCpuCardDto.setCardSerialNo(row.getCell(6).getStringCellValue());
+                    batchMakingCpuCardDto.setCardId(row.getCell(7).getStringCellValue());
+
+                    if(!cellIsEmpty(row.getCell(8))){
+                        batchMakingCpuCardDto.setRechargeBalance(BigDecimal.valueOf(row.getCell(8).getNumericCellValue()));
+                    }
+                    // 入库
+                    batchMakingCpuCard(batchMakingCpuCardDto);
+
+                }catch (WisdomParkException e){
+                    errorMap.put(r+1,e.getMessage());
+                    errorCount++;
+                    continue;
+                }catch (Exception e){
+                    e.printStackTrace();
+                    errorMap.put(r+1,"解析异常");
+                    errorCount++;
+                    continue;
+                }
+                successCount++;
+            }
+            batchMarkingCardRespDto.setErrorCount(errorCount);
+            batchMarkingCardRespDto.setSuccessCount(successCount);
+            batchMarkingCardRespDto.setErrorRowInfo(errorMap);
+
+        } catch (Exception e) {
+            log.error("batch_making_card readExcel fileName:{}, Exception...", originalFilename);
+            e.printStackTrace();
+            throw new WisdomParkException(ResponseData.STATUS_CODE_606, "文件读取异常");
+        }
+        return batchMarkingCardRespDto;
+    }
+
+    private boolean cellIsEmpty(Cell cell){
+        if(cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK){
+            return true;
+        }
+        return false;
+    }
+
+    private Integer getdeptId(String deptname) {
+        List<DeptAllDto> list = deptService.getDeptAll();
+        for (DeptAllDto dept : list) {
+            for (DeptAllDto d : dept.getChildren()) {
+                if (d.getLabel().equals(deptname)) {
+                    return d.getValue();
+                }
+            }
+        }
+        return 0;
+
+    }
+
+    private void batchMakingCpuCard(BatchMakingCpuCardDto batchMakingCpuCardDto) {
+        // 保存用户信息
+        User user = saveUser(batchMakingCpuCardDto.getUserName(),
+                batchMakingCpuCardDto.getUserCardNum(), batchMakingCpuCardDto.getDeptId(), batchMakingCpuCardDto.getPhoneNum());
+        // 保存制卡信息
+        Integer userId = user.getId();
+        saveCpuCardInfo(StringTools.cardDecimalToHexString(batchMakingCpuCardDto.getCardId()),
+                batchMakingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, BigDecimal.ZERO,batchMakingCpuCardDto.getRechargeBalance(), userId);
+    }
+
 
 }

@@ -2,6 +2,7 @@ package com.eco.wisdompark.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.RedisUtil;
 import com.eco.wisdompark.common.utils.SendSmsUtils;
@@ -47,6 +48,7 @@ public class UserController {
 
     @RequestMapping(value = "/searchUserDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员列表", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<UserSearchRespDto> searchUserDtos(@RequestBody SearchUserDto searchUserDto) {
         UserSearchRespDto result = userService.searchUserDtos(searchUserDto);
         return ResponseData.OK(result);

@@ -81,7 +81,7 @@ public interface UserService extends IService<User> {
 
     String getAb(String username);
 
-
+    List<User> getListByQuery(SearchUserDto searchUserDto);
 
 
 }

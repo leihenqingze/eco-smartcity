@@ -2,6 +2,7 @@ package com.eco.wisdompark.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.bus.BusRecordDto;
 import com.eco.wisdompark.domain.dto.req.bus.SearchBusRecordDto;
@@ -36,6 +37,7 @@ public class BusRecordController {
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperation(value = "班车乘车记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<IPage<BusRecordDto>> list(@RequestBody SearchBusRecordDto searchBusRecordDto) {
 
         IPage<BusRecordDto> busRecordDtoPage = busRecordService.getBusRecordByQuery(searchBusRecordDto);

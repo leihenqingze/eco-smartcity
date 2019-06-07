@@ -29,7 +29,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 查询二级部门
             Dept dept = deptService.getById(searchUserDto.getDeptId());
             if(dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)){
-                AddLevel2DeptDto addLevel2DeptDto = new AddLevel2DeptDto();
-                addLevel2DeptDto.setId(dept.getId());
-                List<DeptDto> level2DeptList = deptService.getLevel2Dept(addLevel2DeptDto);
+                List<DeptDto> level2DeptList = getLevel2Dept(dept.getId());
                 if(!CollectionUtils.isEmpty(level2DeptList)){
                     deptIdList.clear();
                     level2DeptList.forEach(e->{
@@ -246,6 +243,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return  baseMapper.getABalance(username);
     }
 
+    @Override
+    public List<User> getListByQuery(SearchUserDto searchUserDto) {
+        QueryWrapper<User> wrapper = new QueryWrapper<User>();
+
+        List<Integer> deptIdList = Lists.newArrayList();
+
+        if(searchUserDto.getDeptId() != null){
+            deptIdList.add(searchUserDto.getDeptId());
+            // 查询二级部门
+            Dept dept = deptService.getById(searchUserDto.getDeptId());
+            if(dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)){
+                List<DeptDto> level2DeptList = getLevel2Dept(dept.getId());
+                if(!CollectionUtils.isEmpty(level2DeptList)){
+                    deptIdList.clear();
+                    level2DeptList.forEach(e->{
+                        deptIdList.add(e.getId());
+                    });
+                }
+            }
+        }
+
+        if (StringUtils.isNotBlank(searchUserDto.getUserName())) {
+            wrapper.like("user_name", searchUserDto.getUserName());
+        }
+        if (StringUtils.isNotBlank(searchUserDto.getPhoneNum())) {
+            wrapper.like("phone_num", searchUserDto.getPhoneNum());
+        }
+        if(!CollectionUtils.isEmpty(deptIdList)){
+            wrapper.in("dept_id",deptIdList);
+        }
+
+        return baseMapper.selectList(wrapper);
+    }
+
     /**
      * 比较验证码
      *
@@ -254,6 +285,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     private boolean isCaptcha(String phone,String captcha) {
         return redisUtil.get(phone).equals(captcha);
+    }
+
+    private List<DeptDto> getLevel2Dept(Integer deptId){
+        AddLevel2DeptDto addLevel2DeptDto = new AddLevel2DeptDto();
+        addLevel2DeptDto.setId(deptId);
+        return deptService.getLevel2Dept(addLevel2DeptDto);
     }
 
 }

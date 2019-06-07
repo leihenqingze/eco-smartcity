@@ -3,6 +3,7 @@ package com.eco.wisdompark.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.RegexUtils;
 import com.eco.wisdompark.domain.dto.req.sysUser.SaveSysUserDto;
@@ -41,6 +42,7 @@ public class SysUserController {
 
     @RequestMapping(value = "/getSysUserList", method = RequestMethod.POST)
     @ApiOperation(value = "分页查询系统用户", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<IPage<SysUser>> getSysUserList(@RequestBody SysUserDto sysUserDto) {
         log.debug(">>>>>getSysUserList,param is :{}", JSON.toJSONString(sysUserDto));
         IPage<SysUser> sysUserPage = sysUserService.getSysUserPage(sysUserDto);
@@ -49,6 +51,7 @@ public class SysUserController {
 
     @RequestMapping(value = "/saveSysUser", method = RequestMethod.POST)
     @ApiOperation(value = "添加系统用户", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData saveSysUser(@RequestBody SaveSysUserDto saveSysUserDto) {
         log.debug(">>>>>saveSysUser,param is :{}", JSON.toJSONString(saveSysUserDto));
         if (saveSysUserDto == null) {
@@ -65,6 +68,7 @@ public class SysUserController {
 
     @RequestMapping(value = "/updateSysUserPass", method = RequestMethod.POST)
     @ApiOperation(value = "修改系统用户密码", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData updateSysUserPass(@RequestBody UpdateUserPassDto updateUserPassDto,HttpServletRequest request) {
         log.debug(">>>>>updateSysUserPass,updateUserPassDto:{}", JSON.toJSONString(updateUserPassDto));
         if (!StringUtils.trim(updateUserPassDto.getNewPassWord()).equals(StringUtils.trim(updateUserPassDto.getConfirmNewPassWord()))) {
@@ -97,7 +101,7 @@ public class SysUserController {
         }
         HttpSession session = request.getSession();
         session.setAttribute("Authentication", sysUser);
-        session.setMaxInactiveInterval(3600);
+        session.setMaxInactiveInterval(1800); // 登录有效期30分钟
         return ResponseData.OK(sysUser.getSysUserDepartment());
 
     }

@@ -1,6 +1,7 @@
 package com.eco.wisdompark.controller;
 
 
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.bus.RideBusDto;
 import com.eco.wisdompark.domain.dto.req.bus.SearchBusDto;
@@ -32,6 +33,7 @@ public class BusController {
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperation(value = "查询所有班车", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<List<Bus>> getAllBus( @RequestBody SearchBusDto searchBusDto) {
         List<Bus> result = busService.getBusByQuery(searchBusDto);
         return ResponseData.OK(result);

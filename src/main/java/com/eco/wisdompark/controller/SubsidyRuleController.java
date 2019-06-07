@@ -2,6 +2,7 @@ package com.eco.wisdompark.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.AddAutoSubsidyRuleDto;
@@ -36,6 +37,7 @@ public class SubsidyRuleController {
 
     @RequestMapping(value = "/autoSubsidyRule", method = RequestMethod.POST)
     @ApiOperation(value = "添加自动补助规则", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData addAutoSubsidyRule(@RequestBody AddAutoSubsidyRuleDto addAutoSubsidyRuleDto) {
         SubsidyRule subsidyRule = new SubsidyRule();
         BeanUtils.copyProperties(addAutoSubsidyRuleDto, subsidyRule);
@@ -46,6 +48,7 @@ public class SubsidyRuleController {
 
     @RequestMapping(value = "/revStopSubsidyRule", method = RequestMethod.POST)
     @ApiOperation(value = "启停自动补助规则", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData revStopSubsidyRule(@RequestBody RevStopSubsidyRuleDto revStopSubsidyRuleDto) {
         SubsidyRule subsidyRule = new SubsidyRule();
         BeanUtils.copyProperties(revStopSubsidyRuleDto, subsidyRule);
@@ -55,6 +58,7 @@ public class SubsidyRuleController {
 
     @RequestMapping(value = "/updateSubsidyRule", method = RequestMethod.POST)
     @ApiOperation(value = "修改自动补助规则", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData updateSubsidyRule(@RequestBody UpdateSubsidyRuleDto updateSubsidyRuleDto) {
         SubsidyRule subsidyRule = new SubsidyRule();
         BeanUtils.copyProperties(updateSubsidyRuleDto, subsidyRule);

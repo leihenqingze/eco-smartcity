@@ -5,17 +5,24 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.RechargeRecordDto;
-import com.eco.wisdompark.domain.model.ConsumeRecord;
+import com.eco.wisdompark.domain.dto.req.rechargeRecord.SearchRechargeRecordDto;
+import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
+import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.RechargeRecord;
+import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.RechargeType;
+import com.eco.wisdompark.enums.RechargeWay;
 import com.eco.wisdompark.mapper.RechargeRecordMapper;
+import com.eco.wisdompark.service.DeptService;
 import com.eco.wisdompark.service.RechargeRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eco.wisdompark.service.UserService;
+import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -34,14 +41,21 @@ import java.util.List;
 @Service
 public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper, RechargeRecord> implements RechargeRecordService {
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DeptService deptService;
+
     @Override
     public boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount,
-                                      RechargeType rechargeType, String importSerialNo) {
+                                      RechargeType rechargeType, String importSerialNo,int rechargeWay) {
         RechargeRecord rechargeRecord = new RechargeRecord();
         rechargeRecord.setCardId(cardInfoDto.getCardId());
         rechargeRecord.setCardSerialNo(cardInfoDto.getCardSerialNo());
         rechargeRecord.setAmount(amount);
         rechargeRecord.setRechargeType(rechargeType.getCode());
+        rechargeRecord.setRechargeWay(rechargeWay);
         if (!StringUtils.isEmpty(importSerialNo)){
             rechargeRecord.setImportSerialno(importSerialNo);
         }
@@ -51,17 +65,44 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
     }
 
     @Override
-    public IPage<RechargeRecordDto> searchUserRechargeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+    public IPage<RechargeRecordDto> searchUserRechargeRecordDtos(SearchRechargeRecordDto searchRechargeRecordDto) {
         IPage<RechargeRecordDto> result=new Page<>();
         QueryWrapper<RechargeRecord> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id",searchConsumeRecordDto.getId());
-        if(org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getStartTime())){
-            wrapper.ge("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getStartTime()));
+
+        List<Integer> userIdList = Lists.newArrayList();
+
+        if(!StringUtils.isEmpty(searchRechargeRecordDto.getUserName())
+                || !StringUtils.isEmpty(searchRechargeRecordDto.getPhone())
+                || searchRechargeRecordDto.getDeptId() != null){
+            SearchUserDto searchUserDto = new SearchUserDto();
+            searchUserDto.setUserName(searchRechargeRecordDto.getUserName());
+            searchUserDto.setPhoneNum(searchRechargeRecordDto.getPhone());
+            searchUserDto.setDeptId(searchRechargeRecordDto.getDeptId());
+
+            List<User> userList = userService.getListByQuery(searchUserDto);
+            if(!CollectionUtils.isEmpty(userList)){
+                userList.forEach(e -> {
+                    userIdList.add(e.getId());
+                });
+            }
+            if(CollectionUtils.isEmpty(userIdList)){
+                return result;
+            }
         }
-        if(org.apache.commons.lang3.StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())){
-            wrapper.le("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getEndTime()));
+
+        if(!CollectionUtils.isEmpty(userIdList)){
+            wrapper.in("user_id",userIdList);
         }
-        IPage<RechargeRecord> page = baseMapper.selectPage(new Page<>(searchConsumeRecordDto.getCurrentPage(), searchConsumeRecordDto.getPageSize()), wrapper);
+        if(!StringUtils.isEmpty(searchRechargeRecordDto.getStartTime())){
+            wrapper.ge("create_time", LocalDateTimeUtils.localTime(searchRechargeRecordDto.getStartTime()));
+        }
+        if(!StringUtils.isEmpty(searchRechargeRecordDto.getEndTime())){
+            wrapper.le("create_time", LocalDateTimeUtils.localTime(searchRechargeRecordDto.getEndTime()));
+        }
+        if(!StringUtils.isEmpty(searchRechargeRecordDto.getCardId())){
+            wrapper.eq("card_id",searchRechargeRecordDto.getCardId());
+        }
+        IPage<RechargeRecord> page = baseMapper.selectPage(new Page<>(searchRechargeRecordDto.getCurrentPage(), searchRechargeRecordDto.getPageSize()), wrapper);
         result.setPages(page.getPages());
         result.setCurrent(page.getCurrent());
         result.setSize(page.getSize());
@@ -73,6 +114,17 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
                 RechargeRecordDto dto=new RechargeRecordDto();
                 BeanUtils.copyProperties(e, dto);
                 dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
+                dto.setRechargeType(RechargeType.valueOf(e.getRechargeType()).getDescription());
+                dto.setRechargeWay(RechargeWay.valueOf(e.getRechargeWay()).getDescription());
+                User user = userService.getById(e.getUserId());
+                if(user != null){
+                    dto.setUserName(user.getUserName());
+                    dto.setPhone(user.getPhoneNum());
+                    Dept dept = deptService.getById(user.getDeptId());
+                    if(dept != null){
+                        dto.setDeptName(dept.getDeptName());
+                    }
+                }
                 dtoList.add(dto);
             });
             result.setRecords(dtoList);

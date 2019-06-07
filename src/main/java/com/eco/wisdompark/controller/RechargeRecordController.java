@@ -2,9 +2,11 @@ package com.eco.wisdompark.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.RechargeRecordDto;
+import com.eco.wisdompark.domain.dto.req.rechargeRecord.SearchRechargeRecordDto;
 import com.eco.wisdompark.service.RechargeRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,8 +35,9 @@ public class RechargeRecordController {
 
     @RequestMapping(value = "/searchUserRechargeRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员充值记录", httpMethod = "POST")
-    public ResponseData searchUserRechargeRecordDtos( @RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
-        IPage<RechargeRecordDto> result = rechargeRecordService.searchUserRechargeRecordDtos(searchConsumeRecordDto);
+    @SysUserLogin
+    public ResponseData searchUserRechargeRecordDtos( @RequestBody SearchRechargeRecordDto searchRechargeRecordDto) {
+        IPage<RechargeRecordDto> result = rechargeRecordService.searchUserRechargeRecordDtos(searchRechargeRecordDto);
         return ResponseData.OK(result);
     }
 

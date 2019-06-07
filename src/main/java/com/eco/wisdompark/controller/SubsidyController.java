@@ -1,6 +1,7 @@
 package com.eco.wisdompark.controller;
 
 
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.subsidy.ManualSubsidyDto;
 import com.eco.wisdompark.service.SubsidyService;
@@ -30,6 +31,7 @@ public class SubsidyController {
 
     @RequestMapping(value = "/manualSubsidy", method = RequestMethod.POST)
     @ApiOperation(value = "手动补助", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData manualSubsidy(@RequestBody ManualSubsidyDto manualSubsidyDto) {
         subsidyService.manualSubsidy(manualSubsidyDto);
         return ResponseData.OK();

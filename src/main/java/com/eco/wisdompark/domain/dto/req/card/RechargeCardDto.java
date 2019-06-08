@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import net.sf.oval.constraint.Min;
 import net.sf.oval.constraint.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 
@@ -19,5 +20,9 @@ public class RechargeCardDto {
     @ApiModelProperty(value = "充值金额")
     @Min(value = 1, message = "充值金额最小不能小于1元")
     private BigDecimal rechargeAmt;
+
+    @ApiModelProperty(value = "充值方式")
+    @NotNull(message = "充值方式不能为空")
+    private Integer rechargeWay;
 
 }

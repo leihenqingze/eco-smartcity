@@ -162,7 +162,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         // 2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
-        return rechargeBalance(innerCpuCardInfoDto, StringTools.cardDecimalToHexString(rechargeCardDto.getCardId()), rechargeCardDto.getRechargeAmt(),RechargeWay.CASH_DEPOSIT.getCode());
+        return rechargeBalance(innerCpuCardInfoDto, StringTools.cardDecimalToHexString(rechargeCardDto.getCardId()), rechargeCardDto.getRechargeAmt(),rechargeCardDto.getRechargeWay());
     }
 
 

@@ -56,12 +56,14 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         if (this.isExists(addLevel2DeptDto.getDeptName()) > 0)
             throw new WisdomParkException(ResponseData.STATUS_CODE_463, "组织架构名称已经存在");
         Dept l1Dept = baseMapper.selectById(addLevel2DeptDto.getId());
+        ConsumeIdentity consumeIdentity = ConsumeIdentity.valueOf(addLevel2DeptDto.getConsumeIdentity());
+        if (consumeIdentity == null) throw new WisdomParkException(ResponseData.STATUS_CODE_464, "未匹配到消费类型");
         Integer result = null;
         if (l1Dept != null) {
             Dept dept = new Dept();
             dept.setDeptUpId(l1Dept.getId());
             dept.setDeptName(addLevel2DeptDto.getDeptName());
-            dept.setConsumeIdentity(l1Dept.getConsumeIdentity());
+            dept.setConsumeIdentity(consumeIdentity.getCode());
             dept.setDeptUpDownStr(l1Dept.getDeptUpDownStr() + "|" + l1Dept.getId());
             result = baseMapper.insert(dept);
         }

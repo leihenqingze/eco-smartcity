@@ -105,6 +105,13 @@ public interface CpuCardService extends IService<CpuCard> {
      * */
     CpuCard getCpuCarByUserId(Integer userId);
 
+    /**
+     * 通过卡编号查询人员Id
+     * @param card_serialNo
+     * @return
+     * */
+    Integer getUserId(String card_serialNo);
+
 
     /**
      * 更新cpu卡信息

@@ -65,6 +65,12 @@ public interface DeptService extends IService<Dept> {
     public List<DeptAllDto> getDeptAll();
 
     /**
+     * 获取全部的组织架构信息、
+     *
+     * */
+    public List<Dept> findtDeptAll();
+
+    /**
      * 很据二级Id获取 一级名称+二级名称
      * */
     String getDeptName(Integer id);

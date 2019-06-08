@@ -101,7 +101,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         // 3.保存制卡信息
         Integer userId = user.getId();
         CpuCard cpuCard = saveCpuCardInfo(StringTools.cardDecimalToHexString(makingCpuCardDto.getCardId()),
-                makingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, makingCpuCardDto.getDeposit(),new BigDecimal(0), userId);
+                makingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, makingCpuCardDto.getDeposit(), new BigDecimal(0), userId);
         // 4.封装返回信息
         RespMakingCpuCardDto respMakingCpuCardDto = RespMakingCpuCardDtoConverter.create(cpuCard, user);
         return respMakingCpuCardDto;
@@ -126,7 +126,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 activeCpuCardDto.getUserCardNum(), activeCpuCardDto.getDeptId(), activeCpuCardDto.getPhoneNum());
         // 3.保存制卡信息
         CpuCard cpuCard = saveCpuCardInfo(StringTools.cardDecimalToHexString(activeCpuCardDto.getCardId()),
-                activeCpuCardDto.getCardSerialNo(), CardSource.ACTIVATION, new BigDecimal(0), new BigDecimal(0),user.getId());
+                activeCpuCardDto.getCardSerialNo(), CardSource.ACTIVATION, new BigDecimal(0), new BigDecimal(0), user.getId());
         // 4.封装返回信息
         RespActiveCpuCardDto respActiveCpuCardDto = RespActiveCpuCardDtoConverter.create(cpuCard, user);
         return respActiveCpuCardDto;
@@ -212,7 +212,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     @Override
     public RespQueryAmountDto queryAmount(QueryCardInfoDto queryCardInfoDto) {
-        InnerCpuCardInfoDto cardInfoDto = queryCardInfoByCardId(queryCardInfoDto.getCardId(),null);
+        InnerCpuCardInfoDto cardInfoDto = queryCardInfoByCardId(queryCardInfoDto.getCardId(), null);
         BigDecimal amount = cardInfoDto.getRechargeBalance().add(cardInfoDto.getSubsidyBalance());
         RespQueryAmountDto dto = new RespQueryAmountDto();
         dto.setTotalBalance(amount);
@@ -222,7 +222,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     public int updateCpuCardBalance(Integer userId, BigDecimal rechargeBalance) {
 
-        CpuCard cpuCard =baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", userId));
+        CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", userId));
         cpuCard.setRechargeBalance(rechargeBalance);
         baseMapper.updateById(cpuCard);
         return 0;
@@ -231,7 +231,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     @Override
     public int updateCpuCardSBalance(Integer userId, BigDecimal subsidyBalance) {
 
-        CpuCard cpuCard =baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", userId));
+        CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", userId));
 
         cpuCard.setSubsidyBalance(cpuCard.getSubsidyBalance().add(subsidyBalance));
         baseMapper.updateById(cpuCard);
@@ -470,6 +470,17 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return cpuCard;
     }
 
+    @Override
+    public Integer getUserId(String card_serialNo) {
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("card_serialNo", card_serialNo);
+        CpuCard cpuCard = baseMapper.selectOne(queryWrapper);
+        if (cpuCard != null) {
+            return cpuCard.getUserId();
+        }
+        return null;
+    }
+
 
     /**
      * 单个人员 充值操作
@@ -594,7 +605,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
 
     private CpuCard saveCpuCardInfo(String cardId, String cardSerialNo,
-                                    CardSource cardSource, BigDecimal deposit,BigDecimal recharge, Integer userId) {
+                                    CardSource cardSource, BigDecimal deposit, BigDecimal recharge, Integer userId) {
         // 校验CPU卡物理id是否存在
         boolean isExist = queryCardInfoIsExist(cardId, cardSerialNo);
         if (isExist) {
@@ -629,6 +640,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
 
     /**
      * 批量制卡
+     *
      * @param file
      * @return
      */
@@ -675,9 +687,9 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
      */
     private BatchMarkingCardRespDto makingCardReadExcel(MultipartFile file) {
         BatchMarkingCardRespDto batchMarkingCardRespDto = new BatchMarkingCardRespDto();
-        Map<Integer,String> errorMap = new HashMap<>();
-        int successCount = 0 ;
-        int errorCount = 0 ;
+        Map<Integer, String> errorMap = new HashMap<>();
+        int successCount = 0;
+        int errorCount = 0;
 
         //获取文件的名字
         String originalFilename = file.getOriginalFilename();
@@ -695,36 +707,36 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             Sheet sheet = workbook.getSheetAt(0);
             int rows = sheet.getLastRowNum();
             for (int r = 3; r <= rows; r++) {
-                try{
+                try {
                     Row row = sheet.getRow(r);
                     if (row == null) {
                         continue;
                     }
                     BatchMakingCpuCardDto batchMakingCpuCardDto = new BatchMakingCpuCardDto();
-                    if(cellIsEmpty(row.getCell(1))){
-                        errorMap.put(r+1,"姓名为空");
+                    if (cellIsEmpty(row.getCell(1))) {
+                        errorMap.put(r + 1, "姓名为空");
                         errorCount++;
                         continue;
                     }
-                    if(cellIsEmpty(row.getCell(2))){
-                        errorMap.put(r+1,"组织架构为空");
+                    if (cellIsEmpty(row.getCell(2))) {
+                        errorMap.put(r + 1, "组织架构为空");
                         errorCount++;
                         continue;
                     }
-                    if(cellIsEmpty(row.getCell(6))){
-                        errorMap.put(r+1,"卡编号为空");
+                    if (cellIsEmpty(row.getCell(6))) {
+                        errorMap.put(r + 1, "卡编号为空");
                         errorCount++;
                         continue;
                     }
-                    if(cellIsEmpty(row.getCell(7))){
-                        errorMap.put(r+1,"卡id为空");
+                    if (cellIsEmpty(row.getCell(7))) {
+                        errorMap.put(r + 1, "卡id为空");
                         errorCount++;
                         continue;
                     }
                     String deptname = row.getCell(2).getStringCellValue();
                     Integer deptid = getdeptId(deptname);
-                    if(deptid == 0){
-                        errorMap.put(r+1,"组织架构不存在");
+                    if (deptid == 0) {
+                        errorMap.put(r + 1, "组织架构不存在");
                         errorCount++;
                         continue;
                     }
@@ -735,19 +747,19 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                     batchMakingCpuCardDto.setCardSerialNo(row.getCell(6).getStringCellValue());
                     batchMakingCpuCardDto.setCardId(row.getCell(7).getStringCellValue());
 
-                    if(!cellIsEmpty(row.getCell(8))){
+                    if (!cellIsEmpty(row.getCell(8))) {
                         batchMakingCpuCardDto.setRechargeBalance(BigDecimal.valueOf(row.getCell(8).getNumericCellValue()));
                     }
                     // 入库
                     batchMakingCpuCard(batchMakingCpuCardDto);
 
-                }catch (WisdomParkException e){
-                    errorMap.put(r+1,e.getMessage());
+                } catch (WisdomParkException e) {
+                    errorMap.put(r + 1, e.getMessage());
                     errorCount++;
                     continue;
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                    errorMap.put(r+1,"解析异常");
+                    errorMap.put(r + 1, "解析异常");
                     errorCount++;
                     continue;
                 }
@@ -765,8 +777,8 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         return batchMarkingCardRespDto;
     }
 
-    private boolean cellIsEmpty(Cell cell){
-        if(cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK){
+    private boolean cellIsEmpty(Cell cell) {
+        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
             return true;
         }
         return false;
@@ -792,7 +804,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         // 保存制卡信息
         Integer userId = user.getId();
         saveCpuCardInfo(StringTools.cardDecimalToHexString(batchMakingCpuCardDto.getCardId()),
-                batchMakingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, BigDecimal.ZERO,batchMakingCpuCardDto.getRechargeBalance(), userId);
+                batchMakingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, BigDecimal.ZERO, batchMakingCpuCardDto.getRechargeBalance(), userId);
     }
 
 

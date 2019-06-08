@@ -113,7 +113,6 @@ public class BluetoothOpenDoorController {
                 String cardId = row.getCell(17).getStringCellValue();
                 log.error(" cardId:{}, ...", cardId);
                 if (StringUtils.isNotBlank(cardId)) {
-
                     JSONObject param = new JSONObject();
                     param.put("cardId", cardId);
                     param.put("cardSerialNo", cardnum);

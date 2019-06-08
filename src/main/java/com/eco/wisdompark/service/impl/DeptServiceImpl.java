@@ -149,6 +149,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     }
 
     @Override
+    public List<Dept> findtDeptAll() {
+        QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
+        return baseMapper.selectList(wrapper);
+    }
+
+    @Override
     public String getDeptName(Integer id) {
         StringBuffer stringBuffer = new StringBuffer();
         if (id != null && id > 0) {

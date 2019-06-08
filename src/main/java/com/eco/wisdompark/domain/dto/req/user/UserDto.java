@@ -30,6 +30,9 @@ public class UserDto {
     @ApiModelProperty(value = "组织架构Id")
     private Integer deptId;
 
+    @ApiModelProperty(value = "组织架构名称")
+    private String deptName;
+
     @ApiModelProperty(value = "逻辑删除")
     private Integer del;
 

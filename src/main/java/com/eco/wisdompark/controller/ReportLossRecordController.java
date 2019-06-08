@@ -1,6 +1,7 @@
 package com.eco.wisdompark.controller;
 
 
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.card.LossQueryCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.LossQueryConfirmDto;
@@ -42,6 +43,7 @@ public class ReportLossRecordController {
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "卡片挂失查询接口", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<RespQueryCardInfoListDto> lossQueryCardInfo(@RequestBody LossQueryCardInfoDto lossQueryCardInfoDto) {
         RespQueryCardInfoListDto respQueryCardInfoListDto = cpuCardService.queryCardInfoList(lossQueryCardInfoDto);
         return ResponseData.OK(respQueryCardInfoListDto);
@@ -50,6 +52,7 @@ public class ReportLossRecordController {
 
     @RequestMapping(value = "/query/confirm", method = RequestMethod.POST)
     @ApiOperation(value = "卡片挂失查询确认接口", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<RespLossQueryConfirmDto> lossQueryConfirm(@RequestBody LossQueryConfirmDto lossQueryConfirmDto) {
         RespLossQueryConfirmDto respLossQueryConfirmDto = cpuCardService.queryCardInfo(lossQueryConfirmDto);
         return ResponseData.OK(respLossQueryConfirmDto);
@@ -58,6 +61,7 @@ public class ReportLossRecordController {
 
     @RequestMapping(value = "/reissue", method = RequestMethod.POST)
     @ApiOperation(value = "卡片挂失补发接口", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<Boolean> reissueCard(@RequestBody ReissueCardDto reissueCardDto) {
         boolean ressueResult = reportLossRecordService.reissueCard(reissueCardDto);
         return ResponseData.OK(ressueResult);

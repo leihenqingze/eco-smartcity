@@ -8,7 +8,6 @@ import com.eco.wisdompark.converter.req.ConsumeRecordConverter;
 import com.eco.wisdompark.converter.resp.ConsumeRespDtoConverter;
 import com.eco.wisdompark.domain.dto.CalculateAmountDto;
 import com.eco.wisdompark.domain.dto.req.consume.ConsumeDto;
-import com.eco.wisdompark.domain.dto.resp.ConsumeRespDto;
 import com.eco.wisdompark.domain.dto.resp.ConsumeServiceRespDto;
 import com.eco.wisdompark.domain.model.*;
 import com.eco.wisdompark.enums.AmountChangeType;
@@ -16,7 +15,7 @@ import com.eco.wisdompark.enums.ConsumeType;
 import com.eco.wisdompark.enums.DiningType;
 import com.eco.wisdompark.mapper.*;
 import com.eco.wisdompark.service.ConsumeService;
-import com.eco.wisdompark.strategy.consume.ConsumeStrategy;
+import com.eco.wisdompark.strategy.consume.ConsumeCalculate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     @Autowired
     private PosMapper posMapper;
     @Autowired
-    private ConsumeStrategy consumeStrategy;
+    private ConsumeCalculate consumeStrategy;
     @Autowired
     private ConsumeRespDtoConverter consumeRespDtoConverter;
 

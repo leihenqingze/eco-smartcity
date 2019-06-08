@@ -20,11 +20,14 @@ public class RechargeRecordDto {
     @ApiModelProperty(value = "充值金额")
     private BigDecimal amount;
 
+    @ApiModelProperty(value = "充值类型：1现金存款，2支票存款，3旧卡导入，4汇款")
+    private String rechargeWay;
+
     @ApiModelProperty(value = "创建时间")
     private String createTime;
 
     @ApiModelProperty(value = "充值类型：0手动，1批量导入")
-    private Integer rechargeType;
+    private String rechargeType;
 
     @ApiModelProperty(value = "批量导入序列号")
     private String importSerialno;
@@ -32,6 +35,12 @@ public class RechargeRecordDto {
     @ApiModelProperty(value = "用户ID")
     private Integer userId;
 
-    @ApiModelProperty(value = "时间戳")
-    private LocalDateTime ts;
+    @ApiModelProperty(value = "用户姓名")
+    private String userName;
+
+    @ApiModelProperty(value = "部门名称")
+    private String deptName;
+
+    @ApiModelProperty(value = "手机号")
+    private String phone;
 }

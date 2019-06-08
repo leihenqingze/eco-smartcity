@@ -3,6 +3,7 @@ package com.eco.wisdompark.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.*;
 import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
@@ -64,6 +65,7 @@ public class ConsumeRecordController {
 
     @RequestMapping(value = "/trainingStaffRecord", method = RequestMethod.POST)
     @ApiOperation(value = "训练局职工消费记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<ConsomeRecordRespDto> trainingStaffRecord(@RequestBody TrainingStaffConsumeRecordDto trainingStaffConsumeRecordDto) {
 
         // 获取用户ID集合
@@ -95,6 +97,7 @@ public class ConsumeRecordController {
 
     @RequestMapping(value = "/notTrainingStaffRecord", method = RequestMethod.POST)
     @ApiOperation(value = "非训练局职工消费记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<ConsomeRecordRespDto> notTrainingStaffRecord(@RequestBody NotTrainingStaffConsumeRecordDto notTrainingStaffConsumeRecordDto) {
 
         // 获取用户ID集合
@@ -117,6 +120,7 @@ public class ConsumeRecordController {
 
     @RequestMapping(value = "/securityRecord", method = RequestMethod.POST)
     @ApiOperation(value = "保安消费记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<ConsomeRecordRespDto> securityRecord(@RequestBody PropertyConsumeRecordDto propertyConsumeRecordDto) {
 
         // 获取用户ID集合
@@ -139,6 +143,7 @@ public class ConsumeRecordController {
 
     @RequestMapping(value = "/cleaningRecord", method = RequestMethod.POST)
     @ApiOperation(value = "保洁消费记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<ConsomeRecordRespDto> cleaningRecord(@RequestBody PropertyConsumeRecordDto propertyConsumeRecordDto) {
 
         // 获取用户ID集合
@@ -161,6 +166,7 @@ public class ConsumeRecordController {
 
     @RequestMapping(value = "/searchUserConsumeRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员消费记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<IPage<ConsumeRecordDto>> searchUserConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<ConsumeRecordDto> result=  consumeRecordService.searchUserConsumeRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);

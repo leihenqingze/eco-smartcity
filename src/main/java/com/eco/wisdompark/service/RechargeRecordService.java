@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.RechargeRecordDto;
+import com.eco.wisdompark.domain.dto.req.rechargeRecord.SearchRechargeRecordDto;
 import com.eco.wisdompark.domain.model.RechargeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.eco.wisdompark.enums.RechargeType;
@@ -27,11 +28,11 @@ public interface RechargeRecordService extends IService<RechargeRecord> {
      * @param importSerialNo 批量导入序列号
      * @return
      */
-    boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount, RechargeType rechargeType, String importSerialNo);
+    boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount, RechargeType rechargeType, String importSerialNo,int rechargeWay);
      /**
       * 按人员查询充值记录
       *
-      * @param searchConsumeRecordDto
+      * @param searchRechargeRecordDto
       * */
-    IPage<RechargeRecordDto> searchUserRechargeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
+    IPage<RechargeRecordDto> searchUserRechargeRecordDtos(SearchRechargeRecordDto searchRechargeRecordDto);
 }

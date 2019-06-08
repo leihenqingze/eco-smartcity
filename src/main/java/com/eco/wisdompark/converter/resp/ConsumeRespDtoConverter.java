@@ -6,7 +6,7 @@ import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.DiningType;
-import com.eco.wisdompark.strategy.consume.ConsumeStrategy;
+import com.eco.wisdompark.strategy.consume.ConsumeCalculate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 public class ConsumeRespDtoConverter {
 
     @Autowired
-    private ConsumeStrategy consumeStrategy;
+    private ConsumeCalculate consumeStrategy;
 
     /**
      * 用餐正常返回

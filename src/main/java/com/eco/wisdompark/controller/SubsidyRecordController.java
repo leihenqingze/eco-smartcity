@@ -1,6 +1,7 @@
 package com.eco.wisdompark.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
@@ -37,6 +38,7 @@ public class SubsidyRecordController {
 
     @RequestMapping(value = "/searchUserSubsidyRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员补助记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<IPage<SubsidyRecordDto>> searchUserSubsidyRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<SubsidyRecordDto> result = subsidyRecordService.searchUserSubsidyRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
@@ -44,6 +46,7 @@ public class SubsidyRecordController {
 
     @RequestMapping(value = "/searchAutoSubsidyRecord", method = RequestMethod.POST)
     @ApiOperation(value = "查询自动补助记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<SubsidyDetailsDto> searchAutoSubsidyRecord(
             @RequestBody SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq) {
         return ResponseData.OK(subsidyRecordService.searchAutoSubsidyRecord(searchAutoSubsidyRecordReq));
@@ -51,6 +54,7 @@ public class SubsidyRecordController {
 
     @RequestMapping(value = "/searchManualSubsidyRecord", method = RequestMethod.POST)
     @ApiOperation(value = "查询手动补助记录", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<List<ManualSubsidyRecordListRespDto>> searchManualSubsidyRecord(@RequestBody PageReqDto<Integer> pageReqDto) {
         return ResponseData.OK(subsidyRecordService.searchManualSubsidyRecord(pageReqDto));
     }

@@ -26,4 +26,10 @@ public class RespRechargeBatchDataDto {
     @ApiModelProperty(value = "充值信息有误Dto集合")
     private List<BatchRechargeDataDto> infoErrorList;
 
+    @ApiModelProperty(value = "成功条数")
+    private int successCount;
+
+    @ApiModelProperty(value = "失败条数")
+    private int errorCount;
+
 }

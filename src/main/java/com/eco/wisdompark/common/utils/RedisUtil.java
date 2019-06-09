@@ -4,7 +4,6 @@ package com.eco.wisdompark.common.utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -59,6 +58,25 @@ public class RedisUtil {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * 设置key的过期时间
+     * @param key
+     * @param time
+     * @return
+     */
+    public boolean expire(String key, long time) {
+        boolean result = false;
+        try {
+            if(time > 0) {
+                redisTemplate.expire(key, time, TimeUnit.SECONDS);
+                result = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

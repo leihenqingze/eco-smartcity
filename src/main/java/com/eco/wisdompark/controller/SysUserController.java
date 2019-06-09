@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.RegexUtils;
+import com.eco.wisdompark.common.utils.TokenUtils;
 import com.eco.wisdompark.domain.dto.req.sysUser.SaveSysUserDto;
 import com.eco.wisdompark.domain.dto.req.sysUser.SysUserDto;
 import com.eco.wisdompark.domain.dto.req.sysUser.SysUserLoginDto;
@@ -19,9 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import sun.misc.BASE64Encoder;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * <p>
@@ -39,6 +44,9 @@ public class SysUserController {
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @RequestMapping(value = "/getSysUserList", method = RequestMethod.POST)
     @ApiOperation(value = "分页查询系统用户", httpMethod = "POST")
@@ -88,7 +96,8 @@ public class SysUserController {
     @RequestMapping(value = "sysUserLogin", method = RequestMethod.POST)
     @ApiOperation(value = "系统用户登录", httpMethod = "POST")
     public ResponseData sysUserLogin(HttpServletRequest request,
-                                     @RequestBody SysUserLoginDto sysUserLoginDto) {
+                                     @RequestBody SysUserLoginDto sysUserLoginDto,
+                                     HttpServletResponse response) {
         log.debug(">>>>>sysUserLogin,sysUserLoginDto:{}", JSON.toJSONString(sysUserLoginDto));
         SysUser sysUser = null;
         if (RegexUtils.isPhone(StringUtils.trim(sysUserLoginDto.getKeyword()))) {
@@ -99,11 +108,30 @@ public class SysUserController {
         if (sysUser == null) {
             return ResponseData.ERROR("登录失败!");
         }
-        HttpSession session = request.getSession();
-        session.setAttribute("Authentication", sysUser);
-        session.setMaxInactiveInterval(1800); // 登录有效期30分钟
+        String token = tokenUtils.create(sysUser.getId());
+        Cookie cookie = new Cookie("Authentication", token);
+        //将cookie对象添加到response对象中，这样服务器在输出response对象中的内容时就会把cookie也输出到客户端浏览器
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return ResponseData.OK(sysUser.getSysUserDepartment());
 
+    }
+    /**
+     * 生成Token
+     * @return
+     */
+    private String makeToken() {
+        String token = (System.currentTimeMillis() + new Random().nextInt(999999999)) + "";
+        try {
+            MessageDigest md = MessageDigest.getInstance("md5");
+            byte md5[] =  md.digest(token.getBytes());
+            BASE64Encoder encoder = new BASE64Encoder();
+            return encoder.encode(md5);
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

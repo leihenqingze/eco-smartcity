@@ -1,9 +1,5 @@
 package com.eco.wisdompark.domain.dto.req.user;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@ApiModel(value="查询人员列表", description="查询人员列表")
+@ApiModel(value = "查询人员列表", description = "查询人员列表")
 public class UserDto {
 
     @ApiModelProperty(value = "人员ID")
@@ -56,5 +52,11 @@ public class UserDto {
 
     @ApiModelProperty(value = "CUP卡补助余额")
     private BigDecimal subsidyBalance;
+
+    @ApiModelProperty(value = "CPU卡ID")
+    private String cardId;
+
+    @ApiModelProperty(value = "CPU卡是否停用:0启用，1停用")
+    private int cardIfUsed;
 
 }

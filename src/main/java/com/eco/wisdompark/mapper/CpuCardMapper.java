@@ -33,4 +33,13 @@ public interface CpuCardMapper extends BaseMapper<CpuCard> {
      */
     int updateBatchSubsidy(List<CpuCard> list);
 
+    /**
+     * 启停
+     *
+     * @param ifUsed 是否启用
+     * @param cardId 卡物理机编号
+     * @return 是否停用成功
+     */
+    int startStop(@Param("ifUsed") int ifUsed, @Param("cardId") String cardId);
+
 }

@@ -6,6 +6,7 @@ import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 制卡接口
+     *
      * @param makingCpuCardDto
      * @return
      */
@@ -28,6 +30,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 卡片激活接口
+     *
      * @param activeCpuCardDto
      * @return
      */
@@ -35,6 +38,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 查询卡片信息接口【充值使用】
+     *
      * @param queryCardInfoDto
      * @return
      */
@@ -42,13 +46,15 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 查询人员卡信息列表接口【挂失使用】
+     *
      * @param lossQueryCardInfoDto
-   * @return
+     * @return
      */
     RespQueryCardInfoListDto queryCardInfoList(LossQueryCardInfoDto lossQueryCardInfoDto);
 
     /**
      * 挂失查询人员卡信息确认接口【挂失使用】
+     *
      * @param lossQueryConfirmDto
      * @return
      */
@@ -56,6 +62,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 查询人员卡卡信息接口
+     *
      * @param userName
      * @param mobile
      * @param deptId
@@ -65,6 +72,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 卡片余额充值接口
+     *
      * @param rechargeCardDto
      * @return
      */
@@ -72,6 +80,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 卡片批量充值接口
+     *
      * @param fileCode
      * @return
      */
@@ -79,6 +88,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 查询CPU卡片信息 by cardId
+     *
      * @param cardId
      * @return
      */
@@ -86,6 +96,7 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 查询CPU卡片信息 是否存在？
+     *
      * @param cardId
      * @param cardSerialNo
      * @return
@@ -94,27 +105,32 @@ public interface CpuCardService extends IService<CpuCard> {
 
     /**
      * 查询人员对应CPU卡信息
+     *
      * @param userIds
      * @return
-     * */
+     */
     List<CpuCard> getCpuCardByUserIds(List<Integer> userIds);
+
     /**
      * 查询人员对应CPU卡信息
+     *
      * @param userId
      * @return
-     * */
+     */
     CpuCard getCpuCarByUserId(Integer userId);
 
     /**
      * 通过卡编号查询人员Id
+     *
      * @param card_serialNo
      * @return
-     * */
+     */
     Integer getUserId(String card_serialNo);
 
 
     /**
      * 更新cpu卡信息
+     *
      * @param cpuCard
      */
     int updateCpuCard(CpuCard cpuCard);
@@ -129,5 +145,14 @@ public interface CpuCardService extends IService<CpuCard> {
     int updateCpuCardSBalance(Integer userId, BigDecimal subsidyBalance);
 
     BatchMarkingCardRespDto batchMakingCard(MultipartFile file);
+
+    /**
+     * 启停
+     *
+     * @param ifUsed 是否启用
+     * @param cardId 卡物理机编号
+     * @return 是否停用成功
+     */
+    boolean startStop(int ifUsed, String cardId);
 
 }

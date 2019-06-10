@@ -2,6 +2,7 @@ package com.eco.wisdompark.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.common.utils.FileUtils;
@@ -39,6 +40,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -46,6 +48,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static com.eco.wisdompark.common.dto.ResponseData.STATUS_CODE_601;
+import static com.eco.wisdompark.common.dto.ResponseData.STATUS_CODE_613;
 
 /**
  * <p>
@@ -162,7 +165,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         // 2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
-        return rechargeBalance(innerCpuCardInfoDto, StringTools.cardDecimalToHexString(rechargeCardDto.getCardId()), rechargeCardDto.getRechargeAmt(),rechargeCardDto.getRechargeWay());
+        return rechargeBalance(innerCpuCardInfoDto, StringTools.cardDecimalToHexString(rechargeCardDto.getCardId()), rechargeCardDto.getRechargeAmt(), rechargeCardDto.getRechargeWay());
     }
 
 
@@ -199,7 +202,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             log.info("fileUpload success...");
             FileItem fileItem = FileUtils.createFileItem(newFile.getPath(), newFileName);
             MultipartFile xlsFile = new CommonsMultipartFile(fileItem);
-            readExcel(xlsFile,respRechargeBatchDataDto);
+            readExcel(xlsFile, respRechargeBatchDataDto);
             // 组装返回数据
             fileUploadRetData(respRechargeBatchDataDto);
             respRechargeBatchDataDto.setFileCode(newFileName);
@@ -286,7 +289,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             return;
         }
 
-        for(BatchRechargeDataDto batchRechargeDataDto : successDtoList){
+        for (BatchRechargeDataDto batchRechargeDataDto : successDtoList) {
             String cardSerialNo = batchRechargeDataDto.getCardSerialNo();
             CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("card_serialNo", cardSerialNo));
             if (cpuCard != null) {
@@ -300,12 +303,12 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             } else {
                 batchRechargeDataDto.setErrorMsg("CPU卡不存在");
                 infoErrorDtoList.add(batchRechargeDataDto);
-                errorCount ++;
-                successCount --;
+                errorCount++;
+                successCount--;
             }
         }
         BigDecimal totalAmt = BigDecimal.ZERO;
-        if(!CollectionUtils.isEmpty(newBatchRechargeDataDtoList)){
+        if (!CollectionUtils.isEmpty(newBatchRechargeDataDtoList)) {
             totalAmt = newBatchRechargeDataDtoList.stream().map(BatchRechargeDataDto::getRechargeAmt).reduce(BigDecimal::add).get();
         }
         respRechargeBatchDataDto.setTotalAmt(totalAmt);
@@ -321,7 +324,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
      *
      * @param file
      */
-    private void readExcel(MultipartFile file,RespRechargeBatchDataDto respRechargeBatchDataDto) {
+    private void readExcel(MultipartFile file, RespRechargeBatchDataDto respRechargeBatchDataDto) {
         List<BatchRechargeDataDto> successBatchRechargeDataDtoList = new ArrayList<>();
         List<BatchRechargeDataDto> errorBatchRechargeDataDtoList = new ArrayList<>();
         int successCount = 0;
@@ -354,65 +357,65 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 // 充值方式
                 String rechargeWay = null;
 
-                if(!cellIsEmpty(row.getCell(0))){
+                if (!cellIsEmpty(row.getCell(0))) {
                     row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
                     cardSerialNo = row.getCell(0).getStringCellValue();
                 }
-                if(!cellIsEmpty(row.getCell(1))){
+                if (!cellIsEmpty(row.getCell(1))) {
                     row.getCell(1).setCellType(Cell.CELL_TYPE_NUMERIC);
                     rechargeAmt = row.getCell(1).getNumericCellValue();
                 }
-                if(!cellIsEmpty(row.getCell(2))){
+                if (!cellIsEmpty(row.getCell(2))) {
                     row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
                     rechargeWay = row.getCell(2).getStringCellValue();
                 }
 
-                BatchRechargeDataDto batchRechargeDataDto = new BatchRechargeDataDto(cardSerialNo, rechargeAmt != null ? new BigDecimal(rechargeAmt) : null,rechargeWay);
+                BatchRechargeDataDto batchRechargeDataDto = new BatchRechargeDataDto(cardSerialNo, rechargeAmt != null ? new BigDecimal(rechargeAmt) : null, rechargeWay);
 
                 if (StringUtils.isEmpty(cardSerialNo)) {
                     log.error("readExcel 第{}行数据异常，请检查...", r);
-                    batchRechargeDataDto.setRowNum(r+1);
+                    batchRechargeDataDto.setRowNum(r + 1);
                     batchRechargeDataDto.setErrorMsg("CPU卡序列号为空");
                     errorBatchRechargeDataDtoList.add(batchRechargeDataDto);
-                    errorCount ++;
+                    errorCount++;
                     continue;
                 }
                 if (rechargeAmt == null) {
                     log.error("readExcel 第{}行数据异常，请检查...", r);
-                    batchRechargeDataDto.setRowNum(r+1);
+                    batchRechargeDataDto.setRowNum(r + 1);
                     batchRechargeDataDto.setErrorMsg("充值金额为空");
                     errorBatchRechargeDataDtoList.add(batchRechargeDataDto);
-                    errorCount ++;
+                    errorCount++;
                     continue;
                 }
-                if(rechargeAmt <= 0){
+                if (rechargeAmt <= 0) {
                     log.error("readExcel 第{}行数据异常，请检查...", r);
-                    batchRechargeDataDto.setRowNum(r+1);
+                    batchRechargeDataDto.setRowNum(r + 1);
                     batchRechargeDataDto.setErrorMsg("充值金额不合法");
                     errorBatchRechargeDataDtoList.add(batchRechargeDataDto);
-                    errorCount ++;
+                    errorCount++;
                     continue;
                 }
                 if (StringUtils.isEmpty(rechargeWay)) {
                     log.error("readExcel 第{}行数据异常，请检查...", r);
-                    batchRechargeDataDto.setRowNum(r+1);
+                    batchRechargeDataDto.setRowNum(r + 1);
                     batchRechargeDataDto.setErrorMsg("充值类型为空");
                     errorBatchRechargeDataDtoList.add(batchRechargeDataDto);
-                    errorCount ++;
+                    errorCount++;
                     continue;
                 }
                 RechargeWay rechargeWayEnum = RechargeWay.getByDescription(rechargeWay);
-                if(rechargeWayEnum == null){
+                if (rechargeWayEnum == null) {
                     log.error("readExcel 第{}行数据异常，请检查...", r);
-                    batchRechargeDataDto.setRowNum(r+1);
+                    batchRechargeDataDto.setRowNum(r + 1);
                     batchRechargeDataDto.setErrorMsg("充值类型不合法");
                     errorBatchRechargeDataDtoList.add(batchRechargeDataDto);
-                    errorCount ++;
+                    errorCount++;
                     continue;
                 }
-                batchRechargeDataDto.setRowNum(r+1);
+                batchRechargeDataDto.setRowNum(r + 1);
                 successBatchRechargeDataDtoList.add(batchRechargeDataDto);
-                successCount ++;
+                successCount++;
             }
         } catch (Exception e) {
             log.error("readExcel fileName:{}, Exception...", originalFilename);
@@ -440,7 +443,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         MultipartFile xlsFile = new CommonsMultipartFile(fileItem);
 
         RespRechargeBatchDataDto respRechargeBatchDataDto = new RespRechargeBatchDataDto();
-        readExcel(xlsFile,respRechargeBatchDataDto);
+        readExcel(xlsFile, respRechargeBatchDataDto);
 
         // 进行充值操作
         if (!CollectionUtils.isEmpty(respRechargeBatchDataDto.getBatchRechargeDataDtoList())) {
@@ -450,7 +453,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                     RechargeCardDto rechargeCardDto = new RechargeCardDto();
                     rechargeCardDto.setCardId(cpuCard.getCardId());
                     rechargeCardDto.setRechargeAmt(batchRechargeDataDto.getRechargeAmt());
-                    rechargeForBath(rechargeCardDto,RechargeWay.getByDescription(batchRechargeDataDto.getRechargeWay()).getCode());
+                    rechargeForBath(rechargeCardDto, RechargeWay.getByDescription(batchRechargeDataDto.getRechargeWay()).getCode());
                 }
             });
         }
@@ -563,11 +566,11 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
      * @param amount
      * @return
      */
-    private boolean rechargeBalance(InnerCpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount,int rechargeWay) {
+    private boolean rechargeBalance(InnerCpuCardInfoDto cardInfoDto, String cardId, BigDecimal amount, int rechargeWay) {
         //  1.充值操作
         cpuCardMapper.recharge(cardId, amount);
         // 2.保存充值记录
-        rechargeRecordService.saveRechargeRecord(cardInfoDto, amount, RechargeType.MANUAL, null,rechargeWay);
+        rechargeRecordService.saveRechargeRecord(cardInfoDto, amount, RechargeType.MANUAL, null, rechargeWay);
         // 3.保存金额变更记录
         changeAmountService.saveRechargeChanageAmountRecord(cardInfoDto, amount, AmountChangeType.TOP_UP);
         return true;
@@ -882,15 +885,24 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 batchMakingCpuCardDto.getCardSerialNo(), CardSource.MAKE_CARD, BigDecimal.ZERO, batchMakingCpuCardDto.getRechargeBalance(), userId);
     }
 
-    private boolean rechargeForBath(RechargeCardDto rechargeCardDto,int rechargeWay) {
+    private boolean rechargeForBath(RechargeCardDto rechargeCardDto, int rechargeWay) {
         // 1.校验CPU卡是否存在getUsers
         InnerCpuCardInfoDto innerCpuCardInfoDto = queryCardInfoByCardId(rechargeCardDto.getCardId(), null);
         if (innerCpuCardInfoDto == null) {
             throw new WisdomParkException(STATUS_CODE_601, "用户或卡信息不存在");
         }
         // 2.进行充值操作（变更卡余额 、保存充值记录、增加金额变更记录）
-        return rechargeBalance(innerCpuCardInfoDto, rechargeCardDto.getCardId(), rechargeCardDto.getRechargeAmt(),rechargeWay);
+        return rechargeBalance(innerCpuCardInfoDto, rechargeCardDto.getCardId(), rechargeCardDto.getRechargeAmt(), rechargeWay);
     }
 
+    @Override
+    @Transactional
+    public boolean startStop(int ifUsed, String cardId) {
+        int num = cpuCardMapper.startStop(ifUsed, cardId);
+        if (num != 1) {
+            throw new WisdomParkException(STATUS_CODE_613, "数据库操作异常");
+        }
+        return true;
+    }
 
 }

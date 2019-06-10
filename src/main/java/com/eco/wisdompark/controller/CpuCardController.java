@@ -3,10 +3,7 @@ package com.eco.wisdompark.controller;
 import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.StringTools;
-import com.eco.wisdompark.domain.dto.req.card.ActiveCpuCardDto;
-import com.eco.wisdompark.domain.dto.req.card.RechargeCardDto;
-import com.eco.wisdompark.domain.dto.req.card.MakingCpuCardDto;
-import com.eco.wisdompark.domain.dto.req.card.QueryCardInfoDto;
+import com.eco.wisdompark.domain.dto.req.card.*;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.service.CpuCardService;
 import com.eco.wisdompark.service.ReturnCardService;
@@ -107,6 +104,14 @@ public class CpuCardController {
     public ResponseData<BatchMarkingCardRespDto> batchMakingCard(@RequestParam("file") MultipartFile file) {
         BatchMarkingCardRespDto batchMarkingCardRespDto = cpuCardService.batchMakingCard(file);
         return ResponseData.OK(batchMarkingCardRespDto);
+    }
+
+    @RequestMapping(value = "/making/startStop", method = RequestMethod.POST)
+    @ApiOperation(value = "CPU卡启停接口", httpMethod = "POST")
+    @SysUserLogin
+    public ResponseData<BatchMarkingCardRespDto> batchMakingCard(@RequestBody StartStopDto startStopDto) {
+        boolean bool = cpuCardService.startStop(startStopDto.getIfUsed(), startStopDto.getCardId());
+        return ResponseData.OK(bool);
     }
 
 }

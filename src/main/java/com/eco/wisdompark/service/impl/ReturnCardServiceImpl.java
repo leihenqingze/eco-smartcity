@@ -44,6 +44,9 @@ public class ReturnCardServiceImpl implements ReturnCardService {
         if (changeBefore == null) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "该卡不能进行退卡操作");
         }
+        if (changeBefore.getIfUsed() != 0) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_614, "该卡已停用");
+        }
         CpuCard changeAfter = new CpuCard();
         BeanUtils.copyProperties(changeBefore, changeAfter);
         changeAfter.setRechargeBalance(new BigDecimal(0));

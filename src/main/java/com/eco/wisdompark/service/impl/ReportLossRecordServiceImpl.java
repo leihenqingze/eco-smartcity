@@ -61,14 +61,14 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
         List<Integer> userIds = new ArrayList<>();
         userIds.add(userId);
         List<CpuCard> cpuCardList = cpuCardService.getCpuCardByUserIds(userIds);
-        if (CollectionUtils.isEmpty(cpuCardList)){
+        if (CollectionUtils.isEmpty(cpuCardList)) {
             log.error("reissueCard not query user or old cpuCard not exist... userId:{}", reissueCardDto.getUserId());
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "用户或卡信息不存在");
         }
 
         // 2.查询用户信息
         User user = userService.queryByUserId(userId);
-        if (user == null){
+        if (user == null) {
             log.error("reissueCard user not exists... userId:{}", userId);
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "user or cpuCard not exist");
         }
@@ -76,6 +76,9 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
         String newCardId = StringTools.cardDecimalToHexString(reissueCardDto.getCardId());
         String newCardSerialNo = reissueCardDto.getCardSerialNo();
         CpuCard cpuCard = cpuCardList.get(0);
+        if (cpuCard.getIfUsed() != 0) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_614, "该卡已停用");
+        }
         String oldCardId = cpuCard.getCardId();
         String oldCardSerialNo = cpuCard.getCardSerialNo();
         BigDecimal rechargeBalance = cpuCard.getRechargeBalance() != null ? cpuCard.getRechargeBalance() : new BigDecimal(0);
@@ -87,14 +90,14 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
 
         // 4.校验新CPU卡ID是否存在
         boolean isExist = cpuCardService.queryCardInfoIsExist(newCardId, newCardSerialNo);
-        if (isExist){
+        if (isExist) {
             log.error("reissueCard newCardId:{} or newCardSerialNo:{} exists...", newCardId, newCardSerialNo);
             throw new WisdomParkException(ResponseData.STATUS_CODE_602, "新CPU卡ID或卡序列号已被使用");
         }
 
         // 5.插入新卡信息
         BigDecimal deposit = getDeposit(reissueCardDto.getDeposit());
-        CpuCard newCpuCard =  CpuCardConverter.create(userId, newCardId, newCardSerialNo,
+        CpuCard newCpuCard = CpuCardConverter.create(userId, newCardId, newCardSerialNo,
                 CardType.CPU, CardSource.MAKE_CARD, deposit, rechargeBalance, subsidyBalance);
         cpuCardService.save(newCpuCard);
 
@@ -107,22 +110,23 @@ public class ReportLossRecordServiceImpl extends ServiceImpl<ReportLossRecordMap
 
     /**
      * 获取押金
+     *
      * @param paramDeposit
      * @return
      */
-    private BigDecimal getDeposit(BigDecimal paramDeposit){
+    private BigDecimal getDeposit(BigDecimal paramDeposit) {
         BigDecimal deposit = null;
-        if (paramDeposit == null || paramDeposit.doubleValue() <= 0){
+        if (paramDeposit == null || paramDeposit.doubleValue() <= 0) {
             deposit = new BigDecimal(defaultDepositAmt);
-        }else {
-            deposit =  paramDeposit;
+        } else {
+            deposit = paramDeposit;
         }
         return deposit;
     }
 
 
     public static void main(String[] args) {
-        BigDecimal  a = new BigDecimal(1);
+        BigDecimal a = new BigDecimal(1);
         BigDecimal b = null;
         System.out.println("1111" + a.add(b));
     }

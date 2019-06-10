@@ -155,6 +155,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                             dto.setCardSource(c.getCardSource());
                             dto.setRechargeBalance(c.getRechargeBalance());
                             dto.setSubsidyBalance(c.getSubsidyBalance());
+                            dto.setCardId(c.getCardId());
+                            dto.setCardIfUsed(c.getIfUsed());
                             currentPageRechargeAmount = currentPageRechargeAmount.add(c.getRechargeBalance());
                             currentPageSubsidyAmount = currentPageSubsidyAmount.add(c.getSubsidyBalance());
                         }

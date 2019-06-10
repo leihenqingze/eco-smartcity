@@ -1,13 +1,18 @@
 package com.eco.wisdompark.domain.model;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,7 +31,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("tb_cpu_card")
-@ApiModel(value="CpuCard对象", description="CPU卡")
+@ApiModel(value = "CpuCard对象", description = "CPU卡")
 public class CpuCard extends Model<CpuCard> {
 
     private static final long serialVersionUID = 1L;
@@ -66,12 +71,15 @@ public class CpuCard extends Model<CpuCard> {
     @ApiModelProperty(value = "逻辑删除：0正常，1删除")
     private Integer del;
 
+    @ApiModelProperty(value = "启停状态：0启用，1停用")
+    @TableField("if_used")
+    private int ifUsed;
+
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
 
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;
-
 
     @Override
     protected Serializable pkVal() {

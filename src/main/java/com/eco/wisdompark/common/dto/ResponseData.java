@@ -51,6 +51,8 @@ public class ResponseData<T> implements Serializable {
     public static final int STATUS_CODE_610 = 610; // 验证码不正确
     public static final int STATUS_CODE_611 = 611; // 用户不存在
     public static final int STATUS_CODE_612 = 612; // 批量制卡文件不能为空
+    public static final int STATUS_CODE_613 = 613; // 数据库操作异常
+    public static final int STATUS_CODE_614 = 614; // 该卡已停用
 
     public static final String STATUS_MESSAGE_200 = "OK";
     public static final String STATUS_MESSAGE_400 = "Error";

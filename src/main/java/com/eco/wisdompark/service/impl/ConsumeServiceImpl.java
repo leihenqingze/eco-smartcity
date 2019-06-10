@@ -58,6 +58,9 @@ public class ConsumeServiceImpl implements ConsumeService {
         Pos pos = getPosByPosNum(consumeDto.getPosNum());
         ConsumeType consumeType = ConsumeType.valueOf(pos.getPosConsumeType());
         CpuCard cpuCardBefore = getCpuCardByCardId(consumeDto.getCardId());
+        if (cpuCardBefore.getIfUsed() != 0) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_614, "该卡已停用");
+        }
         User user = userMapper.selectById(cpuCardBefore.getUserId());
         Dept dept = deptMapper.selectById(user.getDeptId());
         Dept parent = deptMapper.selectById(dept.getDeptUpId());

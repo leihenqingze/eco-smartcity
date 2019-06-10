@@ -1,7 +1,6 @@
 package com.eco.wisdompark.domain.dto.resp;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.user.UserDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

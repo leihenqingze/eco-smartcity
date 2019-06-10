@@ -812,11 +812,14 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                         errorCount++;
                         continue;
                     }
-                    batchMakingCpuCardDto.setUserName(row.getCell(1).getStringCellValue());
-                    batchMakingCpuCardDto.setUserCardNum(row.getCell(3).getStringCellValue());
                     batchMakingCpuCardDto.setDeptId(deptid);
+                    batchMakingCpuCardDto.setUserName(row.getCell(1).getStringCellValue().replace(" ", ""));
+                    batchMakingCpuCardDto.setUserCardNum(row.getCell(3).getStringCellValue());
+                    row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
                     batchMakingCpuCardDto.setPhoneNum(row.getCell(4).getStringCellValue());
+                    row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
                     batchMakingCpuCardDto.setCardSerialNo(row.getCell(6).getStringCellValue());
+                    row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
                     batchMakingCpuCardDto.setCardId(row.getCell(7).getStringCellValue());
 
                     if (!cellIsEmpty(row.getCell(8))) {

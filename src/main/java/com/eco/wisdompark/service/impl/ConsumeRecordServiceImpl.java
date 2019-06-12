@@ -9,13 +9,17 @@ import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.pos.SearchPosDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
+import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.Pos;
+import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.ConsumeType;
 import com.eco.wisdompark.enums.PosPosition;
 import com.eco.wisdompark.mapper.ConsumeRecordMapper;
 import com.eco.wisdompark.service.ConsumeRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eco.wisdompark.service.DeptService;
 import com.eco.wisdompark.service.PosService;
+import com.eco.wisdompark.service.UserService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +45,12 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
 
     @Autowired
     private PosService posService;
+
+    @Autowired
+    private DeptService deptService;
+
+    @Autowired
+    private UserService userService;
 
 
 
@@ -119,6 +129,35 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         return convertRecordListToDtoList(consumeRecordList);
     }
 
+    @Override
+    public IPage<ConsumeRecordDto> searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+        IPage<ConsumeRecordDto> result=new Page<>();
+        SearchPosDto searchPosDto = new SearchPosDto();
+        searchPosDto.setPosConsumeType(ConsumeType.SHOP.getCode());
+        List<Pos> posList = posService.getPosByQuery(searchPosDto);
+        if(!CollectionUtils.isEmpty(posList)) {
+            QueryWrapper<ConsumeRecord> wrapper = new QueryWrapper<ConsumeRecord>();
+            List<String> posNumList = Lists.newArrayList();
+            posList.forEach(e -> {
+                posNumList.add(e.getPosNum());
+            });
+            wrapper.in("pos_num", posNumList);
+            if (StringUtils.isNotBlank(searchConsumeRecordDto.getStartTime())) {
+                wrapper.ge("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getStartTime()));
+            }
+            if (StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())) {
+                wrapper.le("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getEndTime()));
+            }
+            IPage<ConsumeRecord> page = baseMapper.selectPage(new Page<>(searchConsumeRecordDto.getCurrentPage(), searchConsumeRecordDto.getPageSize()), wrapper);
+            result.setPages(page.getPages());
+            result.setCurrent(page.getCurrent());
+            result.setSize(page.getSize());
+            result.setTotal(page.getTotal());
+            result.setRecords(convertRecordListToDtoList(page.getRecords()));
+        }
+        return result;
+    }
+
     private List<ConsumeRecordDto> convertRecordListToDtoList(List<ConsumeRecord> consumeRecordList){
 
         List<ConsumeRecordDto> consumeRecordDtoList = Lists.newArrayList();
@@ -136,6 +175,16 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             searchPosDto.setPosNum(e.getPosNum());
             List<Pos> posList = posService.getPosByQuery(searchPosDto);
             dto.setPosPosition((!CollectionUtils.isEmpty(posList) && posList.get(0).getPosPosition() != null) ? PosPosition.valueOf(posList.get(0).getPosPosition()).getDescription()+"POS" : "");
+            User user = userService.getById(e.getUserId());
+            if(user != null){
+                dto.setUserName(user.getUserName());
+                if(user.getDeptId() != null){
+                    Dept dept = deptService.getById(user.getDeptId());
+                    if(dept != null){
+                        dto.setDeptName(dept.getDeptName());
+                    }
+                }
+            }
             consumeRecordDtoList.add(dto);
         });
 

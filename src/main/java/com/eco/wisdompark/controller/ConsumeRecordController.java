@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -178,6 +179,14 @@ public class ConsumeRecordController {
     public ResponseData<IPage<ConsumeRecordDto>> searchShopPosConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
         IPage<ConsumeRecordDto> result=  consumeRecordService.searchShopPosConsumeRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
+    }
+
+    @RequestMapping(value = "/exportShopPosConsumeRecordDtos", method = RequestMethod.POST)
+    @ApiOperation(value = "导出消费Pos机消费记录", httpMethod = "POST")
+    @SysUserLogin
+    public void exportShopPosConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto,
+                                               HttpServletResponse response) {
+        consumeRecordService.exportShopPosConsumeRecordDtos(searchConsumeRecordDto,response);
     }
 
     @RequestMapping(value = "/searchUserConsumeRecordDtosForApp", method = RequestMethod.POST)

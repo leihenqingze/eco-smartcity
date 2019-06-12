@@ -7,6 +7,7 @@ import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -29,5 +30,7 @@ public interface ConsumeRecordService extends IService<ConsumeRecord> {
     List<ConsumeRecordDto> searchUserConsumeRecordDtosByCardId(String cardId);
 
     IPage<ConsumeRecordDto> searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
+
+    void exportShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto,HttpServletResponse response);
 
 }

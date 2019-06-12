@@ -1,6 +1,5 @@
 package com.eco.wisdompark.mapper;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.domain.model.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -17,6 +16,8 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
     String getABalance (String username);
+
+
 
 
 

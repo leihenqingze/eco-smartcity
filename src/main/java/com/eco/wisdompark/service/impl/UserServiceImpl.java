@@ -9,10 +9,7 @@ import com.eco.wisdompark.common.utils.RedisUtil;
 import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.domain.dto.req.dept.AddLevel2DeptDto;
 import com.eco.wisdompark.domain.dto.req.dept.DeptDto;
-import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
-import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
-import com.eco.wisdompark.domain.dto.req.user.UserDto;
-import com.eco.wisdompark.domain.dto.req.user.UserLoginDto;
+import com.eco.wisdompark.domain.dto.req.user.*;
 import com.eco.wisdompark.domain.dto.resp.UserLoginRespDto;
 import com.eco.wisdompark.domain.dto.resp.UserSearchRespDto;
 import com.eco.wisdompark.domain.model.CpuCard;
@@ -29,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,15 +71,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         BigDecimal totalSubsidyAmount = BigDecimal.ZERO;
         List<Integer> deptIdList = Lists.newArrayList();
 
-        if(searchUserDto.getDeptId() != null){
+        if (searchUserDto.getDeptId() != null) {
             deptIdList.add(searchUserDto.getDeptId());
             // 查询二级部门
             Dept dept = deptService.getById(searchUserDto.getDeptId());
-            if(dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)){
+            if (dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)) {
                 List<DeptDto> level2DeptList = getLevel2Dept(dept.getId());
-                if(!CollectionUtils.isEmpty(level2DeptList)){
+                if (!CollectionUtils.isEmpty(level2DeptList)) {
                     deptIdList.clear();
-                    level2DeptList.forEach(e->{
+                    level2DeptList.forEach(e -> {
                         deptIdList.add(e.getId());
                     });
                 }
@@ -89,9 +87,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         QueryWrapper<User> wrapper = new QueryWrapper<User>();
-        if(StringUtils.isNotBlank(searchUserDto.getCardSerialNo())){
-            Integer userId= cpuCardService.getUserId(searchUserDto.getCardSerialNo());
-            if(userId!=null && userId>0 ){
+        if (StringUtils.isNotBlank(searchUserDto.getCardSerialNo())) {
+            Integer userId = cpuCardService.getUserId(searchUserDto.getCardSerialNo());
+            if (userId != null && userId > 0) {
                 wrapper.eq("id", userId);
             }
         }
@@ -101,8 +99,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isNotBlank(searchUserDto.getPhoneNum())) {
             wrapper.like("phone_num", searchUserDto.getPhoneNum());
         }
-        if(!CollectionUtils.isEmpty(deptIdList)){
-            wrapper.in("dept_id",deptIdList);
+        if (!CollectionUtils.isEmpty(deptIdList)) {
+            wrapper.in("dept_id", deptIdList);
         }
         // 统计所有金额
         List<User> userList = baseMapper.selectList(wrapper);
@@ -113,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             });
             List<CpuCard> cpuCards = cpuCardService.getCpuCardByUserIds(userIds);
             if (!cpuCards.isEmpty()) {
-                for(CpuCard cpuCard : cpuCards){
+                for (CpuCard cpuCard : cpuCards) {
                     totalRechargeAmount = totalRechargeAmount.add(cpuCard.getRechargeBalance());
                     totalSubsidyAmount = totalSubsidyAmount.add(cpuCard.getSubsidyBalance());
                 }
@@ -136,10 +134,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 BeanUtils.copyProperties(e, dto);
                 dtoList.add(dto);
             });
-            if(deptlist!=null && deptlist.size()>0 ){
-                dtoList.forEach(dto->{
-                    deptlist.forEach(dept->{
-                        if(dto.getDeptId().equals(dept.getId())){
+            if (deptlist != null && deptlist.size() > 0) {
+                dtoList.forEach(dto -> {
+                    deptlist.forEach(dept -> {
+                        if (dto.getDeptId().equals(dept.getId())) {
                             dto.setDeptName(dept.getDeptName());
                         }
                     });
@@ -147,8 +145,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             List<CpuCard> cpuCards = cpuCardService.getCpuCardByUserIds(userIds);
             if (!cpuCards.isEmpty()) {
-                for(CpuCard c : cpuCards){
-                    for(UserDto dto : dtoList){
+                for (CpuCard c : cpuCards) {
+                    for (UserDto dto : dtoList) {
                         if (c.getUserId().equals(dto.getId())) {
                             dto.setCardSerialNo(c.getCardSerialNo());
                             dto.setDeposit(c.getDeposit());
@@ -225,7 +223,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public UserLoginRespDto login(UserLoginDto dto) {
-        if (!isCaptcha(dto.getPhoneNum(),dto.getCaptcha())) {
+        if (!isCaptcha(dto.getPhoneNum(), dto.getCaptcha())) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_610, "验证码不正确");
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -257,7 +255,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public String getAb(String username) {
 
 
-        return  baseMapper.getABalance(username);
+        return baseMapper.getABalance(username);
     }
 
     @Override
@@ -266,15 +264,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         List<Integer> deptIdList = Lists.newArrayList();
 
-        if(searchUserDto.getDeptId() != null){
+        if (searchUserDto.getDeptId() != null) {
             deptIdList.add(searchUserDto.getDeptId());
             // 查询二级部门
             Dept dept = deptService.getById(searchUserDto.getDeptId());
-            if(dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)){
+            if (dept != null && (dept.getDeptUpId() == null || dept.getDeptUpId() == 0)) {
                 List<DeptDto> level2DeptList = getLevel2Dept(dept.getId());
-                if(!CollectionUtils.isEmpty(level2DeptList)){
+                if (!CollectionUtils.isEmpty(level2DeptList)) {
                     deptIdList.clear();
-                    level2DeptList.forEach(e->{
+                    level2DeptList.forEach(e -> {
                         deptIdList.add(e.getId());
                     });
                 }
@@ -287,12 +285,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isNotBlank(searchUserDto.getPhoneNum())) {
             wrapper.like("phone_num", searchUserDto.getPhoneNum());
         }
-        if(!CollectionUtils.isEmpty(deptIdList)){
-            wrapper.in("dept_id",deptIdList);
+        if (!CollectionUtils.isEmpty(deptIdList)) {
+            wrapper.in("dept_id", deptIdList);
         }
 
         return baseMapper.selectList(wrapper);
     }
+
+    @Override
+    public Integer updateUserInfo(UpdateUserInfoDto updateUserInfoDto) {
+        User user = baseMapper.selectById(updateUserInfoDto.getId());
+        if (user == null) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "用户不存在");
+        }
+        if(StringUtils.isBlank(updateUserInfoDto.getPhoneNum()) ){
+            throw new WisdomParkException(ResponseData.STATUS_CODE_400, "手机号不能为空");
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone_num", updateUserInfoDto.getPhoneNum())
+                .or()
+                .eq("user_card_num", updateUserInfoDto.getUserCardNum());
+        List<User> userList = baseMapper.selectList(queryWrapper);
+        if(userList!=null && userList.size()>1 ){
+            throw new WisdomParkException(ResponseData.STATUS_CODE_400, "手机号或者身份证号已经存在");
+        }
+        user.setPhoneNum(updateUserInfoDto.getPhoneNum());
+        user.setUserName(updateUserInfoDto.getUserName());
+        user.setUserCardNum(updateUserInfoDto.getUserCardNum());
+        Integer result = baseMapper.updateById(user);
+        return result;
+    }
+
+
+
 
     /**
      * 比较验证码
@@ -300,11 +325,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param captcha 用户输入的验证码
      * @return 是否相等
      */
-    private boolean isCaptcha(String phone,String captcha) {
+    private boolean isCaptcha(String phone, String captcha) {
         return redisUtil.get(phone).equals(captcha);
     }
 
-    private List<DeptDto> getLevel2Dept(Integer deptId){
+    private List<DeptDto> getLevel2Dept(Integer deptId) {
         AddLevel2DeptDto addLevel2DeptDto = new AddLevel2DeptDto();
         addLevel2DeptDto.setId(deptId);
         return deptService.getLevel2Dept(addLevel2DeptDto);

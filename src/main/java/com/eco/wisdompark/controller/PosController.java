@@ -58,7 +58,6 @@ public class PosController {
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
-    @SysUserLogin
     public ResponseData<RespQueryCardInfoDto> queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
         RespQueryCardInfoDto respQueryCardInfoDto = cpuCardService.queryCardInfo(queryCardInfoDto);
         return ResponseData.OK(respQueryCardInfoDto);

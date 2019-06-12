@@ -16,6 +16,7 @@ import com.eco.wisdompark.converter.resp.RespMakingCpuCardDtoConverter;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.*;
 import com.eco.wisdompark.domain.dto.req.dept.DeptAllDto;
+import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.eco.wisdompark.domain.model.User;
@@ -753,6 +754,18 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             e.printStackTrace();
         }
         return batchMarkingCardRespDto;
+    }
+
+    @Override
+    public Integer updateUserBalance(UpdateUserBalanceDto updateUserBalanceDto) {
+        CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("user_id", updateUserBalanceDto.getId()));
+        if (cpuCard == null) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "未找到用户");
+        }
+        cpuCard.setSubsidyBalance(updateUserBalanceDto.getSubsidyBalance());
+        cpuCard.setRechargeBalance(updateUserBalanceDto.getRechargeBalance());
+        Integer result = baseMapper.updateById(cpuCard);
+        return result;
     }
 
     /**

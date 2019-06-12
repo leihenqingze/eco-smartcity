@@ -1,6 +1,7 @@
 package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.domain.dto.req.card.*;
+import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -145,6 +146,12 @@ public interface CpuCardService extends IService<CpuCard> {
     int updateCpuCardSBalance(Integer userId, BigDecimal subsidyBalance);
 
     BatchMarkingCardRespDto batchMakingCard(MultipartFile file);
+
+
+    /**
+     * 修改用户余额
+     * */
+    Integer updateUserBalance(UpdateUserBalanceDto updateUserBalanceDto);
 
     /**
      * 启停

@@ -4,6 +4,7 @@ import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.domain.dto.req.card.*;
+import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.service.CpuCardService;
 import com.eco.wisdompark.service.ReturnCardService;
@@ -50,12 +51,19 @@ public class CpuCardController {
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ApiOperation(value = "查询卡片信息接口", httpMethod = "POST")
-    @SysUserLogin
     public ResponseData<RespQueryCardInfoDto> queryCardInfo(@RequestBody QueryCardInfoDto queryCardInfoDto) {
         queryCardInfoDto.setCardId(StringTools.cardDecimalToHexString(queryCardInfoDto.getCardId()));
         RespQueryCardInfoDto respQueryCardInfoDto = cpuCardService.queryCardInfo(queryCardInfoDto);
         return ResponseData.OK(respQueryCardInfoDto);
     }
+
+    @RequestMapping(value = "/updateUserBalance", method = RequestMethod.POST)
+    @ApiOperation(value = "修改人员余额", httpMethod = "POST")
+    public ResponseData<Integer> updateUserBalance(@RequestBody UpdateUserBalanceDto updateUserBalanceDto) {
+        Integer result = cpuCardService.updateUserBalance(updateUserBalanceDto);
+        return ResponseData.OK(result);
+    }
+
 
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     @ApiOperation(value = "卡片余额充值接口", httpMethod = "POST")

@@ -28,4 +28,6 @@ public interface ConsumeRecordService extends IService<ConsumeRecord> {
 
     List<ConsumeRecordDto> searchUserConsumeRecordDtosByCardId(String cardId);
 
+    IPage<ConsumeRecordDto> searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
+
 }

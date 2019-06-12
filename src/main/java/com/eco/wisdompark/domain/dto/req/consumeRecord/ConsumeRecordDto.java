@@ -53,4 +53,7 @@ public class ConsumeRecordDto {
     @ApiModelProperty(value = "人员姓名")
     private String userName;
 
+    @ApiModelProperty(value = "部门名称")
+    private String deptName;
+
 }

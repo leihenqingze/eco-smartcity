@@ -13,7 +13,6 @@ public class SearchConsumeRecordDto {
 
 
     @ApiModelProperty(value = "人员ID")
-    @NotNull( message = "人员Id不能空")
     private Integer id;
 
     @ApiModelProperty(value = "起始时间")

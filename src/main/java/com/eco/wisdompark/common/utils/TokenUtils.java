@@ -12,7 +12,7 @@ public class TokenUtils{
     @Autowired
     private RedisUtil redisUtil;
 
-    private static final int token_expire = 30; // token有效期
+    private static final int token_expire = 30*60; // token有效期
 
     public String create(Integer userId) {
         String token = UUID.randomUUID().toString().replace("-", "");

@@ -54,6 +54,14 @@ public class UserController {
         return ResponseData.OK(result);
     }
 
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
+    @ApiOperation(value = "修改人员信息", httpMethod = "POST")
+    public ResponseData<Integer> updateUserInfo(@RequestBody UpdateUserInfoDto updateUserInfoDto) {
+        Integer result = userService.updateUserInfo(updateUserInfoDto);
+        return ResponseData.OK(result);
+    }
+
+
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员详情", httpMethod = "POST")
     public ResponseData<UserDto> getUser(@RequestBody GetUserDto getUserDto) {

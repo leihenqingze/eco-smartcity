@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eco.wisdompark.mapper.UserMapper">
 
 
-    <select id="getABalance" resultType="String"  parameterType="String" >
+    <select id="getABalance" resultType="String" parameterType="String">
 
    select s.ABalance from Sdt_BusinessWater_Table s where s.UserName=#{username}  ORDER BY s.BDate DESC  LIMIT 0,1
 
-
     </select>
+
+
 
 
 </mapper>

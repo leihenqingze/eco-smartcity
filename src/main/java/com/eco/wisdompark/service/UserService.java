@@ -1,10 +1,6 @@
 package com.eco.wisdompark.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
-import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
-import com.eco.wisdompark.domain.dto.req.user.UserDto;
-import com.eco.wisdompark.domain.dto.req.user.UserLoginDto;
+import com.eco.wisdompark.domain.dto.req.user.*;
 import com.eco.wisdompark.domain.dto.resp.UserLoginRespDto;
 import com.eco.wisdompark.domain.dto.resp.UserSearchRespDto;
 import com.eco.wisdompark.domain.model.User;
@@ -82,6 +78,9 @@ public interface UserService extends IService<User> {
     String getAb(String username);
 
     List<User> getListByQuery(SearchUserDto searchUserDto);
+
+    Integer updateUserInfo(UpdateUserInfoDto updateUserInfoDto);
+
 
 
 }

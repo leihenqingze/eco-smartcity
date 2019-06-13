@@ -81,6 +81,8 @@ public interface UserService extends IService<User> {
 
     Integer updateUserInfo(UpdateUserInfoDto updateUserInfoDto);
 
+    Integer delUserById(Integer id);
+
 
 
 }

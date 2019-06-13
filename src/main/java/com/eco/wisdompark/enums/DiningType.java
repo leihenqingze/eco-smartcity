@@ -16,7 +16,7 @@ import java.util.function.Function;
 public enum DiningType implements CommonEnum<DiningType> {
     BREAKFAST(0, "早餐", LocalTime.of(5, 0), LocalTime.of(9, 59), ConsumeIdentity::getBreakfast),
     LUNCH(1, "午餐", LocalTime.of(10, 0), LocalTime.of(15, 59), ConsumeIdentity::getLunch),
-    DINNER(2, "晚餐", LocalTime.of(16, 0), LocalTime.of(22, 59), ConsumeIdentity::getDinner);
+    DINNER(2, "晚餐", LocalTime.of(16, 0), LocalTime.of(23, 59), ConsumeIdentity::getDinner);
 
     private final int code;
     private final String description;

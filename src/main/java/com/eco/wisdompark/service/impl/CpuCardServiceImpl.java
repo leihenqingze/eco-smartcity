@@ -16,6 +16,8 @@ import com.eco.wisdompark.converter.resp.RespMakingCpuCardDtoConverter;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
 import com.eco.wisdompark.domain.dto.req.card.*;
 import com.eco.wisdompark.domain.dto.req.dept.DeptAllDto;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
+import com.eco.wisdompark.domain.dto.req.user.SerianNoDto;
 import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
@@ -916,6 +918,40 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             throw new WisdomParkException(STATUS_CODE_613, "数据库操作异常");
         }
         return true;
+    }
+
+    @Override
+    public RespCpuCardAndUserInfoDto getCpuCardAndUserInfo(SerianNoDto serianNoDto) {
+        RespCpuCardAndUserInfoDto result = new RespCpuCardAndUserInfoDto();
+        CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("card_serialNo", serianNoDto.getCardSerialNo()));
+        if (cpuCard == null) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_600, "未找到用户");
+        }
+        result.setId(cpuCard.getId());
+        result.setCardSerialNo(cpuCard.getCardSerialNo());
+        result.setRechargeBalance(cpuCard.getRechargeBalance());
+        result.setSubsidyBalance(cpuCard.getSubsidyBalance());
+        if (cpuCard.getUserId() != null && cpuCard.getUserId() > 0) {
+           User user= userService.queryByUserId(cpuCard.getUserId());
+           if(user!=null){
+               result.setUserName(user.getUserName());
+               result.setDeptName(deptService.getDeptName(user.getDeptId()));
+           }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Integer del(GetUserDto getUserDto) {
+        CpuCard cpuCard=baseMapper.selectById(getUserDto.getId());
+        if(cpuCard!=null){
+
+            userService.delUserById(cpuCard.getUserId());
+
+        }
+
+        return baseMapper.deleteById(cpuCard.getId());
     }
 
 }

@@ -316,7 +316,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return result;
     }
 
+    @Override
+    public Integer delUserById(Integer id) {
 
+        return baseMapper.deleteById(id);
+    }
 
 
     /**

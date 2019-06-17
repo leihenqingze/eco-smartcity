@@ -4,6 +4,8 @@ import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.utils.StringTools;
 import com.eco.wisdompark.domain.dto.req.card.*;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
+import com.eco.wisdompark.domain.dto.req.user.SerianNoDto;
 import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.service.CpuCardService;
@@ -13,6 +15,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -121,5 +126,24 @@ public class CpuCardController {
         boolean bool = cpuCardService.startStop(startStopDto.getIfUsed(), startStopDto.getCardId());
         return ResponseData.OK(bool);
     }
+
+
+
+    @RequestMapping(value = "/getCpuCardAndUserInfo", method = RequestMethod.POST)
+    @ApiOperation(value = "查询卡片信息和人员信息", httpMethod = "POST")
+    public ResponseData<List<RespCpuCardAndUserInfoDto>> getCpuCardAndUserInfo(@RequestBody SerianNoDto serianNoDto) {
+        RespCpuCardAndUserInfoDto dto=cpuCardService.getCpuCardAndUserInfo(serianNoDto);
+        List<RespCpuCardAndUserInfoDto> list=new ArrayList<>();
+        list.add(dto);
+        return ResponseData.OK(list);
+    }
+
+    @RequestMapping(value = "/del", method = RequestMethod.POST)
+    @ApiOperation(value = "删除卡片信息和人员信息", httpMethod = "POST")
+    public ResponseData<Integer> del(@RequestBody GetUserDto getUserDto) {
+       Integer result=cpuCardService.del(getUserDto);
+        return ResponseData.OK(result);
+    }
+
 
 }

@@ -1,6 +1,8 @@
 package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.domain.dto.req.card.*;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
+import com.eco.wisdompark.domain.dto.req.user.SerianNoDto;
 import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
@@ -161,5 +163,11 @@ public interface CpuCardService extends IService<CpuCard> {
      * @return 是否停用成功
      */
     boolean startStop(int ifUsed, String cardId);
+
+    RespCpuCardAndUserInfoDto getCpuCardAndUserInfo(SerianNoDto serianNoDto);
+
+    Integer del(GetUserDto getUserDto);
+
+
 
 }

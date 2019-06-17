@@ -21,6 +21,7 @@ import com.eco.wisdompark.domain.dto.req.user.SerianNoDto;
 import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
+import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.*;
 import com.eco.wisdompark.mapper.CpuCardMapper;
@@ -291,7 +292,6 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
             respRechargeBatchDataDto.setBatchRechargeDataDtoList(newBatchRechargeDataDtoList);
             return;
         }
-
         for (BatchRechargeDataDto batchRechargeDataDto : successDtoList) {
             String cardSerialNo = batchRechargeDataDto.getCardSerialNo();
             CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("card_serialNo", cardSerialNo));
@@ -301,6 +301,7 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                 batchRechargeDataDto.setUserName(user.getUserName());
                 batchRechargeDataDto.setPhoneNum(user.getPhoneNum());
                 batchRechargeDataDto.setDeptId(user.getDeptId());
+                batchRechargeDataDto.setDeptName(deptService.getDeptName(user.getDeptId()));
                 batchRechargeDataDto.setUserCardNum(IdCardUtils.idCardHidden(user.getUserCardNum()));
                 newBatchRechargeDataDtoList.add(batchRechargeDataDto);
             } else {

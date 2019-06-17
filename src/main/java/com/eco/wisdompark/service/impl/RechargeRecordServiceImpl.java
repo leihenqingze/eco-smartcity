@@ -99,9 +99,10 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
         if(!StringUtils.isEmpty(searchRechargeRecordDto.getEndTime())){
             wrapper.le("create_time", LocalDateTimeUtils.localTime(searchRechargeRecordDto.getEndTime()));
         }
-        if(!StringUtils.isEmpty(searchRechargeRecordDto.getCardId())){
-            wrapper.eq("card_id",searchRechargeRecordDto.getCardId());
+        if(!StringUtils.isEmpty(searchRechargeRecordDto.getCard_serialNo())){
+            wrapper.eq("card_serialNo",searchRechargeRecordDto.getCard_serialNo());
         }
+        wrapper.orderByDesc("create_time");
         IPage<RechargeRecord> page = baseMapper.selectPage(new Page<>(searchRechargeRecordDto.getCurrentPage(), searchRechargeRecordDto.getPageSize()), wrapper);
         result.setPages(page.getPages());
         result.setCurrent(page.getCurrent());

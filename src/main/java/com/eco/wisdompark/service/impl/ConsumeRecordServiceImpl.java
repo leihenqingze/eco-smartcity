@@ -156,6 +156,7 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             if (StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())) {
                 wrapper.le("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getEndTime()));
             }
+            wrapper.orderByDesc("create_time");
             IPage<ConsumeRecord> page = baseMapper.selectPage(new Page<>(searchConsumeRecordDto.getCurrentPage(), searchConsumeRecordDto.getPageSize()), wrapper);
             result.setPages(page.getPages());
             result.setCurrent(page.getCurrent());

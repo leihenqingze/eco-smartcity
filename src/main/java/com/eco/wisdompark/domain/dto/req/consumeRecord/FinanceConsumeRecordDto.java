@@ -14,7 +14,7 @@ public class FinanceConsumeRecordDto {
     @ApiModelProperty(value = "人员ID集合")
     private List<Integer> userIdList;
 
-    @ApiModelProperty(value = "人员ID集合")
+    @ApiModelProperty(value = "pos机编号集合")
     private List<String> posNumList;
 
     @ApiModelProperty(value = "消费类型，0：用餐，1：购物")

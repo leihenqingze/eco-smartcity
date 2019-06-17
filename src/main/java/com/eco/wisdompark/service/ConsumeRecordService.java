@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
+import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -29,7 +30,7 @@ public interface ConsumeRecordService extends IService<ConsumeRecord> {
 
     List<ConsumeRecordDto> searchUserConsumeRecordDtosByCardId(String cardId);
 
-    IPage<ConsumeRecordDto> searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
+    ConsomeRecordRespDto searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto);
 
     void exportShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto,HttpServletResponse response);
 

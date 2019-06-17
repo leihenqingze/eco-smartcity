@@ -176,8 +176,8 @@ public class ConsumeRecordController {
     @RequestMapping(value = "/searchShopPosConsumeRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询消费Pos机消费记录", httpMethod = "POST")
     @SysUserLogin
-    public ResponseData<IPage<ConsumeRecordDto>> searchShopPosConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
-        IPage<ConsumeRecordDto> result=  consumeRecordService.searchShopPosConsumeRecordDtos(searchConsumeRecordDto);
+    public ResponseData<ConsomeRecordRespDto> searchShopPosConsumeRecordDtos(@RequestBody SearchConsumeRecordDto searchConsumeRecordDto) {
+        ConsomeRecordRespDto result=  consumeRecordService.searchShopPosConsumeRecordDtos(searchConsumeRecordDto);
         return ResponseData.OK(result);
     }
 

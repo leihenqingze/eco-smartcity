@@ -1,10 +1,8 @@
 package com.eco.wisdompark.common.utils;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
 
 public class ExcelUtil {
 
@@ -32,6 +30,9 @@ public class ExcelUtil {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND); // 填充单元格
+        style.setFillForegroundColor(HSSFColor.YELLOW.index); // 标头设置背景色
+        style.setFillBackgroundColor(HSSFColor.GREEN.index);
 
         //声明列对象
         HSSFCell cell = null;
@@ -46,9 +47,20 @@ public class ExcelUtil {
         //创建内容
         for(int i=0;i<values.length;i++){
             row = sheet.createRow(i + 1);
+
             for(int j=0;j<values[i].length;j++){
                 //将内容按顺序赋给对应的列对象
-                row.createCell(j).setCellValue(values[i][j]);
+                String value = values[i][j];
+                if(j == 2){
+                    HSSFCell cell1 = row.createCell(j);
+                    cell1.setCellValue(Double.parseDouble(value));
+                    HSSFCellStyle cellStyle = wb.createCellStyle();
+                    cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
+                    cell1.setCellStyle(cellStyle);
+                    cell1.setCellType(Cell.CELL_TYPE_NUMERIC);
+                }else{
+                    row.createCell(j).setCellValue(value);
+                }
             }
         }
         return wb;

@@ -11,6 +11,7 @@ import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.pos.SearchPosDto;
+import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
 import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.Pos;
@@ -138,7 +139,8 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
     }
 
     @Override
-    public IPage<ConsumeRecordDto> searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+    public ConsomeRecordRespDto searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+        ConsomeRecordRespDto respDto = new ConsomeRecordRespDto();
         IPage<ConsumeRecordDto> result=new Page<>();
         SearchPosDto searchPosDto = new SearchPosDto();
         searchPosDto.setPosConsumeType(ConsumeType.SHOP.getCode());
@@ -163,8 +165,17 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             result.setSize(page.getSize());
             result.setTotal(page.getTotal());
             result.setRecords(convertRecordListToDtoList(page.getRecords()));
+            FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
+            respDto.setConsumeRecordDtoPage(result);
+            // 统计金额
+            financeConsumeRecordDto.setPosNumList(posNumList);
+            financeConsumeRecordDto.setStartTime(searchConsumeRecordDto.getStartTime());
+            financeConsumeRecordDto.setEndTime(searchConsumeRecordDto.getEndTime());
+            BigDecimal totalRechargeAmount = baseMapper.totalShopPosRechargeConsomeRecordAmount(financeConsumeRecordDto);
+            BigDecimal totalSubsidyAmount = baseMapper.totalShopPosSubsidyConsomeRecordAmount(financeConsumeRecordDto);
+            respDto.setTotalAmount(totalRechargeAmount.add(totalSubsidyAmount));
         }
-        return result;
+        return respDto;
     }
 
     @Override
@@ -197,7 +208,7 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         String[] title = {"姓名","部门","消费金额","消费时间","卡序列号"};
 
         //excel文件名
-        String fileName = "消费明细"+System.currentTimeMillis()+".xls";
+        String fileName = "shop_pos_"+System.currentTimeMillis()+".xls";
 
         //sheet名
         String sheetName = "消费明细";

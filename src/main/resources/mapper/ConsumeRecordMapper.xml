@@ -56,4 +56,38 @@
         </if>
     </select>
 
+    <select id="totalShopPosRechargeConsomeRecordAmount" resultType="BigDecimal" parameterType="com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto">
+        select sum(recharge_amount) from tb_consume_record where 1=1
+        <if test="posNumList !=null and posNumList.size!=0">
+            and pos_num in (
+            <foreach collection="posNumList" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="startTime !=null and startTime !=''">
+            and <![CDATA[ create_time  >= #{startTime} ]]>
+        </if>
+        <if test="endTime !=null and endTime !=''">
+            and <![CDATA[ create_time  <= #{endTime} ]]>
+        </if>
+    </select>
+
+    <select id="totalShopPosSubsidyConsomeRecordAmount" resultType="BigDecimal" parameterType="com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto">
+        select sum(subsidy_amount) from tb_consume_record where 1=1
+        <if test="posNumList !=null and posNumList.size!=0">
+            and pos_num in (
+            <foreach collection="posNumList" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="startTime !=null and startTime !=''">
+            and <![CDATA[ create_time  >= #{startTime} ]]>
+        </if>
+        <if test="endTime !=null and endTime !=''">
+            and <![CDATA[ create_time  <= #{endTime} ]]>
+        </if>
+    </select>
+
 </mapper>

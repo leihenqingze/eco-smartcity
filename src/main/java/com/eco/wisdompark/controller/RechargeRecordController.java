@@ -43,7 +43,7 @@ public class RechargeRecordController {
     }
 
     @RequestMapping(value = "/exportUserRechargeRecordDtos", method = RequestMethod.POST)
-    @ApiOperation(value = "导出消费Pos机消费记录", httpMethod = "POST")
+    @ApiOperation(value = "导出人员充值记录", httpMethod = "POST")
     @SysUserLogin
     public void exportShopPosConsumeRecordDtos( @RequestBody SearchRechargeRecordDto searchRechargeRecordDto,
                                                HttpServletResponse response) {

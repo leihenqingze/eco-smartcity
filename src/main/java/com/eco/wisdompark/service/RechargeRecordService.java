@@ -1,15 +1,13 @@
 package com.eco.wisdompark.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.RechargeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.SearchRechargeRecordDto;
 import com.eco.wisdompark.domain.model.RechargeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.eco.wisdompark.enums.RechargeType;
-
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 
 /**
@@ -35,4 +33,6 @@ public interface RechargeRecordService extends IService<RechargeRecord> {
       * @param searchRechargeRecordDto
       * */
     IPage<RechargeRecordDto> searchUserRechargeRecordDtos(SearchRechargeRecordDto searchRechargeRecordDto);
+
+    void exportShopPosConsumeRecordDtos(SearchRechargeRecordDto searchRechargeRecordDto,HttpServletResponse response);
 }

@@ -4,7 +4,6 @@ package com.eco.wisdompark.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
-import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.RechargeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.SearchRechargeRecordDto;
 import com.eco.wisdompark.service.RechargeRecordService;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -39,6 +40,14 @@ public class RechargeRecordController {
     public ResponseData searchUserRechargeRecordDtos( @RequestBody SearchRechargeRecordDto searchRechargeRecordDto) {
         IPage<RechargeRecordDto> result = rechargeRecordService.searchUserRechargeRecordDtos(searchRechargeRecordDto);
         return ResponseData.OK(result);
+    }
+
+    @RequestMapping(value = "/exportUserRechargeRecordDtos", method = RequestMethod.POST)
+    @ApiOperation(value = "导出消费Pos机消费记录", httpMethod = "POST")
+    @SysUserLogin
+    public void exportShopPosConsumeRecordDtos( @RequestBody SearchRechargeRecordDto searchRechargeRecordDto,
+                                               HttpServletResponse response) {
+        rechargeRecordService.exportShopPosConsumeRecordDtos(searchRechargeRecordDto,response);
     }
 
 }

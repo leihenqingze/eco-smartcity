@@ -172,7 +172,8 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             financeConsumeRecordDto.setEndTime(searchConsumeRecordDto.getEndTime());
             BigDecimal totalRechargeAmount = baseMapper.totalShopPosRechargeConsomeRecordAmount(financeConsumeRecordDto);
             BigDecimal totalSubsidyAmount = baseMapper.totalShopPosSubsidyConsomeRecordAmount(financeConsumeRecordDto);
-            respDto.setTotalAmount(totalRechargeAmount.add(totalSubsidyAmount));
+            respDto.setTotalAmount(totalRechargeAmount == null?BigDecimal.ZERO:totalRechargeAmount.
+                    add(totalSubsidyAmount == null?BigDecimal.ZERO:totalSubsidyAmount));
         }
         return respDto;
     }

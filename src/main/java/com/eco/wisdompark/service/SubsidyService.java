@@ -1,6 +1,8 @@
 package com.eco.wisdompark.service;
 
 import com.eco.wisdompark.domain.dto.req.subsidy.ManualSubsidyDto;
+import com.eco.wisdompark.domain.dto.resp.RespBatchImportSubsidyDto;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -23,5 +25,10 @@ public interface SubsidyService {
      * 自动补助
      */
     void automaticSubsidy();
+
+    /**
+     * 批量导入补助
+     */
+    RespBatchImportSubsidyDto batchImportSubsidy(MultipartFile file);
 
 }

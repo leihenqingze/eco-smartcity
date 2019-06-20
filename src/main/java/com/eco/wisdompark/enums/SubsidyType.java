@@ -6,7 +6,8 @@ package com.eco.wisdompark.enums;
  */
 public enum SubsidyType implements CommonEnum<SubsidyType> {
     MANUAL(0, "手动"),
-    AUTOMATIC(1, "自动");
+    AUTOMATIC(1, "自动"),
+    BULKIMPORT(2, "批量导入");
 
     private final int code;
     private final String description;

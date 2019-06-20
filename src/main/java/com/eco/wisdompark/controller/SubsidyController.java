@@ -8,10 +8,8 @@ import com.eco.wisdompark.service.SubsidyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -42,6 +40,13 @@ public class SubsidyController {
     public ResponseData automaticSubsidy() {
         subsidyService.automaticSubsidy();
         return ResponseData.OK();
+    }
+
+    @RequestMapping(value = "/subsidy/batch", method = RequestMethod.POST)
+    @ApiOperation(value = "批量补助接口", httpMethod = "POST")
+//    @SysUserLogin
+    public ResponseData<Boolean> rechargeBatch(@RequestParam("file") MultipartFile file) {
+        return ResponseData.OK(subsidyService.batchImportSubsidy(file));
     }
 
 }

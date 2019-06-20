@@ -34,6 +34,10 @@ public class BatchRechargeDataDto {
     @ApiModelProperty(value = "组织架构ID")
     private Integer deptId;
 
+    @ApiModelProperty(value = "组织架构名称")
+    private String deptName;
+
+
     @ApiModelProperty(value = "身份证号")
     private String userCardNum;
 

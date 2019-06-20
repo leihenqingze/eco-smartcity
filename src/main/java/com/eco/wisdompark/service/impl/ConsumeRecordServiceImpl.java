@@ -11,6 +11,7 @@ import com.eco.wisdompark.domain.dto.req.consumeRecord.ConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.FinanceConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.pos.SearchPosDto;
+import com.eco.wisdompark.domain.dto.resp.ConsomeRecordRespDto;
 import com.eco.wisdompark.domain.model.ConsumeRecord;
 import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.Pos;
@@ -33,9 +34,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -138,7 +140,8 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
     }
 
     @Override
-    public IPage<ConsumeRecordDto> searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+    public ConsomeRecordRespDto searchShopPosConsumeRecordDtos(SearchConsumeRecordDto searchConsumeRecordDto) {
+        ConsomeRecordRespDto respDto = new ConsomeRecordRespDto();
         IPage<ConsumeRecordDto> result=new Page<>();
         SearchPosDto searchPosDto = new SearchPosDto();
         searchPosDto.setPosConsumeType(ConsumeType.SHOP.getCode());
@@ -156,14 +159,25 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
             if (StringUtils.isNotBlank(searchConsumeRecordDto.getEndTime())) {
                 wrapper.le("create_time", LocalDateTimeUtils.localTime(searchConsumeRecordDto.getEndTime()));
             }
+            wrapper.orderByDesc("create_time");
             IPage<ConsumeRecord> page = baseMapper.selectPage(new Page<>(searchConsumeRecordDto.getCurrentPage(), searchConsumeRecordDto.getPageSize()), wrapper);
             result.setPages(page.getPages());
             result.setCurrent(page.getCurrent());
             result.setSize(page.getSize());
             result.setTotal(page.getTotal());
             result.setRecords(convertRecordListToDtoList(page.getRecords()));
+            FinanceConsumeRecordDto financeConsumeRecordDto = new FinanceConsumeRecordDto();
+            respDto.setConsumeRecordDtoPage(result);
+            // 统计金额
+            financeConsumeRecordDto.setPosNumList(posNumList);
+            financeConsumeRecordDto.setStartTime(searchConsumeRecordDto.getStartTime());
+            financeConsumeRecordDto.setEndTime(searchConsumeRecordDto.getEndTime());
+            BigDecimal totalRechargeAmount = baseMapper.totalShopPosRechargeConsomeRecordAmount(financeConsumeRecordDto);
+            BigDecimal totalSubsidyAmount = baseMapper.totalShopPosSubsidyConsomeRecordAmount(financeConsumeRecordDto);
+            respDto.setTotalAmount(totalRechargeAmount == null?BigDecimal.ZERO:totalRechargeAmount.
+                    add(totalSubsidyAmount == null?BigDecimal.ZERO:totalSubsidyAmount));
         }
-        return result;
+        return respDto;
     }
 
     @Override
@@ -196,7 +210,7 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         String[] title = {"姓名","部门","消费金额","消费时间","卡序列号"};
 
         //excel文件名
-        String fileName = "消费明细"+System.currentTimeMillis()+".xls";
+        String fileName = "shop_pos_"+System.currentTimeMillis()+".xls";
 
         //sheet名
         String sheetName = "消费明细";
@@ -216,11 +230,13 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         }
 
         //创建HSSFWorkbook
-        HSSFWorkbook wb = ExcelUtil.getHSSFWorkbook(sheetName, title, content, null);
+        Map<Integer,Integer> amountColMap = new HashMap<>();
+        amountColMap.put(2,2);
+        HSSFWorkbook wb = ExcelUtil.getHSSFWorkbook(sheetName, title, content, null,amountColMap);
 
         //响应到客户端
         try {
-            this.setResponseHeader(response, fileName);
+            ExcelUtil.setResponseHeader(response, fileName);
               OutputStream os = response.getOutputStream();
                wb.write(os);
                os.flush();
@@ -263,23 +279,5 @@ public class ConsumeRecordServiceImpl extends ServiceImpl<ConsumeRecordMapper, C
         });
 
         return consumeRecordDtoList;
-    }
-
-    //发送响应流方法
-    private void setResponseHeader(HttpServletResponse response, String fileName) {
-        try {
-            try {
-                fileName = new String(fileName.getBytes(),"UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            response.setContentType("application/octet-stream;charset=UTF-8");
-            response.setHeader("Content-Disposition", "attachment;filename="+fileName);
-            response.addHeader("Pargam", "no-cache");
-            response.addHeader("Cache-Control", "no-cache");
-        } catch (Exception ex) {
-            throw new WisdomParkException(ResponseData.STATUS_CODE_615,"下载失败");
-        }
     }
 }

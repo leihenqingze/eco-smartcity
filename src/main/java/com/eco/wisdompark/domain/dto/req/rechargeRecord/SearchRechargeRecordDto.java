@@ -11,8 +11,8 @@ import net.sf.oval.constraint.NotNull;
 public class SearchRechargeRecordDto {
 
 
-    @ApiModelProperty(value = "卡ID")
-    private String cardId;
+    @ApiModelProperty(value = "卡片编号")
+    private String card_serialNo;
 
     @ApiModelProperty(value = "人员姓名")
     private String userName;

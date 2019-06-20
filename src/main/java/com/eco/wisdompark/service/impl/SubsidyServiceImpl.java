@@ -208,7 +208,7 @@ public class SubsidyServiceImpl implements SubsidyService {
             if (Objects.nonNull(cell)) {
                 subsidyAmt = cell.getNumericCellValue();
             }
-            if (Objects.nonNull(subsidyAmt)) {
+            if (Objects.isNull(subsidyAmt)) {
                 batchImportSubsidyDto.setErrorMsg("补助金额为空");
                 return batchImportSubsidyDto;
             } else if (subsidyAmt <= 0) {

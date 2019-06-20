@@ -204,11 +204,14 @@ public class SubsidyServiceImpl implements SubsidyService {
             if (Objects.nonNull(cell)) {
                 subsidyAmt = cell.getNumericCellValue();
             }
-            if (subsidyAmt > 0) {
-                batchImportSubsidyDto.setSubsidyAmt(new BigDecimal(subsidyAmt));
-            } else {
+            if (Objects.nonNull(subsidyAmt)) {
+                batchImportSubsidyDto.setErrorMsg("补助金额为空");
+                return batchImportSubsidyDto;
+            } else if (subsidyAmt <= 0) {
                 batchImportSubsidyDto.setErrorMsg("补助金额不大于0");
                 return batchImportSubsidyDto;
+            } else {
+                batchImportSubsidyDto.setSubsidyAmt(new BigDecimal(subsidyAmt));
             }
         } catch (IllegalStateException ex) {
             batchImportSubsidyDto.setErrorMsg("补助金额不正确");

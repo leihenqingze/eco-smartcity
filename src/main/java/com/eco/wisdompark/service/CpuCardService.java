@@ -23,6 +23,8 @@ import java.util.List;
  */
 public interface CpuCardService extends IService<CpuCard> {
 
+    CpuCard findByCardSerialNo(String cardSerialNo);
+
     /**
      * 制卡接口
      *

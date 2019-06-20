@@ -13,6 +13,7 @@ import com.eco.wisdompark.enums.ReportLossStstus;
 import com.eco.wisdompark.enums.SubsidyStatus;
 import com.eco.wisdompark.enums.SubsidyType;
 import com.eco.wisdompark.mapper.*;
+import com.eco.wisdompark.service.CpuCardService;
 import com.eco.wisdompark.service.SubsidyService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,9 @@ public class SubsidyServiceImpl implements SubsidyService {
 
     @Autowired
     private CpuCardMapper cpuCardMapper;
+
+    @Autowired
+    private CpuCardService cpuCardService;
     @Autowired
     private SubsidyRecordMapper subsidyRecordMapper;
     @Autowired
@@ -50,7 +54,7 @@ public class SubsidyServiceImpl implements SubsidyService {
     @Transactional
     @Override
     public void manualSubsidy(ManualSubsidyDto manualSubsidyDto) {
-        CpuCard changeBefore = cpuCardMapper.selectById(manualSubsidyDto.getCpuCardId());
+        CpuCard changeBefore = cpuCardService.findByCardSerialNo(manualSubsidyDto.getCardSerialNo());
         if (Objects.isNull(changeBefore) || !Objects.equals(ReportLossStstus.IN_USE.getCode(),
                 changeBefore.getReportLossStstus()))
             throw new WisdomParkException(ResponseData.STATUS_CODE_601, "该卡不能进行补助操作");

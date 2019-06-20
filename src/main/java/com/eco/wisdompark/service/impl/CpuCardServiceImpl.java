@@ -91,6 +91,12 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
     private static String UPLOAD_FILE_PATH;
 
     @Override
+    public CpuCard findByCardSerialNo(String cardSerialNo) {
+        CpuCard cpuCard = baseMapper.selectOne(new QueryWrapper<CpuCard>().eq("card_serialNo", cardSerialNo));
+        return cpuCard;
+    }
+
+    @Override
     @Transactional
     public RespMakingCpuCardDto makingCpuCard(MakingCpuCardDto makingCpuCardDto) {
 //        // 1.校验用户是否存在

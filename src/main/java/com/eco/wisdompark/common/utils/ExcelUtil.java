@@ -1,10 +1,18 @@
 package com.eco.wisdompark.common.utils;
 
+import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
 public class ExcelUtil {
+
+
 
     /**
      * 导出Excel
@@ -14,7 +22,7 @@ public class ExcelUtil {
      * @param wb HSSFWorkbook对象
      * @return
      */
-    public static HSSFWorkbook getHSSFWorkbook(String sheetName,String []title,String [][]values, HSSFWorkbook wb){
+    public static HSSFWorkbook getHSSFWorkbook(String sheetName,String []title,String [][]values, HSSFWorkbook wb,Map<Integer,Integer> amountCol){
 
         // 第一步，创建一个HSSFWorkbook，对应一个Excel文件
         if(wb == null){
@@ -51,7 +59,7 @@ public class ExcelUtil {
             for(int j=0;j<values[i].length;j++){
                 //将内容按顺序赋给对应的列对象
                 String value = values[i][j];
-                if(j == 2){
+                if(amountCol.get(j) != null){
                     HSSFCell cell1 = row.createCell(j);
                     cell1.setCellValue(Double.parseDouble(value));
                     HSSFCellStyle cellStyle = wb.createCellStyle();
@@ -64,5 +72,24 @@ public class ExcelUtil {
             }
         }
         return wb;
+    }
+
+
+    //发送响应流方法
+    public static void setResponseHeader(HttpServletResponse response, String fileName) {
+        try {
+            try {
+                fileName = new String(fileName.getBytes(),"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename="+fileName);
+            response.addHeader("Pargam", "no-cache");
+            response.addHeader("Cache-Control", "no-cache");
+        } catch (Exception ex) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_615,"下载失败");
+        }
     }
 }

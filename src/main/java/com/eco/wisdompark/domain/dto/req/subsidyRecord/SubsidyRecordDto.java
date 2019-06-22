@@ -1,13 +1,11 @@
 package com.eco.wisdompark.domain.dto.req.subsidyRecord;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 @Data
 @ApiModel(value="CPU卡补助记录", description="CPU卡-补助记录表")
 public class SubsidyRecordDto {
@@ -16,16 +14,24 @@ public class SubsidyRecordDto {
     private String cardId;
 
     @ApiModelProperty(value = "卡序列号")
-    @TableField("card_serialNo")
     private String cardSerialNo;
 
     @ApiModelProperty(value = "用户ID")
     private Integer userId;
 
+    @ApiModelProperty(value = "用户姓名")
+    private String userName;
+
+    @ApiModelProperty(value = "部门名称")
+    private String deptName;
+
+    @ApiModelProperty(value = "手机号")
+    private String phone;
+
     @ApiModelProperty(value = "补助金额")
     private BigDecimal amount;
 
-    @ApiModelProperty(value = "补助类型，0：自动，1：手动")
+    @ApiModelProperty(value = "补助类型：0手动，1自动, 2批量导入")
     private Integer type;
 
     @ApiModelProperty(value = "创建时间")

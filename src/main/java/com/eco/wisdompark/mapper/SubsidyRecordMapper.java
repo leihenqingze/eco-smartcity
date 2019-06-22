@@ -1,7 +1,9 @@
 package com.eco.wisdompark.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.eco.wisdompark.domain.model.SubsidyRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,5 +24,7 @@ public interface SubsidyRecordMapper extends BaseMapper<SubsidyRecord> {
      * @return 影响行数
      */
     int insertBatch(List<SubsidyRecord> subsidyRecords);
+
+    Double countAmount(@Param("ew") Wrapper<SubsidyRecord> wrapper);
 
 }

@@ -4,39 +4,43 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.eco.wisdompark.common.dto.ResponseData;
+import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.common.utils.ExcelUtil;
 import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
 import com.eco.wisdompark.converter.req.PageReqDtoToPageConverter;
 import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
+import com.eco.wisdompark.domain.dto.req.subsidyRecord.SearchSubsidyRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidyRecord.SubsidyRecordDto;
+import com.eco.wisdompark.domain.dto.req.user.SearchUserDto;
 import com.eco.wisdompark.domain.dto.resp.ManualSubsidyRecordListRespDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyRecordListRespDto;
-import com.eco.wisdompark.domain.model.Dept;
-import com.eco.wisdompark.domain.model.SubsidyRecord;
-import com.eco.wisdompark.domain.model.SubsidyRule;
-import com.eco.wisdompark.domain.model.User;
+import com.eco.wisdompark.domain.model.*;
 import com.eco.wisdompark.enums.SubsidyType;
 import com.eco.wisdompark.mapper.DeptMapper;
 import com.eco.wisdompark.mapper.SubsidyRecordMapper;
 import com.eco.wisdompark.mapper.SubsidyRuleMapper;
 import com.eco.wisdompark.mapper.UserMapper;
+import com.eco.wisdompark.service.DeptService;
 import com.eco.wisdompark.service.SubsidyRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eco.wisdompark.service.UserService;
 import com.google.common.collect.Lists;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import java.util.ArrayList;
 
 /**
  * <p>
@@ -58,6 +62,10 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
     private UserMapper userMapper;
     @Autowired
     private DeptMapper deptMapper;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private DeptService deptService;
 
     @Override
     public SubsidyDetailsDto searchAutoSubsidyRecord(SearchAutoSubsidyRecordReq searchAutoSubsidyRecordReq) {
@@ -97,12 +105,12 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
     /**
      * 根据人员ID获取自动补助记录
      *
-     * @param userIds     用户ID
+     * @param userIds 用户ID
      * @return 自动补助记录
      */
     private List<SubsidyRecord> selectByUsersAndDate(List<Integer> userIds) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = LocalDateTime.of(now.getYear(),now.getMonth(),1,0,0,0);
+        LocalDateTime start = LocalDateTime.of(now.getYear(), now.getMonth(), 1, 0, 0, 0);
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("user_id", userIds);
         queryWrapper.ge("create_time", start);
@@ -262,6 +270,127 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("id", subsidyRecordId);
         return userMapper.selectList(queryWrapper);
+    }
+
+    public IPage<SubsidyRecordDto> searchSubsidyRecordDtos(SearchSubsidyRecordDto searchSubsidyRecordDto) {
+        IPage<SubsidyRecordDto> result = new Page<>();
+        IPage<SubsidyRecord> page = baseMapper.selectPage(new Page<>(searchSubsidyRecordDto.getCurrentPage(),
+                searchSubsidyRecordDto.getPageSize()), getWhere(searchSubsidyRecordDto));
+        result.setPages(page.getPages());
+        result.setCurrent(page.getCurrent());
+        result.setSize(page.getSize());
+        result.setTotal(page.getTotal());
+        List<SubsidyRecord> list = page.getRecords();
+        if (!list.isEmpty()) {
+            List<SubsidyRecordDto> dtoList = new ArrayList<>();
+            packageRechargeRecordDtoList(list, dtoList);
+            result.setRecords(dtoList);
+        }
+        return result;
+    }
+
+    private void packageRechargeRecordDtoList(List<SubsidyRecord> list, List<SubsidyRecordDto> dtoList) {
+        list.forEach(e -> {
+            SubsidyRecordDto dto = new SubsidyRecordDto();
+            BeanUtils.copyProperties(e, dto);
+            dto.setCreateTime(LocalDateTimeUtils.localTimeStr(e.getCreateTime()));
+            User user = userService.getById(e.getUserId());
+            if (user != null) {
+                dto.setUserName(user.getUserName());
+                dto.setPhone(user.getPhoneNum());
+                Dept dept = deptService.getById(user.getDeptId());
+                if (dept != null) {
+                    dto.setDeptName(dept.getDeptName());
+                }
+            }
+            dtoList.add(dto);
+        });
+    }
+
+    private QueryWrapper<SubsidyRecord> getWhere(SearchSubsidyRecordDto searchSubsidyRecordDto) {
+        QueryWrapper<SubsidyRecord> wrapper = new QueryWrapper<>();
+        List<Integer> userIds = getUserIds(searchSubsidyRecordDto);
+        if (!org.springframework.util.CollectionUtils.isEmpty(userIds)) {
+            wrapper.in("user_id", userIds);
+        }
+        if (!StringUtils.isEmpty(searchSubsidyRecordDto.getStartTime())) {
+            wrapper.ge("create_time", LocalDateTimeUtils.localTime(searchSubsidyRecordDto.getStartTime()));
+        }
+        if (!StringUtils.isEmpty(searchSubsidyRecordDto.getEndTime())) {
+            wrapper.le("create_time", LocalDateTimeUtils.localTime(searchSubsidyRecordDto.getEndTime()));
+        }
+        if (!StringUtils.isEmpty(searchSubsidyRecordDto.getCard_serialNo())) {
+            wrapper.eq("card_serialNo", searchSubsidyRecordDto.getCard_serialNo());
+        }
+        wrapper.orderByDesc("create_time");
+        return wrapper;
+    }
+
+    private List<Integer> getUserIds(SearchSubsidyRecordDto searchSubsidyRecordDto) {
+        if (!StringUtils.isEmpty(searchSubsidyRecordDto.getUserName())
+                || !StringUtils.isEmpty(searchSubsidyRecordDto.getPhone())
+                || searchSubsidyRecordDto.getDeptId() != null) {
+            SearchUserDto searchUserDto = new SearchUserDto();
+            searchUserDto.setUserName(searchSubsidyRecordDto.getUserName());
+            searchUserDto.setPhoneNum(searchSubsidyRecordDto.getPhone());
+            searchUserDto.setDeptId(searchSubsidyRecordDto.getDeptId());
+            List<User> userList = userService.getListByQuery(searchUserDto);
+            return userList.stream().map(User::getId).collect(Collectors.toList());
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    public void exportSearchSubsidyRecord(SearchSubsidyRecordDto searchSubsidyRecordDto, HttpServletResponse response) {
+        List<SubsidyRecordDto> rechargeRecordDtoList = Lists.newArrayList();
+        List<SubsidyRecord> rechargeRecords = baseMapper.selectList(getWhere(searchSubsidyRecordDto));
+        if (!rechargeRecords.isEmpty()) {
+            packageRechargeRecordDtoList(rechargeRecords, rechargeRecordDtoList);
+        }
+        exportExcel(rechargeRecordDtoList, response);
+    }
+
+    private void exportExcel(List<SubsidyRecordDto> subsidyRecordDtos, HttpServletResponse response) {
+        //excel标题
+        String[] title = {"卡面序列号", "姓名", "部门名称", "手机号", "补助金额", "补助类型", "补助时间"};
+        //excel文件名
+        String fileName = "subsidy_record_" + System.currentTimeMillis() + ".xls";
+        //sheet名
+        String sheetName = "补助明细";
+        String[][] content = new String[subsidyRecordDtos.size()][];
+        if (!org.springframework.util.CollectionUtils.isEmpty(subsidyRecordDtos)) {
+            for (int i = 0; i < subsidyRecordDtos.size(); i++) {
+                content[i] = new String[title.length];
+                SubsidyRecordDto obj = subsidyRecordDtos.get(i);
+                content[i][0] = obj.getCardSerialNo();
+                content[i][1] = obj.getUserName();
+                content[i][2] = obj.getDeptName();
+                content[i][3] = obj.getPhone();
+                content[i][4] = obj.getAmount().toString();
+                content[i][5] = SubsidyType.valueOf(obj.getType())
+                        .getDescription();
+                content[i][6] = obj.getCreateTime();
+            }
+        }
+
+        //创建HSSFWorkbook
+        Map<Integer, Integer> amountColMap = new HashMap<>();
+        amountColMap.put(4, 4);
+        HSSFWorkbook wb = ExcelUtil.getHSSFWorkbook(sheetName, title, content, null, amountColMap);
+        //响应到客户端
+        try {
+            ExcelUtil.setResponseHeader(response, fileName);
+            OutputStream os = response.getOutputStream();
+            wb.write(os);
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new WisdomParkException(ResponseData.STATUS_CODE_615, "下载失败");
+        }
+    }
+
+    public Double countSubsidyRecord(SearchSubsidyRecordDto searchSubsidyRecordDto) {
+        return subsidyRecordMapper.countAmount(getWhere(searchSubsidyRecordDto));
     }
 
 }

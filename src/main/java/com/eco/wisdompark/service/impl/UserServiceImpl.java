@@ -260,10 +260,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public List<User> getListByQuery(SearchUserDto searchUserDto) {
-        QueryWrapper<User> wrapper = new QueryWrapper<User>();
-
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
         List<Integer> deptIdList = Lists.newArrayList();
-
         if (searchUserDto.getDeptId() != null) {
             deptIdList.add(searchUserDto.getDeptId());
             // 查询二级部门

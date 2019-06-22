@@ -14,4 +14,11 @@
         </foreach>
     </insert>
 
+    <select id="countAmount" resultType="java.lang.Double">
+        select sum(amount) from tb_subsidy_record
+        <where>
+            ${ew.sqlSegment}
+        </where>
+    </select>
+
 </mapper>

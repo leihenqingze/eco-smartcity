@@ -6,6 +6,7 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.PageReqDto;
 import com.eco.wisdompark.domain.dto.req.consumeRecord.SearchConsumeRecordDto;
 import com.eco.wisdompark.domain.dto.req.subsidy.SearchAutoSubsidyRecordReq;
+import com.eco.wisdompark.domain.dto.req.subsidyRecord.SearchSubsidyRecordDto;
 import com.eco.wisdompark.domain.dto.resp.ManualSubsidyRecordListRespDto;
 import com.eco.wisdompark.domain.dto.resp.SubsidyDetailsDto;
 import com.eco.wisdompark.service.SubsidyRecordService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -57,6 +59,28 @@ public class SubsidyRecordController {
     @SysUserLogin
     public ResponseData<List<ManualSubsidyRecordListRespDto>> searchManualSubsidyRecord(@RequestBody PageReqDto<Integer> pageReqDto) {
         return ResponseData.OK(subsidyRecordService.searchManualSubsidyRecord(pageReqDto));
+    }
+
+    @RequestMapping(value = "/searchSubsidyRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "查询补助记录", httpMethod = "POST")
+    @SysUserLogin
+    public ResponseData<IPage<SubsidyRecordDto>> searchSubsidyRecordDtos(@RequestBody SearchSubsidyRecordDto searchSubsidyRecordDto) {
+        return ResponseData.OK(subsidyRecordService.searchSubsidyRecordDtos(searchSubsidyRecordDto));
+    }
+
+    @RequestMapping(value = "/exportSubsidyRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "导出人员补助记录", httpMethod = "POST")
+    @SysUserLogin
+    public void exportShopPosConsumeRecordDtos(@RequestBody SearchSubsidyRecordDto searchSubsidyRecordDto,
+                                               HttpServletResponse response) {
+        subsidyRecordService.exportSearchSubsidyRecord(searchSubsidyRecordDto, response);
+    }
+
+    @RequestMapping(value = "/countSubsidyRecord", method = RequestMethod.POST)
+    @ApiOperation(value = "查询补助记录", httpMethod = "POST")
+//    @SysUserLogin
+    public ResponseData<Double> countSubsidyRecordDtos(@RequestBody SearchSubsidyRecordDto searchSubsidyRecordDto) {
+        return ResponseData.OK(subsidyRecordService.countSubsidyRecord(searchSubsidyRecordDto));
     }
 
 }

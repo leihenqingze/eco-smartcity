@@ -77,8 +77,8 @@ public class SubsidyRecordController {
     }
 
     @RequestMapping(value = "/countSubsidyRecord", method = RequestMethod.POST)
-    @ApiOperation(value = "查询补助记录", httpMethod = "POST")
-//    @SysUserLogin
+    @ApiOperation(value = "统计补助金额", httpMethod = "POST")
+    @SysUserLogin
     public ResponseData<Double> countSubsidyRecordDtos(@RequestBody SearchSubsidyRecordDto searchSubsidyRecordDto) {
         return ResponseData.OK(subsidyRecordService.countSubsidyRecord(searchSubsidyRecordDto));
     }

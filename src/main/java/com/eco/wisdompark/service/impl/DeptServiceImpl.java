@@ -185,25 +185,25 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public List<DeptAllDto> getDeptAllByConsumeIdentity(GetLevel1DeptByIdentityDto getLevel1DeptByIdentityDto) {
-        List<DeptAllDto> result=new ArrayList<>();
+        List<DeptAllDto> result = new ArrayList<>();
         QueryWrapper<Dept> wrapper = new QueryWrapper<Dept>();
-        if(getLevel1DeptByIdentityDto.getConsumeIdentity() != null){
-            wrapper.eq("consume_identity",getLevel1DeptByIdentityDto.getConsumeIdentity());
+        if (getLevel1DeptByIdentityDto.getConsumeIdentity() != null) {
+            wrapper.eq("consume_identity", getLevel1DeptByIdentityDto.getConsumeIdentity());
         }
-        List<Dept> level1=baseMapper.selectList(wrapper);
-        if(!level1.isEmpty() ){
-            level1.forEach(l1->{
-                DeptAllDto dto=new DeptAllDto();
+        List<Dept> level1 = baseMapper.selectList(wrapper);
+        if (!level1.isEmpty()) {
+            level1.forEach(l1 -> {
+                DeptAllDto dto = new DeptAllDto();
                 dto.setValue(l1.getId());
                 dto.setLabel(l1.getDeptName());
-                if(l1.getId()!=null && l1.getId()>0 ){
+                if (l1.getId() != null && l1.getId() > 0) {
                     QueryWrapper<Dept> l2wrapper = new QueryWrapper<Dept>();
                     l2wrapper.eq("dept_up_id", l1.getId());
-                    List<Dept> level2=baseMapper.selectList(l2wrapper);
-                    if(!level2.isEmpty()){
-                        List<DeptAllDto> children=new ArrayList<>();
-                        level2.forEach(l2->{
-                            DeptAllDto l2Dto=new DeptAllDto();
+                    List<Dept> level2 = baseMapper.selectList(l2wrapper);
+                    if (!level2.isEmpty()) {
+                        List<DeptAllDto> children = new ArrayList<>();
+                        level2.forEach(l2 -> {
+                            DeptAllDto l2Dto = new DeptAllDto();
                             l2Dto.setValue(l2.getId());
                             l2Dto.setLabel(l2.getDeptName());
                             children.add(l2Dto);
@@ -217,6 +217,15 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             });
         }
         return result;
+    }
+
+    @Override
+    public List<Dept> getDeptByConsumeIdentity(Integer consumeIdentity) {
+        QueryWrapper<Dept> wrapper = new QueryWrapper<>();
+        if (null != consumeIdentity) {
+            wrapper.eq("consume_identity", consumeIdentity);
+        }
+        return baseMapper.selectList(wrapper);
     }
 
     private Integer isExists(String deptName) {
@@ -237,4 +246,5 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         }
         return result;
     }
+
 }

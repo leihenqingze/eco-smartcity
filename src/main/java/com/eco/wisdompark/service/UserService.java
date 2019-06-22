@@ -21,35 +21,40 @@ public interface UserService extends IService<User> {
 
     /**
      * 查询组织架构Id的所有人员数量
+     *
      * @param deptId
      * @return
-     * */
-     Integer countByDept(Integer deptId);
+     */
+    Integer countByDept(Integer deptId);
 
     /**
      * 查询人员信息列表
+     *
      * @param searchUserDto
      * @return
-     * */
+     */
     UserSearchRespDto searchUserDtos(SearchUserDto searchUserDto);
 
     /**
      * 查询人员详情
+     *
      * @param getUserDto
      * @return
-     * */
-     UserDto getUser(GetUserDto getUserDto);
+     */
+    UserDto getUser(GetUserDto getUserDto);
 
     /**
      * 查询人员ids
+     *
      * @param userIds
      * @return
-     * */
+     */
     List<User> getUsers(List<Integer> userIds);
 
 
     /**
      * 查询人员信息
+     *
      * @param userId
      * @return
      */
@@ -57,6 +62,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 根据部门id查询人员信息
+     *
      * @param deptId
      * @return
      */
@@ -66,14 +72,13 @@ public interface UserService extends IService<User> {
 
     /**
      * 查询全部用户
-     *
-     * */
+     */
     List<User> getAllUser();
 
 
     /**
      * 获取余额
-     * */
+     */
 
     String getAb(String username);
 
@@ -83,6 +88,12 @@ public interface UserService extends IService<User> {
 
     Integer delUserById(Integer id);
 
-
+    /**
+     * 根据部门ID集合查询
+     *
+     * @param deptIds 部门ID集合
+     * @return 用户集合
+     */
+    List<User> searchByDeptIds(List<Integer> deptIds);
 
 }

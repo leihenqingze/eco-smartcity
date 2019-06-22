@@ -296,7 +296,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_600, "用户不存在");
         }
-        if(StringUtils.isBlank(updateUserInfoDto.getPhoneNum()) ){
+        if (StringUtils.isBlank(updateUserInfoDto.getPhoneNum())) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_400, "手机号不能为空");
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -304,7 +304,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .or()
                 .eq("user_card_num", updateUserInfoDto.getUserCardNum());
         List<User> userList = baseMapper.selectList(queryWrapper);
-        if(userList!=null && userList.size()>1 ){
+        if (userList != null && userList.size() > 1) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_400, "手机号或者身份证号已经存在");
         }
         user.setPhoneNum(updateUserInfoDto.getPhoneNum());
@@ -318,6 +318,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Integer delUserById(Integer id) {
 
         return baseMapper.deleteById(id);
+    }
+
+    @Override
+    public List<User> searchByDeptIds(List<Integer> deptIds) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.in("dept_id", deptIds);
+        return baseMapper.selectList(wrapper);
     }
 
 

@@ -3,7 +3,6 @@ package com.eco.wisdompark.service;
 import com.eco.wisdompark.domain.dto.req.dept.*;
 import com.eco.wisdompark.domain.model.Dept;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.eco.wisdompark.enums.ConsumeIdentity;
 
 import java.util.List;
 
@@ -60,23 +59,23 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 获取全部的组织架构信息、
-     *
-     * */
+     */
     public List<DeptAllDto> getDeptAll();
 
     /**
      * 获取全部的组织架构信息、
-     *
-     * */
+     */
     public List<Dept> findtDeptAll();
 
     /**
      * 很据二级Id获取 一级名称+二级名称
-     * */
+     */
     String getDeptName(Integer id);
 
-    public List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto);
+    List<DeptDto> getLevel2Dept(GetLevel2DeptDto getLevel2DeptDto);
 
-    public List<DeptAllDto> getDeptAllByConsumeIdentity(GetLevel1DeptByIdentityDto getLevel1DeptByIdentityDto);
+    List<DeptAllDto> getDeptAllByConsumeIdentity(GetLevel1DeptByIdentityDto getLevel1DeptByIdentityDto);
+
+    List<Dept> getDeptByConsumeIdentity(Integer consumeIdentity);
 
 }

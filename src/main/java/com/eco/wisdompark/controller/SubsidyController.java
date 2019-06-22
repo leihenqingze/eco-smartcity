@@ -44,7 +44,7 @@ public class SubsidyController {
 
     @RequestMapping(value = "/subsidy/batch", method = RequestMethod.POST)
     @ApiOperation(value = "批量补助接口", httpMethod = "POST")
-//    @SysUserLogin
+    @SysUserLogin
     public ResponseData<Boolean> rechargeBatch(@RequestParam("file") MultipartFile file) {
         return ResponseData.OK(subsidyService.batchImportSubsidy(file));
     }

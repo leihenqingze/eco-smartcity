@@ -13,7 +13,9 @@ import com.eco.wisdompark.domain.model.*;
 import com.eco.wisdompark.enums.*;
 import com.eco.wisdompark.mapper.*;
 import com.eco.wisdompark.service.CpuCardService;
+import com.eco.wisdompark.service.DeptService;
 import com.eco.wisdompark.service.SubsidyService;
+import com.eco.wisdompark.service.UserService;
 import com.eco.wisdompark.strategy.subsidy.SubsidyStrategy;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +49,10 @@ public class SubsidyServiceImpl implements SubsidyService {
 
     private static final String SUFFIX_2003 = ".xls";
     private static final String SUFFIX_2007 = ".xlsx";
+    private static final BigDecimal RESET_SUBSIDY_AMOUNT = new BigDecimal(550);
 
     @Autowired
     private CpuCardMapper cpuCardMapper;
-
     @Autowired
     private CpuCardService cpuCardService;
     @Autowired
@@ -61,6 +63,10 @@ public class SubsidyServiceImpl implements SubsidyService {
     private SubsidyRuleMapper subsidyRuleMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private DeptService deptService;
+    @Autowired
+    private UserService userService;
 
     @Transactional
     @Override
@@ -78,7 +84,7 @@ public class SubsidyServiceImpl implements SubsidyService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 1 * * ?")
+//    @Scheduled(cron = "0 0 1 * * ?")
 //    @Scheduled(cron = "0 */1 * * * ?")
     public void automaticSubsidy() {
         List<SubsidyRule> subsidyRules = selectRevSubsidyRuleByNow();
@@ -101,7 +107,29 @@ public class SubsidyServiceImpl implements SubsidyService {
         });
     }
 
+    @Scheduled(cron = "0 0 1 26 * ?")
+    public void automaticSubsidyByReset() {
+        List<Dept> depts = deptService.getDeptByConsumeIdentity(ConsumeIdentity.E.getCode());
+        if (!org.springframework.util.CollectionUtils.isEmpty(depts)){
+            List<Integer> deptIds = depts.stream().map(Dept::getId).collect(Collectors.toList());
+            List<User> users = userService.searchByDeptIds(deptIds);
+            if (!org.springframework.util.CollectionUtils.isEmpty(users)){
+                List<Integer> userIds = users.stream().map(User::getId).collect(Collectors.toList());
+                List<CpuCard> cpuCards = selectCpuCardsByUserIds(userIds);
+                Triplet<List<CpuCard>, List<SubsidyRecord>, List<ChangeAmount>>
+                        triplet = buildSubsidy(RESET_SUBSIDY_AMOUNT, cpuCards,
+                        SubsidyType.AUTOMATIC, Subsidies.RESET);
+                try {
+                    saveAutomaticSubsidy(triplet);
+                } catch (Exception ex) {
+                    log.error("ConsumeIdentity:" + ConsumeIdentity.E.getCode() + ",error", ex);
+                }
+            }
+        }
+    }
+
     @Override
+    @Transactional
     public RespBatchImportSubsidyDto batchImportSubsidy(MultipartFile file) {
         RespBatchImportSubsidyDto respBatchImportSubsidyDto = new RespBatchImportSubsidyDto();
         List<BatchImportSubsidyDto> batchRechargeDataDtoList = Lists.newArrayList();
@@ -110,8 +138,11 @@ public class SubsidyServiceImpl implements SubsidyService {
         List<BatchImportSubsidyDto> batchImportSubsidyDtos = readWorkbook(file);
         batchImportSubsidyDtos.forEach(batchImportSubsidyDto -> {
             if (StringUtils.isBlank(batchImportSubsidyDto.getErrorMsg())) {
-                CpuCard cpuCard = cpuCardMapper.selectOne(new QueryWrapper<CpuCard>().eq("card_serialNo",
-                        batchImportSubsidyDto.getCardSerialNo()));
+                QueryWrapper<CpuCard> wrapper = new QueryWrapper<CpuCard>()
+                        .eq("card_serialNo", batchImportSubsidyDto.getCardSerialNo())
+                        .eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode())
+                        .eq("if_used", 0);
+                CpuCard cpuCard = cpuCardMapper.selectOne(wrapper);
                 if (Objects.nonNull(cpuCard)) {
                     Triplet<CpuCard, SubsidyRecord, ChangeAmount> triplet =
                             subsidy(batchImportSubsidyDto.getSubsidyAmt(), cpuCard, SubsidyType.BULKIMPORT,
@@ -121,7 +152,7 @@ public class SubsidyServiceImpl implements SubsidyService {
                     changeAmountMapper.insert(triplet.getValue2());
                     batchRechargeDataDtoList.add(batchImportSubsidyDto);
                 } else {
-                    batchImportSubsidyDto.setErrorMsg("卡编号不存在");
+                    batchImportSubsidyDto.setErrorMsg("卡编号不存在或不可用");
                     infoErrorList.add(batchImportSubsidyDto);
                 }
             } else {
@@ -295,6 +326,8 @@ public class SubsidyServiceImpl implements SubsidyService {
     private List<CpuCard> selectCpuCardsByUserIds(List<Integer> userIds) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("user_id", userIds);
+        queryWrapper.eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode());
+        queryWrapper.eq("if_used", 0);
         return cpuCardMapper.selectList(queryWrapper);
     }
 

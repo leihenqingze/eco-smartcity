@@ -24,7 +24,7 @@ public class SubsidyRecordConverter {
         SubsidyRecord record = new SubsidyRecord();
         record.setAmount(subsidyAmount);
         record.setCardId(cpuCard.getCardId());
-        record.setCardSerialNo(cpuCard.getCardId());
+        record.setCardSerialNo(cpuCard.getCardSerialNo());
         record.setUserId(cpuCard.getUserId());
         record.setType(subsidyType.getCode());
         return record;

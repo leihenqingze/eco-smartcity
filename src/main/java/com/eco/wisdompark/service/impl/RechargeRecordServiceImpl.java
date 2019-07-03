@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -52,6 +51,9 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
 
     @Autowired
     private DeptService deptService;
+
+    @Autowired
+    private RechargeRecordMapper rechargeRecordMapper;
 
     @Override
     public boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount,
@@ -121,6 +123,40 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
             result.setRecords(dtoList);
         }
         return result;
+    }
+
+    @Override
+    public BigDecimal totalRechargeAmount(SearchRechargeRecordDto searchRechargeRecordDto) {
+
+        BigDecimal totalRechargeAmount = BigDecimal.ZERO;
+        List<Integer> userIdList = Lists.newArrayList();
+
+        if(!StringUtils.isEmpty(searchRechargeRecordDto.getUserName())
+                || !StringUtils.isEmpty(searchRechargeRecordDto.getPhone())
+                || searchRechargeRecordDto.getDeptId() != null){
+            SearchUserDto searchUserDto = new SearchUserDto();
+            searchUserDto.setUserName(searchRechargeRecordDto.getUserName());
+            searchUserDto.setPhoneNum(searchRechargeRecordDto.getPhone());
+            searchUserDto.setDeptId(searchRechargeRecordDto.getDeptId());
+
+            List<User> userList = userService.getListByQuery(searchUserDto);
+            if(!CollectionUtils.isEmpty(userList)){
+                userList.forEach(e -> {
+                    userIdList.add(e.getId());
+                });
+            }
+            if(CollectionUtils.isEmpty(userIdList)){
+                return totalRechargeAmount;
+            }
+        }
+
+        Map paramMap = new HashMap();
+        paramMap.put("userIdList",userIdList);
+        paramMap.put("startTime",searchRechargeRecordDto.getStartTime());
+        paramMap.put("endTime",searchRechargeRecordDto.getEndTime());
+        paramMap.put("cardSerialNo",searchRechargeRecordDto.getCard_serialNo());
+
+        return rechargeRecordMapper.totalRechargeAmount(paramMap);
     }
 
     @Override

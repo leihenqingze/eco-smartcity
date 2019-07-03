@@ -2,7 +2,6 @@ package com.eco.wisdompark.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
 import com.eco.wisdompark.common.utils.FileUtils;
@@ -21,7 +20,6 @@ import com.eco.wisdompark.domain.dto.req.user.SerianNoDto;
 import com.eco.wisdompark.domain.dto.req.user.UpdateUserBalanceDto;
 import com.eco.wisdompark.domain.dto.resp.*;
 import com.eco.wisdompark.domain.model.CpuCard;
-import com.eco.wisdompark.domain.model.Dept;
 import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.enums.*;
 import com.eco.wisdompark.mapper.CpuCardMapper;
@@ -371,13 +369,13 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                     row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
                     cardSerialNo = row.getCell(0).getStringCellValue();
                 }
-                if (!cellIsEmpty(row.getCell(1))) {
-                    row.getCell(1).setCellType(Cell.CELL_TYPE_NUMERIC);
-                    rechargeAmt = row.getCell(1).getNumericCellValue();
-                }
                 if (!cellIsEmpty(row.getCell(2))) {
-                    row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-                    rechargeWay = row.getCell(2).getStringCellValue();
+                    row.getCell(2).setCellType(Cell.CELL_TYPE_NUMERIC);
+                    rechargeAmt = row.getCell(2).getNumericCellValue();
+                }
+                if (!cellIsEmpty(row.getCell(3))) {
+                    row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
+                    rechargeWay = row.getCell(3).getStringCellValue();
                 }
 
                 BatchRechargeDataDto batchRechargeDataDto = new BatchRechargeDataDto(cardSerialNo, rechargeAmt != null ? new BigDecimal(rechargeAmt) : null, rechargeWay);

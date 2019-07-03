@@ -20,13 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.BASE64Encoder;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 /**
  * <p>
@@ -82,7 +78,7 @@ public class SysUserController {
         if (!StringUtils.trim(updateUserPassDto.getNewPassWord()).equals(StringUtils.trim(updateUserPassDto.getConfirmNewPassWord()))) {
             return ResponseData.ERROR("两次密码输入不一致!");
         }
-        SysUser sysUser = (SysUser) request.getSession().getAttribute("Authentication");
+        SysUser sysUser = tokenUtils.getLoginSysUser();
         if(sysUser == null){
             return ResponseData.ERROR(ResponseData.STATUS_CODE_110,"登录已失效!");
         }
@@ -116,23 +112,5 @@ public class SysUserController {
         return ResponseData.OK(sysUser.getSysUserDepartment());
 
     }
-    /**
-     * 生成Token
-     * @return
-     */
-    private String makeToken() {
-        String token = (System.currentTimeMillis() + new Random().nextInt(999999999)) + "";
-        try {
-            MessageDigest md = MessageDigest.getInstance("md5");
-            byte md5[] =  md.digest(token.getBytes());
-            BASE64Encoder encoder = new BASE64Encoder();
-            return encoder.encode(md5);
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
 }

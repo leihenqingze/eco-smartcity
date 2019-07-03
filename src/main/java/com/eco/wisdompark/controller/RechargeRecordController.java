@@ -6,16 +6,15 @@ import com.eco.wisdompark.common.aop.SysUserLogin;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.RechargeRecordDto;
 import com.eco.wisdompark.domain.dto.req.rechargeRecord.SearchRechargeRecordDto;
+import com.eco.wisdompark.domain.dto.resp.RespRechargeRecordDataDto;
 import com.eco.wisdompark.service.RechargeRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -37,9 +36,12 @@ public class RechargeRecordController {
     @RequestMapping(value = "/searchUserRechargeRecordDtos", method = RequestMethod.POST)
     @ApiOperation(value = "查询人员充值记录", httpMethod = "POST")
     @SysUserLogin
-    public ResponseData searchUserRechargeRecordDtos( @RequestBody SearchRechargeRecordDto searchRechargeRecordDto) {
-        IPage<RechargeRecordDto> result = rechargeRecordService.searchUserRechargeRecordDtos(searchRechargeRecordDto);
-        return ResponseData.OK(result);
+    public ResponseData<RespRechargeRecordDataDto> searchUserRechargeRecordDtos( @RequestBody SearchRechargeRecordDto searchRechargeRecordDto) {
+        RespRechargeRecordDataDto respRechargeRecordDataDto = new RespRechargeRecordDataDto();
+        IPage<RechargeRecordDto> rechargePage = rechargeRecordService.searchUserRechargeRecordDtos(searchRechargeRecordDto);
+        respRechargeRecordDataDto.setRechargeRecordDtoPage(rechargePage);
+        respRechargeRecordDataDto.setTotalAmount(rechargeRecordService.totalRechargeAmount(searchRechargeRecordDto));
+        return ResponseData.OK(respRechargeRecordDataDto);
     }
 
     @RequestMapping(value = "/exportUserRechargeRecordDtos", method = RequestMethod.POST)

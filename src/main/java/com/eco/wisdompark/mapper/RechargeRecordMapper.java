@@ -2,6 +2,8 @@ package com.eco.wisdompark.mapper;
 
 import com.eco.wisdompark.domain.model.RechargeRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface RechargeRecordMapper extends BaseMapper<RechargeRecord> {
 
+    BigDecimal totalRechargeAmount(Map paramMap);
 }

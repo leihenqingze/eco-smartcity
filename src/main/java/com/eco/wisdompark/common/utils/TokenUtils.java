@@ -1,9 +1,14 @@
 package com.eco.wisdompark.common.utils;
 
+import com.eco.wisdompark.domain.model.SysUser;
+import com.eco.wisdompark.service.SysUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @Component
@@ -11,6 +16,9 @@ public class TokenUtils{
     
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     private static final int token_expire = 30*60; // token有效期
 
@@ -47,6 +55,25 @@ public class TokenUtils{
             }
         }
         return model;
+    }
+
+    public SysUser getLoginSysUser(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Cookie[] cookies = request.getCookies();
+        if (cookies!=null) {
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie cookie = cookies[i];
+                if (cookie.getName().equals("Authentication")) {
+                    String token = cookie.getValue();
+                    TokenModel tokenModel = get(token);
+                    Integer userId = tokenModel.getUserId();
+                    if(userId != null){
+                        return sysUserService.getById(userId);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

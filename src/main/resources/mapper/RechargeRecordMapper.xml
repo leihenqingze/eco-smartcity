@@ -2,4 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eco.wisdompark.mapper.RechargeRecordMapper">
 
+    <select id="totalRechargeAmount" resultType="BigDecimal" parameterType="map">
+        select sum(amount) as rechargeAmount from tb_recharge_record where 1=1
+        <if test="userIdList !=null and userIdList.size!=0">
+            and user_id in (
+            <foreach collection="userIdList" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="cardSerialNo !=null and cardSerialNo !=''">
+            and card_serialNo = #{cardSerialNo}
+        </if>
+        <if test="startTime !=null and startTime !=''">
+            and <![CDATA[ create_time  >= #{startTime} ]]>
+        </if>
+        <if test="endTime !=null and endTime !=''">
+            and <![CDATA[ create_time  <= #{endTime} ]]>
+        </if>
+    </select>
+
 </mapper>

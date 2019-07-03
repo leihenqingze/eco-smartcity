@@ -34,5 +34,12 @@ public interface RechargeRecordService extends IService<RechargeRecord> {
       * */
     IPage<RechargeRecordDto> searchUserRechargeRecordDtos(SearchRechargeRecordDto searchRechargeRecordDto);
 
+    /**
+     * 统计充值总金额
+     * @param searchRechargeRecordDto
+     * @return
+     */
+    BigDecimal totalRechargeAmount(SearchRechargeRecordDto searchRechargeRecordDto);
+
     void exportShopPosConsumeRecordDtos(SearchRechargeRecordDto searchRechargeRecordDto,HttpServletResponse response);
 }

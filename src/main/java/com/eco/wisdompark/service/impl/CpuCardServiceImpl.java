@@ -578,7 +578,9 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
         //  1.充值操作
         cpuCardMapper.recharge(cardId, amount);
         // 2.保存充值记录
-        rechargeRecordService.saveRechargeRecord(cardInfoDto, amount, RechargeType.MANUAL, null, rechargeWay);
+        BigDecimal rechargeAgoAmount = cardInfoDto.getRechargeBalance() != null? cardInfoDto.getRechargeBalance():BigDecimal.ZERO
+                .add(cardInfoDto.getSubsidyBalance() != null? cardInfoDto.getSubsidyBalance():BigDecimal.ZERO);
+        rechargeRecordService.saveRechargeRecord(cardInfoDto, amount,rechargeAgoAmount,rechargeAgoAmount.add(amount), RechargeType.MANUAL, null, rechargeWay);
         // 3.保存金额变更记录
         changeAmountService.saveRechargeChanageAmountRecord(cardInfoDto, amount, AmountChangeType.TOP_UP);
         return true;

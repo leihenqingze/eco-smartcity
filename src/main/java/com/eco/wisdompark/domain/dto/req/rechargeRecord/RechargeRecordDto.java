@@ -20,6 +20,12 @@ public class RechargeRecordDto {
     @ApiModelProperty(value = "充值金额")
     private BigDecimal amount;
 
+    @ApiModelProperty(value = "充值前总金额")
+    private BigDecimal rechargeAgoAmount;
+
+    @ApiModelProperty(value = "充值后总金额")
+    private BigDecimal rechargeAfterAmount;
+
     @ApiModelProperty(value = "充值类型：1现金存款，2支票存款，3旧卡导入，4汇款")
     private String rechargeWay;
 

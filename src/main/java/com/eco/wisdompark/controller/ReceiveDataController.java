@@ -1,5 +1,6 @@
 package com.eco.wisdompark.controller;
 
+import com.eco.wisdompark.domain.dto.req.ReceiveDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +12,15 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ReceiveDataController {
 
-    @RequestMapping(value = "/personInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/person/personInfo", method = RequestMethod.POST)
     @ApiOperation(value = "接收人员信息", httpMethod = "POST")
-    public void personInfo(String dataItems) {
-        log.info("-------> persionInfo {}" + dataItems);
+    public void personInfo(@RequestBody ReceiveDto receiveDto) {
+        log.info("-------> persionInfo {}" + receiveDto);
     }
 
-    @RequestMapping(value = "/cardInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/card/cardInfo", method = RequestMethod.POST)
     @ApiOperation(value = "接收卡片信息", httpMethod = "POST")
-    public void cardInfo(String dataItems) {
-        log.info("-------> cardInfo {}" + dataItems);
+    public void cardInfo(@RequestBody ReceiveDto receiveDto) {
+        log.info("-------> cardInfo {}" + receiveDto);
     }
 }

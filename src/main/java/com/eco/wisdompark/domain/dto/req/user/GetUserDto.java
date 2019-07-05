@@ -3,8 +3,6 @@ package com.eco.wisdompark.domain.dto.req.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NonNull;
-import net.sf.oval.constraint.Length;
 import net.sf.oval.constraint.NotNull;
 
 @Data

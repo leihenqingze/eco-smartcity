@@ -74,7 +74,7 @@ public class SysUserController {
     @ApiOperation(value = "修改系统用户密码", httpMethod = "POST")
     @SysUserLogin
     public ResponseData updateSysUserPass(@RequestBody UpdateUserPassDto updateUserPassDto,HttpServletRequest request) {
-        log.debug(">>>>>updateSysUserPass,updateUserPassDto:{}", JSON.toJSONString(updateUserPassDto));
+        log.info(">>>>>updateSysUserPass,updateUserPassDto:{}", JSON.toJSONString(updateUserPassDto));
         if (!StringUtils.trim(updateUserPassDto.getNewPassWord()).equals(StringUtils.trim(updateUserPassDto.getConfirmNewPassWord()))) {
             return ResponseData.ERROR("两次密码输入不一致!");
         }

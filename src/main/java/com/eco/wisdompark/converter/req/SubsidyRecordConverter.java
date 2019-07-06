@@ -15,18 +15,21 @@ public class SubsidyRecordConverter {
      * 补助记录转换类
      *
      * @param subsidyAmount 补助消费金额
-     * @param cpuCard       CPU卡
+     * @param cpuCardBefore 变动前CPU卡
+     * @param cpuCardAfter  变动后CPU卡
      * @param subsidyType   补助类型
      * @return 补助记录
      */
     public static SubsidyRecord converter(BigDecimal subsidyAmount,
-                                          CpuCard cpuCard, SubsidyType subsidyType) {
+                                          CpuCard cpuCardBefore, CpuCard cpuCardAfter, SubsidyType subsidyType) {
         SubsidyRecord record = new SubsidyRecord();
         record.setAmount(subsidyAmount);
-        record.setCardId(cpuCard.getCardId());
-        record.setCardSerialNo(cpuCard.getCardSerialNo());
-        record.setUserId(cpuCard.getUserId());
+        record.setCardId(cpuCardAfter.getCardId());
+        record.setCardSerialNo(cpuCardAfter.getCardSerialNo());
+        record.setUserId(cpuCardAfter.getUserId());
         record.setType(subsidyType.getCode());
+        record.setSubsidyAgoAmount(cpuCardBefore.getSubsidyBalance());
+        record.setSubsidyAfterAmount(cpuCardAfter.getSubsidyBalance());
         return record;
     }
 

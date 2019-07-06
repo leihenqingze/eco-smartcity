@@ -351,7 +351,8 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
 
     private void exportExcel(List<SubsidyRecordDto> subsidyRecordDtos, HttpServletResponse response) {
         //excel标题
-        String[] title = {"卡面序列号", "姓名", "部门名称", "手机号", "补助金额", "补助类型", "补助时间"};
+        String[] title = {"卡面序列号", "姓名", "部门名称", "手机号", "补助金额", "补助前补助总金额",
+                "补助后补助总金额", "补助类型", "补助时间"};
         //excel文件名
         String fileName = "subsidy_record_" + System.currentTimeMillis() + ".xls";
         //sheet名
@@ -365,16 +366,20 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
                 content[i][1] = obj.getUserName();
                 content[i][2] = obj.getDeptName();
                 content[i][3] = obj.getPhone();
-                content[i][4] = obj.getAmount().toString();
-                content[i][5] = SubsidyType.valueOf(obj.getType())
+                content[i][4] = getDefaultValue(obj.getAmount()).toString();
+                content[i][5] = getDefaultValue(obj.getSubsidyAgoAmount()).toString();
+                content[i][6] = getDefaultValue(obj.getSubsidyAfterAmount()).toString();
+                content[i][7] = SubsidyType.valueOf(obj.getType())
                         .getDescription();
-                content[i][6] = obj.getCreateTime();
+                content[i][8] = obj.getCreateTime();
             }
         }
 
         //创建HSSFWorkbook
         Map<Integer, Integer> amountColMap = new HashMap<>();
         amountColMap.put(4, 4);
+        amountColMap.put(5, 5);
+        amountColMap.put(6, 6);
         HSSFWorkbook wb = ExcelUtil.getHSSFWorkbook(sheetName, title, content, null, amountColMap);
         //响应到客户端
         try {
@@ -391,6 +396,14 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
 
     public Double countSubsidyRecord(SearchSubsidyRecordDto searchSubsidyRecordDto) {
         return subsidyRecordMapper.countAmount(getWhere(searchSubsidyRecordDto));
+    }
+
+    private BigDecimal getDefaultValue(BigDecimal bigDecimal){
+        if (Objects.isNull(bigDecimal)){
+            return new BigDecimal(0);
+        } else {
+            return bigDecimal;
+        }
     }
 
 }

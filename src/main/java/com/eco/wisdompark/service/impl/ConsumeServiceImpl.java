@@ -99,22 +99,23 @@ public class ConsumeServiceImpl implements ConsumeService {
         BeanUtils.copyProperties(cpuCardBefore, consumeAfter);
 
         BigDecimal totalAmount = consumeAfter.getRechargeBalance().add(consumeAfter.getSubsidyBalance());
-        if (totalAmount.compareTo(amount) == -1) {
+        if (totalAmount.compareTo(amount) < 0) {
             throw new WisdomParkException(ResponseData.STATUS_CODE_469, "卡内余额不足");
         } else {
-            if (consumeAfter.getRechargeBalance().compareTo(amount) == -1) {
+            if (consumeAfter.getRechargeBalance().compareTo(amount) < 0) {
                 BigDecimal rechargeAmount = consumeAfter.getRechargeBalance();
                 BigDecimal subsidyAmount = totalAmount.subtract(amount);
                 consumeAfter.setRechargeBalance(new BigDecimal(0));
                 consumeAfter.setSubsidyBalance(subsidyAmount);
                 cpuCardMapper.updateById(consumeAfter);
                 saveConsumeRecord(rechargeAmount, cpuCardBefore.getSubsidyBalance().subtract(subsidyAmount),
-                        pos, consumeType, consumeAfter, diningType);
+                        pos, consumeType, cpuCardBefore, consumeAfter, diningType);
                 saveChangeAmount(amount, AmountChangeType.RECHARGE_AMOUNT, cpuCardBefore, consumeAfter);
                 saveChangeAmount(amount, AmountChangeType.SUBSIDY_AMOUNT, cpuCardBefore, consumeAfter);
             } else {
                 consumeAfter.setRechargeBalance(consumeAfter.getRechargeBalance().subtract(amount));
-                saveConsumeRecord(amount, new BigDecimal(0), pos, consumeType, consumeAfter, diningType);
+                saveConsumeRecord(amount, new BigDecimal(0), pos, consumeType, cpuCardBefore,
+                        consumeAfter, diningType);
                 saveChangeAmount(amount, AmountChangeType.RECHARGE_AMOUNT, cpuCardBefore, consumeAfter);
                 cpuCardMapper.updateById(consumeAfter);
             }
@@ -129,7 +130,7 @@ public class ConsumeServiceImpl implements ConsumeService {
      * @return CPU卡
      */
     private CpuCard getCpuCardByCardId(String cardId) {
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("card_id", cardId);
         return cpuCardMapper.selectOne(queryWrapper);
     }
@@ -141,7 +142,7 @@ public class ConsumeServiceImpl implements ConsumeService {
      * @return POS机
      */
     private Pos getPosByPosNum(String posNum) {
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper<Pos> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("pos_num", posNum);
         return posMapper.selectOne(queryWrapper);
     }
@@ -153,16 +154,17 @@ public class ConsumeServiceImpl implements ConsumeService {
      * @param subsidyAmount  消费的补助金额
      * @param pos            POS机
      * @param consumeType    消费类型
-     * @param cpuCard        cpu卡
+     * @param consumeAgo     消费前CPU卡
+     * @param consumeAfter   消费前后CPU卡
      * @param diningType     用餐类型
      */
     private void saveConsumeRecord(BigDecimal rechargeAmount,
                                    BigDecimal subsidyAmount,
                                    Pos pos, ConsumeType consumeType,
-                                   CpuCard cpuCard, DiningType diningType) {
+                                   CpuCard consumeAgo, CpuCard consumeAfter, DiningType diningType) {
         ConsumeRecord consumeRecord = ConsumeRecordConverter.
                 changeAmount(rechargeAmount, subsidyAmount,
-                        pos, consumeType, cpuCard, diningType);
+                        pos, consumeType, consumeAgo, consumeAfter, diningType);
         consumeRecordMapper.insert(consumeRecord);
     }
 

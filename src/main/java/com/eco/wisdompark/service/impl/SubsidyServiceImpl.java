@@ -79,7 +79,7 @@ public class SubsidyServiceImpl implements SubsidyService {
         BeanUtils.copyProperties(changeBefore, changeAfter);
         changeAfter.setSubsidyBalance(changeAfter.getSubsidyBalance().add(manualSubsidyDto.getSubsidyAmount()));
         cpuCardMapper.updateById(changeAfter);
-        saveSubsidyRecord(manualSubsidyDto.getSubsidyAmount(), changeAfter, SubsidyType.MANUAL);
+        saveSubsidyRecord(manualSubsidyDto.getSubsidyAmount(), changeBefore, changeAfter);
         saveChangeAmount(manualSubsidyDto.getSubsidyAmount(), changeBefore, changeAfter);
     }
 
@@ -97,7 +97,7 @@ public class SubsidyServiceImpl implements SubsidyService {
                 List<CpuCard> cpuCards = selectCpuCardsByUserIds(userIds);
                 Triplet<List<CpuCard>, List<SubsidyRecord>, List<ChangeAmount>>
                         triplet = buildSubsidy(subsidyRule.getSubsidyAmount(), cpuCards,
-                        SubsidyType.AUTOMATIC, Subsidies.ADDUP);
+                        Subsidies.ADDUP);
                 try {
                     saveAutomaticSubsidy(triplet);
                 } catch (Exception ex) {
@@ -110,15 +110,15 @@ public class SubsidyServiceImpl implements SubsidyService {
     @Scheduled(cron = "0 0 1 26 * ?")
     public void automaticSubsidyByReset() {
         List<Dept> depts = deptService.getDeptByConsumeIdentity(ConsumeIdentity.E.getCode());
-        if (!org.springframework.util.CollectionUtils.isEmpty(depts)){
+        if (!org.springframework.util.CollectionUtils.isEmpty(depts)) {
             List<Integer> deptIds = depts.stream().map(Dept::getId).collect(Collectors.toList());
             List<User> users = userService.searchByDeptIds(deptIds);
-            if (!org.springframework.util.CollectionUtils.isEmpty(users)){
+            if (!org.springframework.util.CollectionUtils.isEmpty(users)) {
                 List<Integer> userIds = users.stream().map(User::getId).collect(Collectors.toList());
                 List<CpuCard> cpuCards = selectCpuCardsByUserIds(userIds);
                 Triplet<List<CpuCard>, List<SubsidyRecord>, List<ChangeAmount>>
                         triplet = buildSubsidy(RESET_SUBSIDY_AMOUNT, cpuCards,
-                        SubsidyType.AUTOMATIC, Subsidies.RESET);
+                        Subsidies.RESET);
                 try {
                     saveAutomaticSubsidy(triplet);
                 } catch (Exception ex) {
@@ -189,7 +189,7 @@ public class SubsidyServiceImpl implements SubsidyService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Collections.EMPTY_LIST;
+        return Lists.newArrayList();
     }
 
     /**
@@ -272,12 +272,13 @@ public class SubsidyServiceImpl implements SubsidyService {
     /**
      * 保存补助记录
      *
-     * @param amount      补助金额
-     * @param cpuCard     CPU卡
-     * @param subsidyType 补助类型
+     * @param amount        补助金额
+     * @param cpuCardBefore 变动前CPU卡
+     * @param cpuCardAfter  变动后CPU卡
      */
-    private void saveSubsidyRecord(BigDecimal amount, CpuCard cpuCard, SubsidyType subsidyType) {
-        SubsidyRecord subsidyRecord = SubsidyRecordConverter.converter(amount, cpuCard, subsidyType);
+    private void saveSubsidyRecord(BigDecimal amount, CpuCard cpuCardBefore, CpuCard cpuCardAfter) {
+        SubsidyRecord subsidyRecord = SubsidyRecordConverter.converter(amount, cpuCardBefore,
+                cpuCardAfter, SubsidyType.MANUAL);
         subsidyRecordMapper.insert(subsidyRecord);
     }
 
@@ -301,7 +302,7 @@ public class SubsidyServiceImpl implements SubsidyService {
      */
     private List<SubsidyRule> selectRevSubsidyRuleByNow() {
         LocalDate localDate = LocalDate.now();
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper<SubsidyRule> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("subsidy_time", localDate.getDayOfMonth());
         queryWrapper.eq("subsidy_status", SubsidyStatus.START.getCode());
         return subsidyRuleMapper.selectList(queryWrapper);
@@ -313,7 +314,7 @@ public class SubsidyServiceImpl implements SubsidyService {
      * @return 补助规则
      */
     private List<User> selectUsersByDeptId(Integer deptId) {
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("dept_id", deptId);
         return userMapper.selectList(queryWrapper);
     }
@@ -324,7 +325,7 @@ public class SubsidyServiceImpl implements SubsidyService {
      * @return 补助规则
      */
     private List<CpuCard> selectCpuCardsByUserIds(List<Integer> userIds) {
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper<CpuCard> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("user_id", userIds);
         queryWrapper.eq("report_loss_ststus", ReportLossStstus.IN_USE.getCode());
         queryWrapper.eq("if_used", 0);
@@ -339,13 +340,13 @@ public class SubsidyServiceImpl implements SubsidyService {
      * @return 补助信息
      */
     private Triplet<List<CpuCard>, List<SubsidyRecord>, List<ChangeAmount>>
-    buildSubsidy(BigDecimal subsidyAmount, List<CpuCard> cpuCards, SubsidyType subsidyType, Subsidies subsidies) {
+    buildSubsidy(BigDecimal subsidyAmount, List<CpuCard> cpuCards, Subsidies subsidies) {
         List<CpuCard> changeAfters = Lists.newArrayList();
         List<SubsidyRecord> subsidyRecords = Lists.newArrayList();
         List<ChangeAmount> changeAmounts = Lists.newArrayList();
         cpuCards.forEach(cpuCard -> {
             Triplet<CpuCard, SubsidyRecord, ChangeAmount> triplet =
-                    subsidy(subsidyAmount, cpuCard, subsidyType, subsidies.getSubsidyStrategy());
+                    subsidy(subsidyAmount, cpuCard, SubsidyType.AUTOMATIC, subsidies.getSubsidyStrategy());
             changeAfters.add(triplet.getValue0());
             subsidyRecords.add(triplet.getValue1());
             changeAmounts.add(triplet.getValue2());
@@ -357,7 +358,7 @@ public class SubsidyServiceImpl implements SubsidyService {
      * 对单个卡进行补助
      *
      * @param subsidyAmount   补助金额
-     * @param cpuCard         卡
+     * @param cpuCard         变动前CPU卡
      * @param subsidyType     补助类型
      * @param subsidyStrategy 补助策略
      * @return 补助结果
@@ -369,7 +370,7 @@ public class SubsidyServiceImpl implements SubsidyService {
         changeAfter.setSubsidyBalance(subsidyStrategy.subsidy(cpuCard.getSubsidyBalance(),
                 subsidyAmount));
         SubsidyRecord subsidyRecord = SubsidyRecordConverter.converter
-                (subsidyAmount, cpuCard, subsidyType);
+                (subsidyAmount, cpuCard, changeAfter, subsidyType);
         ChangeAmount changeAmount = ChangeAmountConverter.
                 changeAmount(subsidyAmount,
                         AmountChangeType.SUBSIDIES, cpuCard, changeAfter);

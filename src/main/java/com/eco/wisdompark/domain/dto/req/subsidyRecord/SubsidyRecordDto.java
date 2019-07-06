@@ -40,4 +40,10 @@ public class SubsidyRecordDto {
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;
 
+    @ApiModelProperty(value = "补助前补助总金额")
+    private BigDecimal subsidyAgoAmount;
+
+    @ApiModelProperty(value = "补助后补助总金额")
+    private BigDecimal subsidyAfterAmount;
+
 }

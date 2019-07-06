@@ -1,13 +1,18 @@
 package com.eco.wisdompark.domain.model;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,7 +31,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("tb_consume_record")
-@ApiModel(value="ConsumeRecord对象", description="CPU卡-消费记录表")
+@ApiModel(value = "ConsumeRecord对象", description = "CPU卡-消费记录表")
 public class ConsumeRecord extends Model<ConsumeRecord> {
 
     private static final long serialVersionUID = 1L;
@@ -48,8 +53,20 @@ public class ConsumeRecord extends Model<ConsumeRecord> {
     @ApiModelProperty(value = "消费充值金额")
     private BigDecimal rechargeAmount;
 
+    @ApiModelProperty(value = "消费前充值总金额")
+    private BigDecimal rechargeAgoAmount;
+
+    @ApiModelProperty(value = "消费后充值总金额")
+    private BigDecimal rechargeAfterAmount;
+
     @ApiModelProperty(value = "消费补助金额")
     private BigDecimal subsidyAmount;
+
+    @ApiModelProperty(value = "消费前补助总金额")
+    private BigDecimal subsidyAgoAmount;
+
+    @ApiModelProperty(value = "消费后补助总金额")
+    private BigDecimal subsidyAfterAmount;
 
     @ApiModelProperty(value = "POS机编号")
     private String posNum;
@@ -65,7 +82,6 @@ public class ConsumeRecord extends Model<ConsumeRecord> {
 
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;
-
 
     @Override
     protected Serializable pkVal() {

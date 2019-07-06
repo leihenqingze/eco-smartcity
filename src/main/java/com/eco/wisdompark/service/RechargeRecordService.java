@@ -26,7 +26,7 @@ public interface RechargeRecordService extends IService<RechargeRecord> {
      * @param importSerialNo 批量导入序列号
      * @return
      */
-    boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount, RechargeType rechargeType, String importSerialNo,int rechargeWay);
+    boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount,BigDecimal rechargeAgoAmount,BigDecimal rechargeAfterAmount, RechargeType rechargeType, String importSerialNo,int rechargeWay);
      /**
       * 按人员查询充值记录
       *

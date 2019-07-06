@@ -56,12 +56,14 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
     private RechargeRecordMapper rechargeRecordMapper;
 
     @Override
-    public boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount,
+    public boolean saveRechargeRecord(InnerCpuCardInfoDto cardInfoDto, BigDecimal amount,BigDecimal rechargeAgoAmount,BigDecimal rechargeAfterAmount,
                                       RechargeType rechargeType, String importSerialNo,int rechargeWay) {
         RechargeRecord rechargeRecord = new RechargeRecord();
         rechargeRecord.setCardId(cardInfoDto.getCardId());
         rechargeRecord.setCardSerialNo(cardInfoDto.getCardSerialNo());
         rechargeRecord.setAmount(amount);
+        rechargeRecord.setRechargeAgoAmount(rechargeAgoAmount);
+        rechargeRecord.setRechargeAfterAmount(rechargeAfterAmount);
         rechargeRecord.setRechargeType(rechargeType.getCode());
         rechargeRecord.setRechargeWay(rechargeWay);
         if (!StringUtils.isEmpty(importSerialNo)){
@@ -209,7 +211,7 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
 
     private void exportExcel(List<RechargeRecordDto> rechargeRecordDtoList,HttpServletResponse response){
         //excel标题
-        String[] title = {"卡面序列号","姓名","部门名称","充值金额","充值类型","充值时间"};
+        String[] title = {"卡面序列号","姓名","部门名称","充值金额","充值前总金额","充值后总金额","充值类型","充值时间"};
 
         //excel文件名
         String fileName = "recharge_record_"+System.currentTimeMillis()+".xls";
@@ -227,14 +229,18 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
                 content[i][1] = obj.getUserName();
                 content[i][2] = obj.getDeptName();
                 content[i][3] = obj.getAmount().toString();
-                content[i][4] = obj.getRechargeWay();
-                content[i][5] = obj.getCreateTime();
+                content[i][4] = (obj.getRechargeAgoAmount()!= null?obj.getRechargeAgoAmount():BigDecimal.ZERO).toString();
+                content[i][5] = (obj.getRechargeAfterAmount()!= null?obj.getRechargeAfterAmount():BigDecimal.ZERO).toString();
+                content[i][6] = obj.getRechargeWay();
+                content[i][7] = obj.getCreateTime();
             }
         }
 
         //创建HSSFWorkbook
         Map<Integer,Integer> amountColMap = new HashMap<>();
         amountColMap.put(3,3);
+        amountColMap.put(4,4);
+        amountColMap.put(5,5);
         HSSFWorkbook wb = ExcelUtil.getHSSFWorkbook(sheetName, title, content, null,amountColMap);
 
         //响应到客户端

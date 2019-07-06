@@ -36,7 +36,7 @@ public class OvalLoginAdavice {
 
     @Before("checkLogin()")
     public void doBefore(JoinPoint joinPoint) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        /*HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         boolean loginCheck = false;
         Cookie[] cookies = request.getCookies();
         if (cookies!=null) {
@@ -57,7 +57,7 @@ public class OvalLoginAdavice {
         String methodName = joinPoint.getSignature().getName();
         if(!methodName.equals("sysUserLogin") && !loginCheck){
            throw new WisdomParkException(ResponseData.STATUS_CODE_110,"登录已过期");
-        }
+        }*/
     }
 
 }

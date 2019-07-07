@@ -6,7 +6,7 @@
 
 ALTER TABLE `tb_consume_record` 
 ADD COLUMN `recharge_ago_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费前充值总金额' AFTER `recharge_amount`,
-ADD COLUMN `recharge_after_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费后充值总金额' AFTER `recharge_ago_amount`,
+ADD COLUMN `recharge_ADD COLUMN `recharge_after_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费后after_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费后充值总金额' AFTER `recharge_ago_amount`,
 ADD COLUMN `subsidy_ago_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费前补助总金额' AFTER `subsidy_amount`,
 ADD COLUMN `subsidy_after_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费后补助总金额' AFTER `subsidy_ago_amount`;
 

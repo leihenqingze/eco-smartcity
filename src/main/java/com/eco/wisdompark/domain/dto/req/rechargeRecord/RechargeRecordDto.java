@@ -49,4 +49,7 @@ public class RechargeRecordDto {
 
     @ApiModelProperty(value = "手机号")
     private String phone;
+
+    @ApiModelProperty(value = "身份信息")
+    private String consumeIdentity;
 }

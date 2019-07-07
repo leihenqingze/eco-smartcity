@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.common.utils.ConsumeIdentityUtils;
 import com.eco.wisdompark.common.utils.ExcelUtil;
 import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
 import com.eco.wisdompark.domain.dto.inner.InnerCpuCardInfoDto;
@@ -211,7 +212,7 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
 
     private void exportExcel(List<RechargeRecordDto> rechargeRecordDtoList,HttpServletResponse response){
         //excel标题
-        String[] title = {"卡面序列号","姓名","部门名称","充值金额","充值前总金额","充值后总金额","充值类型","充值时间"};
+        String[] title = {"卡面序列号","姓名","部门名称","充值金额","充值前总金额","充值后总金额","充值类型","交易时间","交易类型","身份信息"};
 
         //excel文件名
         String fileName = "recharge_record_"+System.currentTimeMillis()+".xls";
@@ -233,6 +234,8 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
                 content[i][5] = (obj.getRechargeAfterAmount()!= null?obj.getRechargeAfterAmount():BigDecimal.ZERO).toString();
                 content[i][6] = obj.getRechargeWay();
                 content[i][7] = obj.getCreateTime();
+                content[i][8] = "充值";
+                content[i][9] = obj.getConsumeIdentity();
             }
         }
 
@@ -270,6 +273,7 @@ public class RechargeRecordServiceImpl extends ServiceImpl<RechargeRecordMapper,
                 Dept dept = deptService.getById(user.getDeptId());
                 if(dept != null){
                     dto.setDeptName(dept.getDeptName());
+                    dto.setConsumeIdentity(ConsumeIdentityUtils.getConsumeIdentityUtils(dept.getConsumeIdentity()));
                 }
             }
             dtoList.add(dto);

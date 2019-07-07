@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.common.exceptions.WisdomParkException;
+import com.eco.wisdompark.common.utils.ConsumeIdentityUtils;
 import com.eco.wisdompark.common.utils.ExcelUtil;
 import com.eco.wisdompark.common.utils.LocalDateTimeUtils;
 import com.eco.wisdompark.converter.req.PageReqDtoToPageConverter;
@@ -301,6 +302,7 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
                 Dept dept = deptService.getById(user.getDeptId());
                 if (dept != null) {
                     dto.setDeptName(dept.getDeptName());
+                    dto.setConsumeIdentity(ConsumeIdentityUtils.getConsumeIdentityUtils(dept.getConsumeIdentity()));
                 }
             }
             dtoList.add(dto);
@@ -352,7 +354,7 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
     private void exportExcel(List<SubsidyRecordDto> subsidyRecordDtos, HttpServletResponse response) {
         //excel标题
         String[] title = {"卡面序列号", "姓名", "部门名称", "手机号", "补助金额", "补助前补助总金额",
-                "补助后补助总金额", "补助类型", "补助时间"};
+                "补助后补助总金额", "补助类型", "交易时间","交易类型","身份信息"};
         //excel文件名
         String fileName = "subsidy_record_" + System.currentTimeMillis() + ".xls";
         //sheet名
@@ -372,6 +374,8 @@ public class SubsidyRecordServiceImpl extends ServiceImpl<SubsidyRecordMapper,
                 content[i][7] = SubsidyType.valueOf(obj.getType())
                         .getDescription();
                 content[i][8] = obj.getCreateTime();
+                content[i][9] = "发放补贴";
+                content[i][10] = obj.getConsumeIdentity();
             }
         }
 

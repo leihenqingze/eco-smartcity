@@ -13,15 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
- /**
-  * 登录拦截
-  *
-  * @author zhangkai
-  * @date 2019/1/1 下午11:02
-  */
+/**
+ * 登录拦截
+ *
+ * @author zhangkai
+ * @date 2019/1/1 下午11:02
+ */
 @Aspect
 @Component
 @Slf4j
@@ -36,28 +37,28 @@ public class OvalLoginAdavice {
 
     @Before("checkLogin()")
     public void doBefore(JoinPoint joinPoint) {
-        /*HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         boolean loginCheck = false;
         Cookie[] cookies = request.getCookies();
-        if (cookies!=null) {
-           for (int i = 0; i < cookies.length; i++) {
-               Cookie cookie = cookies[i];
-               if (cookie.getName().equals("Authentication")) {
-                   String token = cookie.getValue();
-                   log.info("========>set token:{}",token);
-                   TokenModel tokenModel = tokenUtils.get(token);
-                   // 校验token 合法
-                   if (tokenUtils.check(tokenModel)) {
-                       loginCheck = true;
-                       break;
-                   }
-               }
-           }
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie cookie = cookies[i];
+                if (cookie.getName().equals("Authentication")) {
+                    String token = cookie.getValue();
+                    log.info("========>set token:{}", token);
+                    TokenModel tokenModel = tokenUtils.get(token);
+                    // 校验token 合法
+                    if (tokenUtils.check(tokenModel)) {
+                        loginCheck = true;
+                        break;
+                    }
+                }
+            }
         }
         String methodName = joinPoint.getSignature().getName();
-        if(!methodName.equals("sysUserLogin") && !loginCheck){
-           throw new WisdomParkException(ResponseData.STATUS_CODE_110,"登录已过期");
-        }*/
+        if (!methodName.equals("sysUserLogin") && !loginCheck) {
+            throw new WisdomParkException(ResponseData.STATUS_CODE_110, "登录已过期");
+        }
     }
 
 }

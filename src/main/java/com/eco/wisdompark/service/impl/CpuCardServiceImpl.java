@@ -369,13 +369,13 @@ public class CpuCardServiceImpl extends ServiceImpl<CpuCardMapper, CpuCard> impl
                     row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
                     cardSerialNo = row.getCell(0).getStringCellValue();
                 }
-                if (!cellIsEmpty(row.getCell(2))) {
-                    row.getCell(2).setCellType(Cell.CELL_TYPE_NUMERIC);
-                    rechargeAmt = row.getCell(2).getNumericCellValue();
-                }
                 if (!cellIsEmpty(row.getCell(3))) {
-                    row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
-                    rechargeWay = row.getCell(3).getStringCellValue();
+                    row.getCell(3).setCellType(Cell.CELL_TYPE_NUMERIC);
+                    rechargeAmt = row.getCell(3).getNumericCellValue();
+                }
+                if (!cellIsEmpty(row.getCell(4))) {
+                    row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
+                    rechargeWay = row.getCell(4).getStringCellValue();
                 }
 
                 BatchRechargeDataDto batchRechargeDataDto = new BatchRechargeDataDto(cardSerialNo, rechargeAmt != null ? new BigDecimal(rechargeAmt) : null, rechargeWay);

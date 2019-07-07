@@ -46,4 +46,7 @@ public class SubsidyRecordDto {
     @ApiModelProperty(value = "补助后补助总金额")
     private BigDecimal subsidyAfterAmount;
 
+    @ApiModelProperty(value = "身份信息")
+    private String consumeIdentity;
+
 }

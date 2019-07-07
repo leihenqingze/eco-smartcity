@@ -94,7 +94,11 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(trainingStaffConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(trainingStaffConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(trainingStaffConsumeRecordDto.getPageSize());
-        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(trainingStaffConsumeRecordDto.getDiningType()));
+        if(trainingStaffConsumeRecordDto.getDiningType()!=null && trainingStaffConsumeRecordDto.getDiningType()>0 ){
+            List<Integer> dingList=new ArrayList<>();
+            dingList.add(trainingStaffConsumeRecordDto.getDiningType());
+            financeConsumeRecordDto.setDiningTypeList(dingList);
+        }
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
@@ -117,7 +121,11 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(notTrainingStaffConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(notTrainingStaffConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(notTrainingStaffConsumeRecordDto.getPageSize());
-        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(notTrainingStaffConsumeRecordDto.getDiningType()));
+        if(notTrainingStaffConsumeRecordDto.getDiningType()!=null && notTrainingStaffConsumeRecordDto.getDiningType()>0 ){
+            List<Integer> dingList=new ArrayList<>();
+            dingList.add(notTrainingStaffConsumeRecordDto.getDiningType());
+            financeConsumeRecordDto.setDiningTypeList(dingList);
+        }
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
@@ -140,7 +148,12 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(propertyConsumeRecordDto.getPageSize());
-        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(propertyConsumeRecordDto.getDiningType()));
+        if(propertyConsumeRecordDto.getDiningType()!=null && propertyConsumeRecordDto.getDiningType()>0 ){
+            List<Integer> dingList=new ArrayList<>();
+            dingList.add(propertyConsumeRecordDto.getDiningType());
+            financeConsumeRecordDto.setDiningTypeList(dingList);
+        }
+
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
@@ -163,7 +176,11 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(propertyConsumeRecordDto.getPageSize());
-        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(propertyConsumeRecordDto.getDiningType()));
+        if(propertyConsumeRecordDto.getDiningType()!=null && propertyConsumeRecordDto.getDiningType()>0 ){
+            List<Integer> dingList=new ArrayList<>();
+            dingList.add(propertyConsumeRecordDto.getDiningType());
+            financeConsumeRecordDto.setDiningTypeList(dingList);
+        }
 
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }

@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -92,7 +94,7 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(trainingStaffConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(trainingStaffConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(trainingStaffConsumeRecordDto.getPageSize());
-
+        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(trainingStaffConsumeRecordDto.getDiningType()));
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
@@ -115,7 +117,7 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(notTrainingStaffConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(notTrainingStaffConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(notTrainingStaffConsumeRecordDto.getPageSize());
-
+        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(notTrainingStaffConsumeRecordDto.getDiningType()));
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
@@ -138,7 +140,7 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(propertyConsumeRecordDto.getPageSize());
-
+        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(propertyConsumeRecordDto.getDiningType()));
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }
 
@@ -161,6 +163,7 @@ public class ConsumeRecordController {
         financeConsumeRecordDto.setEndTime(propertyConsumeRecordDto.getEndTime());
         financeConsumeRecordDto.setCurrentPage(propertyConsumeRecordDto.getCurrentPage());
         financeConsumeRecordDto.setPageSize(propertyConsumeRecordDto.getPageSize());
+        financeConsumeRecordDto.setDiningTypeList(Arrays.asList(propertyConsumeRecordDto.getDiningType()));
 
         return ResponseData.OK(getConsomeRecordRespDto(financeConsumeRecordDto));
     }

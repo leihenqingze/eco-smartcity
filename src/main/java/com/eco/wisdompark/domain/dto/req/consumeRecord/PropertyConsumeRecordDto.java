@@ -21,6 +21,9 @@ public class PropertyConsumeRecordDto {
     @ApiModelProperty(value = "每页长度")
     private Integer pageSize=10;
 
+    @ApiModelProperty(value = "用餐类型")
+    private Integer diningType;
+
 
 
 }

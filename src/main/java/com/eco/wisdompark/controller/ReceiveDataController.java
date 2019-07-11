@@ -106,6 +106,7 @@ public class ReceiveDataController {
                         receivePersoninfo.setTs(LocalDateTime.now());
                         if (saveOrUpdate > 0) {
                             receivePersoninfoMapper.insert(receivePersoninfo);
+
                         } else {
                             receivePersoninfoMapper.updateById(receivePersoninfo);
                         }

@@ -14,7 +14,7 @@ import java.util.List;
 public class CodeGenerator {
 
     public static void main(String[] args) {
-        String table = "tb_user";
+        String table = "tb_receive_cardInfo";
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
 
@@ -32,7 +32,7 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://60.205.115.115:10001/wisdompark?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://60.205.115.115:10001/wisdompark_20190601?useUnicode=true&useSSL=false&characterEncoding=utf8");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("wecoo");
         dsc.setPassword("2016wocoo0929");

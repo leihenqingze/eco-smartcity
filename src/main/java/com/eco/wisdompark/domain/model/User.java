@@ -46,6 +46,12 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "组织架构Id")
     private Integer deptId;
 
+    @ApiModelProperty(value = "身份: 0:训练局职工，外租户，保安保洁等 . 1:运动员")
+    private Integer identity;
+
+    @ApiModelProperty(value = "运动员记录ID")
+    private String item_id;
+
     @ApiModelProperty(value = "逻辑删除")
     @TableLogic
     private Integer del;

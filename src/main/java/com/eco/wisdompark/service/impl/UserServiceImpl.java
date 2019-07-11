@@ -87,6 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         QueryWrapper<User> wrapper = new QueryWrapper<User>();
+        wrapper.eq("identity", 0);
         if (StringUtils.isNotBlank(searchUserDto.getCardSerialNo())) {
             Integer userId = cpuCardService.getUserId(searchUserDto.getCardSerialNo());
             if (userId != null && userId > 0) {

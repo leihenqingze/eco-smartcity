@@ -113,20 +113,20 @@ public class EntranceGuardController {
         }
 
         // 封装返回对象信息
-        // List<EntranceGuardInfoListDto> entranceGuardInfoListDtos = packageEntranceGuardInfoList(responseMsg);
+         List<EntranceGuardInfoListDto> entranceGuardInfoListDtos = packageEntranceGuardInfoList(responseMsg);
 
         // **************************先写死返回一条数据****************************
-        EntranceGuardInfoListDto entranceGuardInfoListDto = new EntranceGuardInfoListDto();
-        entranceGuardInfoListDto.setDoorId("9eab05d9aab04377ba1243f74fe9b776");
-        entranceGuardInfoListDto.setDoorName("门锁_4_103");
-
-        SearchEntranceGuardCardInfo cardInfo = new SearchEntranceGuardCardInfo();
-        cardInfo.setCardId("bd340a2f5974472dbaec171a08b653e5");
-        cardInfo.setPhysicalNo("3D9410E5");
-
-        entranceGuardInfoListDto.setCardList(Lists.newArrayList(cardInfo));
-
-        List<EntranceGuardInfoListDto> entranceGuardInfoListDtos = Lists.newArrayList(entranceGuardInfoListDto);
+//        EntranceGuardInfoListDto entranceGuardInfoListDto = new EntranceGuardInfoListDto();
+//        entranceGuardInfoListDto.setDoorId("9eab05d9aab04377ba1243f74fe9b776");
+//        entranceGuardInfoListDto.setDoorName("门锁_4_103");
+//
+//        SearchEntranceGuardCardInfo cardInfo = new SearchEntranceGuardCardInfo();
+//        cardInfo.setCardId("bd340a2f5974472dbaec171a08b653e5");
+//        cardInfo.setPhysicalNo("3D9410E5");
+//
+//        entranceGuardInfoListDto.setCardList(Lists.newArrayList(cardInfo));
+//
+//        List<EntranceGuardInfoListDto> entranceGuardInfoListDtos = Lists.newArrayList(entranceGuardInfoListDto);
         // **************************先写死返回一条数据****************************
 
         return ResponseData.OK(entranceGuardInfoListDtos);

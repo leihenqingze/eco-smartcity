@@ -15,4 +15,10 @@ ADD COLUMN `subsidy_ago_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费
 ADD COLUMN `subsidy_after_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '消费后补助总金额' AFTER `subsidy_ago_amount`;
 
 ALTER TABLE `tb_user`
-ADD COLUMN `identity` tinyint(1) NOT NULL DEFAULT 0 COMMENT '身份: 0:训练局职工，外租户，保安保洁等 . 1:运动员',` AFTER `dept_id`;**
+ADD COLUMN `identity` tinyint(1) NOT NULL DEFAULT 0 COMMENT '身份: 0:训练局职工，外租户，保安保洁等 . 1:运动员',` AFTER `dept_id`;
+
+ALTER TABLE `tb_recharge_record` 
+ADD COLUMN `recharge_ago_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '充值前总金额' AFTER `amount`,
+ADD COLUMN `recharge_after_amount` decimal(12, 2) NULL DEFAULT NULL COMMENT '充值后总金额' AFTER `recharge_ago_amount`;
+
+**

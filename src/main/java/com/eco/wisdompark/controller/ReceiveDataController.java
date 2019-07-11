@@ -7,8 +7,10 @@ import com.eco.wisdompark.common.dto.ResponseData;
 import com.eco.wisdompark.domain.dto.req.ReceiveDto;
 import com.eco.wisdompark.domain.model.ReceiveCardinfo;
 import com.eco.wisdompark.domain.model.ReceivePersoninfo;
+import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.ReceiveCardinfoMapper;
 import com.eco.wisdompark.mapper.ReceivePersoninfoMapper;
+import com.eco.wisdompark.mapper.UserMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,9 @@ public class ReceiveDataController {
 
     @Autowired
     private ReceiveCardinfoMapper receiveCardinfoMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
 
     @RequestMapping(value = "/person/personInfo", method = RequestMethod.POST)
@@ -106,9 +111,17 @@ public class ReceiveDataController {
                         receivePersoninfo.setTs(LocalDateTime.now());
                         if (saveOrUpdate > 0) {
                             receivePersoninfoMapper.insert(receivePersoninfo);
-
+                            User user=new User();
+                            user.setUserName(receivePersoninfo.getName());
+                            user.setPhoneNum(receivePersoninfo.getTelephone());
+                            user.setIdentity(1);
+                            user.setItem_id(receivePersoninfo.getItemId());
+                            user.setCreateTime(LocalDateTime.now());
+                            user.setTs(LocalDateTime.now());
+                            userMapper.insert(user);
                         } else {
                             receivePersoninfoMapper.updateById(receivePersoninfo);
+
                         }
                     }
                 }

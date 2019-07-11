@@ -8,7 +8,12 @@ import com.eco.wisdompark.common.utils.HttpClient;
 import com.eco.wisdompark.common.utils.JsLifeUtils;
 import com.eco.wisdompark.common.utils.RedisUtil;
 import com.eco.wisdompark.domain.dto.req.JsLife.*;
+import com.eco.wisdompark.domain.dto.req.user.GetUserDto;
 import com.eco.wisdompark.domain.dto.resp.EntranceGuardInfoListDto;
+import com.eco.wisdompark.domain.model.ReceivePersoninfo;
+import com.eco.wisdompark.domain.model.User;
+import com.eco.wisdompark.service.ReceivePersoninfoService;
+import com.eco.wisdompark.service.UserService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,12 +60,25 @@ public class EntranceGuardController {
      @Autowired
      private JsLifeUtils jsLifeUtils;
 
+     @Autowired
+     private UserService userService;
+
+     @Autowired
+     private ReceivePersoninfoService receivePersoninfoService;
+
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperation(value = "获取所有可用门禁", httpMethod = "POST")
-    public ResponseData<List<EntranceGuardInfoListDto>> getEntranceGuardList(){
+    public ResponseData<List<EntranceGuardInfoListDto>> getEntranceGuardList(@RequestBody GetUserDto getUserDto){
+
+        String personCode = getPersonCode(getUserDto.getId());
+
+        if(StringUtils.isBlank(personCode)){
+            log.error(">>>>>>>>>>request search_entrance_guard personCode is empty");
+            return ResponseData.ERROR("数据查询失败!");
+        }
 
         // 封装请求参数
-        CommonRequestParam commonRequestParam = packageSearchRequestParam();
+        CommonRequestParam commonRequestParam = packageSearchRequestParam(personCode);
 
         // 获取token
         String token = getRequestToken();
@@ -165,17 +183,35 @@ public class EntranceGuardController {
         return ResponseData.OK();
     }
 
-    private CommonRequestParam packageSearchRequestParam(){
+    private CommonRequestParam packageSearchRequestParam(String personCode){
         CommonRequestParam commonRequestParam = new CommonRequestParam();
         commonRequestParam.setServiceId(search_service_id);
         commonRequestParam.setRequestType("DATA");
 
         SearchEntranceGuardBusinessParam searchBusinessParam = new SearchEntranceGuardBusinessParam();
         searchBusinessParam.setAreaCode(area_code);
-        searchBusinessParam.setPersonCode("SZ006399"); // todo 根据当前登录用户查询personCode
+        searchBusinessParam.setPersonCode(personCode);
         commonRequestParam.setAttributes(searchBusinessParam);
 
         return commonRequestParam;
+    }
+
+    private String getPersonCode(Integer userId){
+        String personCode = "";
+        if(userId == null){
+            return personCode;
+        }
+        User user = userService.getById(userId);
+        log.info(">>>>>>>>>>>getPersonCode:user is {}",JSON.toJSONString(user));
+        if(user == null || StringUtils.isBlank(user.getItemId())){
+            return personCode;
+        }
+        ReceivePersoninfo receivePersoninfo = receivePersoninfoService.getReceivePersonInfoByItemId(user.getItemId());
+        log.info(">>>>>>>>>>>getPersonCode:receivePersoninfo is {}",JSON.toJSONString(receivePersoninfo));
+        if(receivePersoninfo == null || StringUtils.isBlank(receivePersoninfo.getCode())){
+            return personCode;
+        }
+        return receivePersoninfo.getCode();
     }
 
     private CommonRequestParam packageOpenRequestParam(OpenDoorDto openDoorDto){

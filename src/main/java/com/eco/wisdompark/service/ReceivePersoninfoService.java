@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ReceivePersoninfoService extends IService<ReceivePersoninfo> {
 
+    ReceivePersoninfo getReceivePersonInfoByItemId(String itemId);
+
 }

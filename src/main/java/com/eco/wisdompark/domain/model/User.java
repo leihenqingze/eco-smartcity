@@ -56,6 +56,9 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;
 
+    @ApiModelProperty(value = "运动员记录ID")
+    private String itemId;
+
 
     @Override
     protected Serializable pkVal() {

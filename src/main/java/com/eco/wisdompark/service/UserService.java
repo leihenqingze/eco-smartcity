@@ -96,4 +96,6 @@ public interface UserService extends IService<User> {
      */
     List<User> searchByDeptIds(List<Integer> deptIds);
 
+    User getUserByPhone(String phone);
+
 }

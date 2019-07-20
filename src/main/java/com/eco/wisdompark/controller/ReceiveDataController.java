@@ -11,6 +11,7 @@ import com.eco.wisdompark.domain.model.User;
 import com.eco.wisdompark.mapper.ReceiveCardinfoMapper;
 import com.eco.wisdompark.mapper.ReceivePersoninfoMapper;
 import com.eco.wisdompark.mapper.UserMapper;
+import com.eco.wisdompark.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,10 @@ public class ReceiveDataController {
 
     @Autowired
     private UserMapper userMapper;
+
+
+    @Autowired
+    private UserService userService;
 
 
     @RequestMapping(value = "/person/personInfo", method = RequestMethod.POST)
@@ -110,19 +115,33 @@ public class ReceiveDataController {
                         receivePersoninfo.setCreateTime(LocalDateTime.now());
                         receivePersoninfo.setTs(LocalDateTime.now());
                         if (saveOrUpdate > 0) {
+                            log.info("执行插入{}"+receivePersoninfo);
                             receivePersoninfoMapper.insert(receivePersoninfo);
-                            User user=new User();
-                            user.setUserName(receivePersoninfo.getName());
-                            user.setPhoneNum(receivePersoninfo.getTelephone());
-                            user.setIdentity(1);
-                            user.setItem_id(receivePersoninfo.getItemId());
-                            user.setCreateTime(LocalDateTime.now());
-                            user.setTs(LocalDateTime.now());
-                            userMapper.insert(user);
                         } else {
                             receivePersoninfoMapper.updateById(receivePersoninfo);
+                            log.info("执行更新{}"+receivePersoninfo);
 
                         }
+                        if (receivePersoninfo != null && StringUtils.isNotBlank(receivePersoninfo.getTelephone())) {
+                            User u = userService.getUserByPhone(receivePersoninfo.getTelephone());
+                            if(u!=null){
+                                log.info("用户存在执行更新 {}"+receivePersoninfo.getTelephone());
+                                u.setItemId(receivePersoninfo.getItemId());
+                                userMapper.updateById(u);
+                            }
+                            else{
+                                User user = new User();
+                                user.setUserName(receivePersoninfo.getName());
+                                user.setPhoneNum(receivePersoninfo.getTelephone());
+                                user.setIdentity(1);
+                                user.setItemId(receivePersoninfo.getItemId());
+                                user.setCreateTime(LocalDateTime.now());
+                                user.setTs(LocalDateTime.now());
+                                userMapper.insert(user);
+                                log.info("用户不存在 创建用户 {}"+user);
+                            }
+                        }
+
                     }
                 }
             }
@@ -133,7 +152,7 @@ public class ReceiveDataController {
 
     @RequestMapping(value = "/card/cardInfo", method = RequestMethod.POST)
     @ApiOperation(value = "接收卡片信息", httpMethod = "POST")
-    public ResponseData<String>  cardInfo(@RequestBody ReceiveDto receiveDto) {
+    public ResponseData<String> cardInfo(@RequestBody ReceiveDto receiveDto) {
         log.info("-------> cardInfo {}" + receiveDto);
         if (receiveDto != null && StringUtils.isNotBlank(receiveDto.getDataItems())) {
             JSONArray json = JSONArray.parseArray(receiveDto.getDataItems());

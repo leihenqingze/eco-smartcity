@@ -50,7 +50,7 @@ public class User extends Model<User> {
     private Integer identity;
 
     @ApiModelProperty(value = "运动员记录ID")
-    private String item_id;
+    private String itemId;
 
     @ApiModelProperty(value = "逻辑删除")
     @TableLogic
@@ -61,9 +61,6 @@ public class User extends Model<User> {
 
     @ApiModelProperty(value = "时间戳")
     private LocalDateTime ts;
-
-    @ApiModelProperty(value = "运动员记录ID")
-    private String itemId;
 
 
     @Override

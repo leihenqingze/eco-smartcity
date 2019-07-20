@@ -242,6 +242,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             respDto.setCardId("-1");
         }
         respDto.setUserName(user.getUserName());
+        respDto.setUserId(user.getId());
         return respDto;
     }
 
@@ -326,6 +327,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.in("dept_id", deptIds);
         return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public User getUserByPhone(String phone) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.in("phone_num", phone);
+        List<User> list = baseMapper.selectList(wrapper);
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
     }
 
 
